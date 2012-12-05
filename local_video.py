@@ -40,6 +40,7 @@ class Local_video:
         self.ext = self.filename[1]
         self.title = re.sub(delimeter + '\d\d\d\d$', '', self.basename)
         self.year = re.sub(self.title + delimeter, '', self.basename)
+        self.dirty_title = self.title
         self.title = re.sub(delimeter, ' ', self.title)
         self.full_title = self.title + ' (' + self.year + ')'
     def get_possible_match_list(self):
@@ -48,13 +49,17 @@ class Local_video:
         if len(results) == 0:
             results = searchMovie(self.title)
         return results
+    def get_exact_title_matches(self):
+        exact_titles = list()
+        for item in self.get_possible_match_list():
+            if item.is_title_match(self.dirty_title):
+                exact_titles.append(item)
+        return exact_titles
     def get_match(self):
-        # search the list of matching movies for exact matches
         for item in self.get_possible_match_list():
             if (item.is_title_match(self.title) and 
                 item.is_year_match(self.year)):
                 return item
-                 
         return
     def get_chosen_match(self, custom_title = ''):
         # ask user for name of movie to search for

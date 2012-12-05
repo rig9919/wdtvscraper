@@ -30,6 +30,9 @@ def clean_title(self, is_original_title = False):
     return str(s)
 
 def is_title_match(self, possible_matching_title):
+    # see if the movie matches exactly
+    if self.title == possible_matching_title:
+        return True
     # check to see if a Movie object's clean title matches with ours
     if self.clean_title().lower() == possible_matching_title.lower():
         return True

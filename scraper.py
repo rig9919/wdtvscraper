@@ -51,7 +51,14 @@ def main():
             os.path.isfile(videofile.basename + '.xml')):
             # metathumb and xml already exists for this movie
             continue
-        match = videofile.get_match()
+        # try first for an exact title match, ignoring year
+        exact_titles = videofile.get_exact_title_matches()
+        if len(exact_titles) == 1:
+            match = exact_titles[0]
+        # if that doesn't work, try for match using year
+        else:
+            print str(len(exact_titles)) + ' exact titles found'
+            match = videofile.get_match()
         if match is None:
             # no perfect matches were found
             if args.interactive == False:
