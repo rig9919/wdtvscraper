@@ -38,13 +38,12 @@ class Local_video:
         self.filename = os.path.splitext(os.path.split(self.abspath)[1])
         self.basename = self.filename[0]
         self.ext = self.filename[1]
-        year_pattern = '(.\d\d\d\d)(.$|$)'
-        self.title = re.sub(year_pattern, '', self.basename)
-        self.title = re.sub('\s*$', '', self.title)
-        self.year = re.sub(self.title, '', self.basename)
-        self.year = re.sub('[^0-9]*', '', self.year)
-        self.dirty_title = self.title
-        self.title = re.sub(delimeter, ' ', self.title)
+        words = re.findall('\w+', self.basename)
+        self.title = ' '.join(words[0:len(words)-1])
+        self.year = words[len(words)-1]
+        if not self.year.isdigit():
+            self.year = ''
+        self.dirty_title = re.sub(self.year, '', self.basename)
         self.full_title = self.title + ' (' + self.year + ')'
     def get_possible_match_list(self):
         # get a list of matching movies from tmdb
