@@ -20,6 +20,7 @@ def main():
                         help='Where CN is a country code from '
                              'ISO 3166-1 alpha-2. '
                              'Common codes include us/gb/de/nl/it/fr/pl')
+    parser.add_argument('-d', '--debug', action='store_true')
     parser.add_argument('path', nargs='?', default=os.getcwd(), 
                          help='The path to the directory containing your '
                               'movie files.')
@@ -48,7 +49,7 @@ def main():
             continue
         videofile = Local_video(f)
         if (os.path.isfile(videofile.basename + '.metathumb') and
-            os.path.isfile(videofile.basename + '.xml')):
+            os.path.isfile(videofile.basename + '.xml') and (not args.debug)):
             # metathumb and xml already exists for this movie
             continue
         # try first for an exact title match, ignoring year
@@ -57,13 +58,17 @@ def main():
             match = exact_titles[0]
         # if that doesn't work, try for match using year
         else:
-            print str(len(exact_titles)) + ' exact titles found'
             match = videofile.get_match()
         if match is None:
             # no perfect matches were found
             if args.interactive == False:
-                failed.append('Failed to find match for: ' + 
-                              videofile.basename)
+                if len(exact_titles) > 1:
+                    failed.append('Failed on %s, too many exact title '
+                                  'matches (%d).'%(videofile.basename,
+                                                 len(exact_titles)))
+                else:
+                    failed.append('Failed on %s, no matches could be '
+                                  'found.'%(videofile.basename))
                 continue
             # ask user for some help finding their movie
             match = videofile.get_chosen_match()
@@ -87,6 +92,7 @@ def main():
         if match:
             print 'Match for %s found: %s'%(videofile.basename, 
                                             match.full_title())
+            if args.debug: continue
             if os.path.isfile(videofile.basename + '.metathumb'):
                 print 'Did not save poster image: %s already exists'%(
                         videofile.basename + '.metathumb')
