@@ -13,12 +13,16 @@ def main():
     parser.add_argument('-t', '--thumbnails', action='store_true',
                         help='Set to include remote thumbnail urls in xml. '
                              'This may slow thumbnail loading.')
-    parser.add_argument('-l', '--language', default='None',
-                        help='Two letter abbrev. Such as \'en\' or \'de\'')
-    parser.add_argument('-c', '--country', default='None',
-                        help='Two letter abbrev. Such as \'fi\' or \'tk\'')
-    parser.add_argument('path', help='The path to the directory containing '
-                        'your movie files.')
+    parser.add_argument('-l', '--language', default='None', metavar='LN',
+                        help='Where LN is a language code from ISO 639-1. '
+                             'Common codes include en/de/nl/es/it/fr/pl')
+    parser.add_argument('-c', '--country', default='None', metavar='CN',
+                        help='Where CN is a country code from '
+                             'ISO 3166-1 alpha-2. '
+                             'Common codes include us/gb/de/nl/it/fr/pl')
+    parser.add_argument('path', nargs='?', default=os.getcwd(), 
+                         help='The path to the directory containing your '
+                              'movie files.')
     args = parser.parse_args()
     
     # configurations for tmdb api
