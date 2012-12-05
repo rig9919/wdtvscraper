@@ -52,25 +52,36 @@ def main():
             os.path.isfile(videofile.basename + '.xml') and (not args.debug)):
             # metathumb and xml already exists for this movie
             continue
-        # try first for an exact title match, ignoring year
-        exact_titles = videofile.get_exact_title_matches()
-        if len(exact_titles) == 1:
-            match = exact_titles[0]
-        # if that doesn't work, try for match using year
-        else:
-            match = videofile.get_match()
+        # first, assume user has named their videos something using a standard
+        # format such as the-movie-title-and-year.ext
+        match = videofile.get_match()
         if match is None:
-            # no perfect matches were found
+            # it appears they didn't, now see if they used the exact title
+            # such as The Movie Title: With Punctuations!.ext
+            exact_title_matches = videofile.get_exact_title_matches()
+            if len(exact_title_matches) == 1:
+                # they did, and there's luckily only one movie named that so
+                # it must be our match
+                match = exact_title_matches[0]
+            else:
+                # more than one movie matched the exact title, examine years
+                for exact_title_match in exact_title_matches:
+                    if exact_title_match.is_year_match(videofile.year):
+                        # the years are the same, this must be our match
+                        match = exact_title_match
+                        break
+        if match is None:
+            # no matches were found in non-interactive mode, letting user know
             if args.interactive == False:
-                if len(exact_titles) > 1:
+                if len(exact_title_matches) > 1:
                     failed.append('Failed on %s, too many exact title '
                                   'matches (%d).'%(videofile.basename,
-                                                 len(exact_titles)))
+                                                 len(exact_title_matches)))
                 else:
                     failed.append('Failed on %s, no matches could be '
                                   'found.'%(videofile.basename))
                 continue
-            # ask user for some help finding their movie
+            # ask user for some help finding their movie if in interactive mode
             match = videofile.get_chosen_match()
             while match is None:
                 try:
