@@ -1,6 +1,7 @@
 import os, re
 from tmdb3 import searchMovie, searchMovieWithYear
 import time
+from common import split
 
 MAXRESULTS = 20
 
@@ -36,20 +37,8 @@ class Local_video:
         self.filename = os.path.splitext(os.path.split(self.abspath)[1])
         self.basename = self.filename[0]
         self.ext = self.filename[1]
-        # split basename into interesting parts
-        words = re.findall('\w+', self.basename)
-        # look at the last item in the words list
-        if words[len(words)-1].isdigit():
-            # if it's a digit, then it represents the year and the
-            # second-to-last item is the end of the title
-            self.year = words[len(words)-1]
-            self.title = ' '.join(words[0:len(words)-1])
-        else:
-            # if it's not a digit, that means the filename contains no year
-            # so we make one up and give title the entire contents of the
-            # words list
-            self.year = ''
-            self.title = ' '.join(words)
+        self.title = split(self.basename)['title']
+        self.year = split(self.basename)['year']
         # keep a dirty title for use in our exact-case-and-punctuation search
         self.dirty_title = re.sub(self.year, '', self.basename)
         self.full_title = self.title + ' (' + self.year + ')'
