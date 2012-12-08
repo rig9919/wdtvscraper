@@ -31,17 +31,17 @@ def get_input(prompt, valid_choice_pattern, choice_list_length=-1):
 class LocalVideo:
     def __init__(self, path):
         # split pathname into useful things upon creation
-        self.abspath = os.path.abspath(path)
-        self.dirpath = os.path.split(self.abspath)[0]
-        self.filename = os.path.splitext(os.path.split(self.abspath)[1])
-        self.basename = self.filename[0]
-        self.ext = self.filename[1]
+        self.__abspath = os.path.abspath(path)
+        self.__dirpath = os.path.split(self.__abspath)[0]
+        self.__filename = os.path.splitext(os.path.split(self.__abspath)[1])
+        self.basename = self.__filename[0]
+        self.ext = self.__filename[1]
         self.title = split(self.basename)['title']
         self.year = split(self.basename)['year']
         # keep a dirty title for use in our exact-case-and-punctuation search
         self.dirty_title = re.sub(self.year, '', self.basename)
         self.full_title = self.title + ' (' + self.year + ')'
-    def get_possible_match_list(self):
+    def __get_possible_match_list(self):
         # get a list of matching movies from tmdb
         results = tmdb3.searchMovieWithYear(self.full_title)
         if len(results) == 0:
@@ -49,12 +49,12 @@ class LocalVideo:
         return results
     def get_exact_title_matches(self):
         exact_titles = list()
-        for item in self.get_possible_match_list():
+        for item in self.__get_possible_match_list():
             if item.is_title_match(self.dirty_title):
                 exact_titles.append(item)
         return exact_titles
     def get_match(self):
-        for item in self.get_possible_match_list():
+        for item in self.__get_possible_match_list():
             if (item.is_title_match(self.title) and 
                 item.is_year_match(self.year)):
                 return item

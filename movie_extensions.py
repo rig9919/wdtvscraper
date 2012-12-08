@@ -110,7 +110,8 @@ def build_xml(self, destination, thumbnails):
     f.close()
 
 tmdb3.Movie.is_title_match = MethodType(is_title_match, None, tmdb3.Movie)
-tmdb3.Movie.earliest_releasedate = MethodType(earliest_releasedate, None, tmdb3.Movie)
+tmdb3.Movie.earliest_releasedate = MethodType(earliest_releasedate, None, 
+                                              tmdb3.Movie)
 tmdb3.Movie.year = MethodType(year, None, tmdb3.Movie)
 tmdb3.Movie.is_year_match = MethodType(is_year_match, None, tmdb3.Movie)
 tmdb3.Movie.full_title = MethodType(full_title, None, tmdb3.Movie)
