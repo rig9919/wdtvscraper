@@ -14,10 +14,10 @@ def main():
     parser.add_argument('-t', '--thumbnails', action='store_true',
                         help='Set to include remote thumbnail urls in xml. '
                              'This may slow thumbnail loading.')
-    parser.add_argument('-l', '--language', default='None', metavar='LN',
+    parser.add_argument('-l', '--language', default='', metavar='LN',
                         help='Where LN is a language code from ISO 639-1. '
                              'Common codes include en/de/nl/es/it/fr/pl')
-    parser.add_argument('-c', '--country', default='None', metavar='CN',
+    parser.add_argument('-c', '--country', default='', metavar='CN',
                         help='Where CN is a country code from '
                              'ISO 3166-1 alpha-2. '
                              'Common codes include us/gb/de/nl/it/fr/pl')
@@ -29,12 +29,12 @@ def main():
     
     # configurations for tmdb api
     tmdb3.set_key('ae90cf3b0ab5da570880728198701ce0')
-    if args.language == 'None' and args.country == 'None':
+    if (not args.language) and (not args.country):
         tmdb3.set_locale(fallthrough=True)
     else:
-        if args.language != 'None':
+        if args.language:
             tmdb3.set_locale(language=args.language, fallthrough=True)
-        if args.country != 'None':
+        if args.country:
             tmdb3.set_locale(country=args.country, fallthrough=True)
     print 'Using locale: ' + str(tmdb3.get_locale())
 
@@ -56,7 +56,7 @@ def main():
         # first, assume user has named their videos something using a standard
         # format such as the-movie-title-and-year.ext
         match = videofile.get_match()
-        if match is None:
+        if not match:
             # it appears they didn't, now see if they used the exact title
             # such as The Movie Title: With Punctuations!.ext
             exact_title_matches = videofile.get_exact_title_matches()
@@ -71,9 +71,9 @@ def main():
                         # the years are the same, this must be our match
                         match = exact_title_match
                         break
-        if match is None:
+        if not match:
             # no matches were found in non-interactive mode, letting user know
-            if args.interactive == False:
+            if not args.interactive:
                 if len(exact_title_matches) > 1:
                     failed.append('Failed on %s, too many exact title '
                                   'matches (%d).'%(videofile.basename,
@@ -84,7 +84,7 @@ def main():
                 continue
             # ask user for some help finding their movie if in interactive mode
             match = videofile.get_chosen_match()
-            while match is None:
+            while not match:
                 try:
                     # keep asking until user gives up or gets their title
                     user_typed_title = raw_input('Enter a possible alternative'
@@ -104,7 +104,8 @@ def main():
         if match:
             print 'Match for %s found: %s'%(videofile.basename, 
                                             match.full_title())
-            if args.debug: continue
+            if args.debug: 
+                continue
             if os.path.isfile(videofile.basename + '.metathumb'):
                 print 'Did not save poster image: %s already exists'%(
                         videofile.basename + '.metathumb')
@@ -129,7 +130,7 @@ def main():
             print 'No match found for %s'%(videofile.basename)
     
     print '\n'.join(failed)
-    if len(failed) > 0:
+    if failed:
         print 'Run in interactive mode to fix any failures manually.'
 
 if __name__ == '__main__':
