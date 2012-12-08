@@ -1,6 +1,6 @@
 import Movie_extensions
 from local_video import Local_video
-from tmdb3 import set_key, set_locale, get_locale, set_cache
+from pytmdb3 import tmdb3
 import os, re, argparse
 # filenames MUST be named the-movie-title-<year>.ext
 # and should be named using your language, not necessarily the original title
@@ -27,15 +27,15 @@ def main():
     args = parser.parse_args()
     
     # configurations for tmdb api
-    set_key('ae90cf3b0ab5da570880728198701ce0')
+    tmdb3.set_key('ae90cf3b0ab5da570880728198701ce0')
     if args.language == 'None' and args.country == 'None':
-        set_locale(fallthrough=True)
+        tmdb3.set_locale(fallthrough=True)
     else:
         if args.language != 'None':
-            set_locale(language=args.language, fallthrough=True)
+            tmdb3.set_locale(language=args.language, fallthrough=True)
         if args.country != 'None':
-            set_locale(country=args.country, fallthrough=True)
-    print 'Using locale: ' + str(get_locale())
+            tmdb3.set_locale(country=args.country, fallthrough=True)
+    print 'Using locale: ' + str(tmdb3.get_locale())
 
     # set up a list for storing failed matches
     failed = list()

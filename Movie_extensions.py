@@ -1,5 +1,5 @@
 from types import MethodType
-from tmdb3 import Movie
+from pytmdb3 import tmdb3
 import unicodedata, re, string, urllib
 from datetime import date
 from common import split
@@ -109,11 +109,11 @@ def build_xml(self, destination, thumbnails):
     f.write(xmlstring)
     f.close()
 
-Movie.is_title_match = MethodType(is_title_match, None, Movie)
-Movie.earliest_releasedate = MethodType(earliest_releasedate, None, Movie)
-Movie.year = MethodType(year, None, Movie)
-Movie.is_year_match = MethodType(is_year_match, None, Movie)
-Movie.full_title = MethodType(full_title, None, Movie)
-Movie.download_poster = MethodType(download_poster, None, Movie)
-Movie.get_genres = MethodType(get_genres, None, Movie)
-Movie.build_xml = MethodType(build_xml, None, Movie)
+tmdb3.Movie.is_title_match = MethodType(is_title_match, None, tmdb3.Movie)
+tmdb3.Movie.earliest_releasedate = MethodType(earliest_releasedate, None, tmdb3.Movie)
+tmdb3.Movie.year = MethodType(year, None, tmdb3.Movie)
+tmdb3.Movie.is_year_match = MethodType(is_year_match, None, tmdb3.Movie)
+tmdb3.Movie.full_title = MethodType(full_title, None, tmdb3.Movie)
+tmdb3.Movie.download_poster = MethodType(download_poster, None, tmdb3.Movie)
+tmdb3.Movie.get_genres = MethodType(get_genres, None, tmdb3.Movie)
+tmdb3.Movie.build_xml = MethodType(build_xml, None, tmdb3.Movie)

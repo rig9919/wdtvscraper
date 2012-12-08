@@ -1,5 +1,5 @@
 import os, re
-from tmdb3 import searchMovie, searchMovieWithYear
+from pytmdb3 import tmdb3
 import time
 from common import split
 
@@ -44,9 +44,9 @@ class Local_video:
         self.full_title = self.title + ' (' + self.year + ')'
     def get_possible_match_list(self):
         # get a list of matching movies from tmdb
-        results = searchMovieWithYear(self.full_title)
+        results = tmdb3.searchMovieWithYear(self.full_title)
         if len(results) == 0:
-            results = searchMovie(self.title)
+            results = tmdb3.searchMovie(self.title)
         return results
     def get_exact_title_matches(self):
         exact_titles = list()
@@ -65,9 +65,9 @@ class Local_video:
         # display a list of matching movies from tmdb
         # allow user to choose a movie from the list that best matches theirs
         if custom_title != '':
-            results = searchMovie(custom_title)
+            results = tmdb3.searchMovie(custom_title)
         else:
-            results = searchMovie(self.title)
+            results = tmdb3.searchMovie(self.title)
        
         while True:
             print_possible_match_table(results)
