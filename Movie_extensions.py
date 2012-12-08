@@ -1,7 +1,7 @@
+import unicodedata, re, urllib
+from datetime import date
 from types import MethodType
 from pytmdb3 import tmdb3
-import unicodedata, re, string, urllib
-from datetime import date
 from common import split
 
 def is_title_match(self, possible_matching_title):

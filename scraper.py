@@ -1,7 +1,8 @@
+import os, re, argparse
+from pytmdb3 import tmdb3
 import Movie_extensions
 from local_video import Local_video
-from pytmdb3 import tmdb3
-import os, re, argparse
+
 # filenames MUST be named the-movie-title-<year>.ext
 # and should be named using your language, not necessarily the original title
 

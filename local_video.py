@@ -1,6 +1,5 @@
 import os, re
 from pytmdb3 import tmdb3
-import time
 from common import split
 
 MAXRESULTS = 20
