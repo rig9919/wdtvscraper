@@ -108,7 +108,17 @@ def main():
                 print 'Did not save poster image: %s already exists'%(
                         videofile.basename + '.metathumb')
             else:
-                match.download_poster('w342', videofile.basename)
+            # if there's any posters available, download w342 size
+            # preferably. otherwise, get the smallest available.
+                if match.poster:
+                    if 'w342' in match.poster.sizes():
+                        match.download_poster('w342', videofile.basename)
+                    else:
+                        match.download_poster(match.poster.sizes()[0],
+                                              videofile.basename)
+                else:
+                    print ('Did not save poster image: no available '
+                           'posters for %s'%(videofile.basename))
             if os.path.isfile(videofile.basename + '.xml'):
                 print 'Did not save metadata: %s already exists'%(
                         videofile.basename + '.xml')
