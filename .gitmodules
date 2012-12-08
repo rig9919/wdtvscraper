@@ -1,0 +1,3 @@
+[submodule "pytmdb3"]
+	path = pytmdb3
+	url = git://github.com/wagnerrp/pytmdb3.git
