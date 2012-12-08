@@ -28,7 +28,7 @@ def get_input(prompt, valid_choice_pattern, choice_list_length=-1):
         except (ValueError, EOFError):
             print 'invalid choice'
 
-class Local_video:
+class LocalVideo:
     def __init__(self, path):
         # split pathname into useful things upon creation
         self.abspath = os.path.abspath(path)

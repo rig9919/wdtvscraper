@@ -1,7 +1,7 @@
 import os, re, argparse
 from pytmdb3 import tmdb3
-import Movie_extensions
-from local_video import Local_video
+import movie_extensions
+from local_video import LocalVideo
 
 # filenames MUST be named the-movie-title-<year>.ext
 # and should be named using your language, not necessarily the original title
@@ -48,7 +48,7 @@ def main():
                          '\.ts|\.m2t|\.m2ts|\.flv|.mp4)$', f):
             # not a format wdtv supports
             continue
-        videofile = Local_video(f)
+        videofile = LocalVideo(f)
         if (os.path.isfile(videofile.basename + '.metathumb') and
             os.path.isfile(videofile.basename + '.xml') and (not args.debug)):
             # metathumb and xml already exists for this movie
