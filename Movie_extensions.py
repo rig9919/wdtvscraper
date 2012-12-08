@@ -2,42 +2,18 @@ from types import MethodType
 from tmdb3 import Movie
 import unicodedata, re, string, urllib
 from datetime import date
-
-def clean_title(self, is_original_title = False):
-    # return the Movie object's title with all punctuation removed
-    # and replaced with a single space or nulled
-    if is_original_title:
-        s = self.originaltitle
-    else:
-        s = self.title
-    # replace en-dash and em-dash with a regular minus-dash
-    s = s.replace( u'\u2013', '-')
-    s = s.replace( u'\u2014', '-')
-    # get rid of accents and use the closest english letter
-    s = unicodedata.normalize('NFKD', unicode(s)).encode('ascii','ignore')
-    s = s.replace( '&', 'and')
-    s = s.replace( ' III', ' 3')
-    s = s.replace( ' II', ' 2')
-    s = s.replace( '\'', '')
-    s = s.replace( ' - ', ' ')
-    s = s.replace( '-', ' ')
-    s = s.replace( '/', ' ')
-    s = s.replace( '. ', ' ')
-    s = s.replace( '.', ' ')
-    s = s.replace( ': ', ' ')
-    s = s.replace( ':', ' ')
-    s = re.sub('[%s]' % re.escape(string.punctuation), '', s)
-    return str(s)
+from common import split
 
 def is_title_match(self, possible_matching_title):
     # see if the movie matches exactly
     if self.title == possible_matching_title:
         return True
     # check to see if a Movie object's clean title matches with ours
-    if self.clean_title().lower() == possible_matching_title.lower():
+    if split(self.title)['title'].lower() == possible_matching_title.lower():
         return True
     # see if the original language title matches with ours
-    if self.clean_title(True).lower() == possible_matching_title.lower():
+    if (split(self.originaltitle)['title'].lower() == 
+                                              possible_matching_title.lower()):
         return True
     return False
 
@@ -133,7 +109,6 @@ def build_xml(self, destination, thumbnails):
     f.write(xmlstring)
     f.close()
 
-Movie.clean_title = MethodType(clean_title, None, Movie)
 Movie.is_title_match = MethodType(is_title_match, None, Movie)
 Movie.earliest_releasedate = MethodType(earliest_releasedate, None, Movie)
 Movie.year = MethodType(year, None, Movie)
