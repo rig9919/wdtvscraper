@@ -22,6 +22,9 @@ def main():
                         help='Where CN is a country code from '
                              'ISO 3166-1 alpha-2. '
                              'Common codes include us/gb/de/nl/it/fr/pl')
+    parser.add_argument('-a', '--assume', action='store_true',
+                        help='Assume match on 1 result. Not recommended '
+                             'This can lead to mismatches.')
     parser.add_argument('-d', '--debug', action='store_true')
     parser.add_argument('path', nargs='?', default=os.getcwd(), 
                          help='The path to the directory containing your '
@@ -58,7 +61,7 @@ def main():
         # format such as the-movie-title-and-year.ext
         match = None
         try:
-            match = videofile.get_match()
+            match = videofile.get_match(args.assume)
         except common.NonzeroMatchlistNoMatches as e:
             failed.append(e)
         except common.ZeroMatchlist as e:

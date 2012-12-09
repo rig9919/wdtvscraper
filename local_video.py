@@ -48,11 +48,14 @@ class LocalVideo:
         if len(results) == 0:
             results = tmdb3.searchMovie(self.title)
         return results
-    def get_match(self):
+    def get_match(self, assume_match=False):
         possible_matches = self.__get_possible_match_list()
         if not possible_matches:
             raise common.ZeroMatchlist(self.basename)
             return
+        if assume_match:
+            if len(possible_matches) == 1:
+                return possible_matches[0]
         for item in possible_matches:
             # if the year and title are the same, it is most likely a match
             if (item.is_title_match(self.title) and 
