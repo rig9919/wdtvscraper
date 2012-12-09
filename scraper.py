@@ -2,6 +2,7 @@ import os, re, argparse
 from pytmdb3 import tmdb3
 import movie_extensions
 from local_video import LocalVideo
+import common
 
 # filenames MUST be named the-movie-title-<year>.ext
 # and should be named using your language, not necessarily the original title
@@ -55,32 +56,16 @@ def main():
             continue
         # first, assume user has named their videos something using a standard
         # format such as the-movie-title-and-year.ext
-        match = videofile.get_match()
+        match = None
+        try:
+            match = videofile.get_match()
+        except common.NonzeroMatchlistNoMatches as e:
+            failed.append(e)
+        except common.ZeroMatchlist as e:
+            failed.append(e)
         if not match:
-            # it appears they didn't, now see if they used the exact title
-            # such as The Movie Title: With Punctuations!.ext
-            exact_title_matches = videofile.get_exact_title_matches()
-            if len(exact_title_matches) == 1:
-                # they did, and there's luckily only one movie named that so
-                # it must be our match
-                match = exact_title_matches[0]
-            else:
-                # more than one movie matched the exact title, examine years
-                for exact_title_match in exact_title_matches:
-                    if exact_title_match.is_year_match(videofile.year):
-                        # the years are the same, this must be our match
-                        match = exact_title_match
-                        break
-        if not match:
-            # no matches were found in non-interactive mode, letting user know
+            # no matches were found in non-interactive mode, continue to next
             if not args.interactive:
-                if len(exact_title_matches) > 1:
-                    failed.append('Failed on %s, too many exact title '
-                                  'matches (%d).'%(videofile.basename,
-                                                 len(exact_title_matches)))
-                else:
-                    failed.append('Failed on %s, no matches could be '
-                                  'found.'%(videofile.basename))
                 continue
             # ask user for some help finding their movie if in interactive mode
             match = videofile.get_chosen_match()
@@ -129,8 +114,9 @@ def main():
         else:
             print 'No match found for %s'%(videofile.basename)
     
-    print '\n'.join(failed)
     if failed:
+        for failure in failed:
+            print failure
         print 'Run in interactive mode to fix any failures manually.'
 
 if __name__ == '__main__':

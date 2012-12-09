@@ -1,9 +1,24 @@
 import re, unicodedata
 
+class NonzeroMatchlistNoMatches(Exception):
+    def __init__(self, name, results):
+        self.name = name
+        self.results = results
+    def __str__(self):
+        return ('Failed: There were ' + str(self.results) + ' results ' 
+                'but no matches for ' + self.name)
+
+class ZeroMatchlist(Exception):
+    def __init__(self, name):
+        self.name = name
+    def __str__(self):
+        return 'Failed: There were zero results for ' + self.name
+
 def split(title):
     # get rid of any accents and other unicode characters
     title = unicodedata.normalize('NFKD', 
                                    unicode(title)).encode('ascii','ignore')
+    title = re.sub('&', 'and', title)
     # split a complete title into the title and the year
     words = re.findall('\w+', title)
     # if there's no words, return empty dict

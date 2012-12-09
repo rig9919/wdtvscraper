@@ -5,13 +5,16 @@ from pytmdb3 import tmdb3
 from common import split
 
 def is_title_match(self, possible_matching_title):
+    #print 'is_title_match() comparing title:', self.title.lower(), possible_matching_title.lower()
     # see if the movie matches exactly
-    if self.title == possible_matching_title:
+    if self.title.lower() == possible_matching_title.lower():
         return True
     # check to see if a Movie object's clean title matches with ours
+    #print 'is_title_match() comparing split(title):', split(self.title)['title'].lower(), possible_matching_title.lower()
     if split(self.title)['title'].lower() == possible_matching_title.lower():
         return True
     # see if the original language title matches with ours
+    #print 'is_title_match() comparing split(originaltitle):', split(self.originaltitle)['title'].lower(), possible_matching_title.lower()
     if (split(self.originaltitle)['title'].lower() == 
                                               possible_matching_title.lower()):
         return True

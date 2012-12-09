@@ -1,6 +1,7 @@
 import os, re
 from pytmdb3 import tmdb3
 from common import split
+import common
 
 MAXRESULTS = 20
 
@@ -47,17 +48,18 @@ class LocalVideo:
         if len(results) == 0:
             results = tmdb3.searchMovie(self.title)
         return results
-    def get_exact_title_matches(self):
-        exact_titles = list()
-        for item in self.__get_possible_match_list():
-            if item.is_title_match(self.dirty_title):
-                exact_titles.append(item)
-        return exact_titles
     def get_match(self):
-        for item in self.__get_possible_match_list():
+        possible_matches = self.__get_possible_match_list()
+        if not possible_matches:
+            raise common.ZeroMatchlist(self.basename)
+            return
+        for item in possible_matches:
+            # if the year and title are the same, it is most likely a match
             if (item.is_title_match(self.title) and 
                 item.is_year_match(self.year)):
                 return item
+        raise common.NonzeroMatchlistNoMatches(self.basename, 
+                                               len(possible_matches))
         return
     def get_chosen_match(self, custom_title = ''):
         # ask user for name of movie to search for
