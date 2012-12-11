@@ -5,31 +5,38 @@ from pytmdb3 import tmdb3
 from common import split
 
 def is_title_match(self, possible_matching_title):
-    #print 'is_title_match() comparing title:', self.title.lower(), possible_matching_title.lower()
-    # see if the movie matches exactly
+    '''
+    compare object's title with <possible_matching_title>
+    '''
+
+    # see if the movie title matches exactly
     if self.title.lower() == possible_matching_title.lower():
         return True
     # check to see if a Movie object's clean title matches with ours
-    #print 'is_title_match() comparing split(title):', split(self.title)['title'].lower(), possible_matching_title.lower()
     if split(self.title)['title'].lower() == possible_matching_title.lower():
         return True
     # see if the original language title matches with ours
-    #print 'is_title_match() comparing split(originaltitle):', split(self.originaltitle)['title'].lower(), possible_matching_title.lower()
     if (split(self.originaltitle)['title'].lower() == 
                                               possible_matching_title.lower()):
         return True
     return False
 
 def earliest_releasedate(self):
+    '''
+    return the initial release date known to tmdb, regardless of country
+    if there's no release date information, return None
+    '''
+
     earliest = date(9999,12,31)
     for release in self.releases.iteritems():
         if release[1].releasedate < earliest:
             earliest = release[1].releasedate
     if earliest == date(9999,12,31):
-        earliest = '????'
+        return
     return earliest
 
 
+# TODO: decide whether or not to allow matches based on local release date
 #def loc_releasedate(self):
 #    country = str(get_locale().country)
 #    print self.releases
@@ -40,34 +47,72 @@ def earliest_releasedate(self):
 #    return releasedate
 
 def year(self):
-    # return year of the Movie object based on it's releasedate
-    # if no releasedate listed, return '????'
-    year_found = re.search('\d\d\d\d', str(self.earliest_releasedate()))
+    '''
+    return the year of the object based on it's earliest release date
+    if no release date or year is found, return '????'
+    '''
+
+    # get the year of the earliest release date
+    earliest_available = self.earliest_releasedate()
+    if earliest_available:
+        year_found = re.search('\d\d\d\d', str(earliest_available))
+    else:
+        year_found = None
+    # if there was a year found, return it
     if year_found:
         return year_found.group(0)
     return '????'
 
 def is_year_match(self, possible_matching_year):
-    # see if the Movie object's year matches with ours
+    '''
+    return true if object's year and <possible_matching_year> are the same
+    '''
+
     if self.year() == possible_matching_year:
         return True
     return False
 
 def full_title(self):
-    # return title in the form 'X-Men Origins: Wolverine (2009)'
+    '''
+    return object's title in the form 'Movie Title (YYYY)'
+    example: 'X-Men Origins: Wolverine (2009)
+    '''
+
     return self.title + ' (' + str(self.year()) + ')'
 
 def download_poster(self, size, name):
+    '''
+    download object's associated movie poster
+    
+    size: w92, w154, w185, w342, w500, or original
+          see http://help.themoviedb.org/kb/api/configuration
+    name: name to save it as
+    '''
+
     poster_url = self.poster.geturl(size)
     urllib.urlretrieve(poster_url, name + '.metathumb')
 
 def get_genres(self):
+    '''
+    return a string listing all the genres of the object
+    '''
+
     genre_names = list()
     for item in self.genres:
         genre_names.append(item.name)
     return ', '.join(genre_names)
 
 def build_xml(self, destination, thumbnails):
+    '''
+    write meta information to a file
+
+    destination: destination of file to write
+    thumbnails: boolean describing whether to include thumbnail URLs or not
+                this is included because on the WDTV if thumbnail URLs are
+                known, it will try and use those before the local .metathumb
+                files which slows movie browsing down
+    '''
+
     xmlstring = '<details>'
     xmlstring += '<id>' + str(self.id) + '</id>'
     xmlstring += '<imdb_id>' + str(self.imdb) + '</imdb_id>'
@@ -112,6 +157,8 @@ def build_xml(self, destination, thumbnails):
     f.write(xmlstring)
     f.close()
 
+
+# give the tmdb3.Movie class our new methods
 tmdb3.Movie.is_title_match = MethodType(is_title_match, None, tmdb3.Movie)
 tmdb3.Movie.earliest_releasedate = MethodType(earliest_releasedate, None, 
                                               tmdb3.Movie)
