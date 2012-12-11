@@ -1,3 +1,4 @@
+<pre>
 wdtvscraper  
 ===========  
   
@@ -21,4 +22,4 @@ optional arguments:
                         lead to mismatches.  
   -d, --debug  
   
-
+</pre>
