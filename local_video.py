@@ -67,8 +67,6 @@ class LocalVideo:
         # extract the title and year from the basename
         self.title = split(self.basename)['title']
         self.year = split(self.basename)['year']
-        # keep a dirty title for use in our exact-case-and-punctuation search
-        self.dirty_title = re.sub(self.year, '', self.basename)
         self.full_title = self.title + ' (' + self.year + ')'
 
     def __get_possible_match_list(self):
