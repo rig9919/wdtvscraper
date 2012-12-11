@@ -9,8 +9,8 @@ import common
 
 def main():
     parser = argparse.ArgumentParser(description='Scrape themoviedb.org for ' 
-                                      'metadata of movies stored on a WDTV ' 
-                                      'Live Hub.')
+                                     'metadata of movies stored on a WDTV '
+                                     'device.') 
     parser.add_argument('-i', '--interactive', action='store_true')
     parser.add_argument('-t', '--thumbnails', action='store_true',
                         help='Set to include remote thumbnail urls in xml. '
