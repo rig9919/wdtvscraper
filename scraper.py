@@ -10,7 +10,8 @@ def main():
     parser = argparse.ArgumentParser(description='Scrape themoviedb.org for ' 
                                      'metadata of movies stored on a WDTV '
                                      'device.') 
-    parser.add_argument('-v', '--version', action='version', version=VERSION)
+    parser.add_argument('-V', '--version', action='version', version=VERSION)
+    parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('-i', '--interactive', action='store_true')
     parser.add_argument('-t', '--thumbnails', action='store_true',
                         help='Set to include remote thumbnail urls in xml. '
@@ -90,8 +91,9 @@ def main():
                     print 'Error: invalid choice'
                     continue
         if match:
-            print 'Match for %s found: %s'%(videofile.basename, 
-                                            match.full_title())
+            if args.verbose:
+                print 'Match for %s found: %s'%(videofile.basename, 
+                                                match.full_title())
             if args.debug: 
                 continue
             if os.path.isfile(videofile.basename + '.metathumb'):
