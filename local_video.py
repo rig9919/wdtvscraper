@@ -1,4 +1,5 @@
 import os, re
+from PIL import Image
 from pytmdb3 import tmdb3
 from common import split
 import common
@@ -151,8 +152,26 @@ class LocalVideo:
                 else:
                     # their choice was invalid, start from the top
                     continue
+
                 # show more information if they chose option m
                 if re.match('^(m|M)$', option):
+                    # give user a preview of the poster
+                    try:
+                        tmp = '.scrapertemp'
+                        if os.path.isfile(tmp + '.metathumb'):
+                            os.remove(tmp + '.metathumb')
+                        item.download_poster('w342', tmp)
+                        img = Image.open(tmp + '.metathumb')
+                        img.show()
+                    except OSError:
+                        pass
+                    except:
+                        print 'Could not preview poster'
+                    finally:
+                        if os.path.isfile(tmp + '.metathumb'):
+                            os.remove(tmp + '.metathumb')
+
+                    # print some summary information
                     print ('Title: %s\n'
                           'Genres: %s\n'
                           'Initial Release: %s\n'
@@ -162,6 +181,7 @@ class LocalVideo:
                                          str(item.earliest_releasedate()),
                                          str(item.runtime), item.imdb,
                                          item.overview)
+
                     # ask if this movie matches
                     user_input = get_input('Does this movie match yours? '
                                            '(yes/No) ', 
