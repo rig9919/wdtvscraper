@@ -96,7 +96,10 @@ class LocalVideo:
             return
         if assume_match:
             if len(possible_matches) == 1:
-                return possible_matches[0]
+                if (possible_matches[0].is_title_match(self.title) and
+                    possible_matches[0].is_year_match(self.year)):
+                    return possible_matches[0]
+                raise common.AssumedMatch(self.basename, possible_matches[0])
         for item in possible_matches:
             # if the year and title are the same, it is most likely a match
             if (item.is_title_match(self.title) and 

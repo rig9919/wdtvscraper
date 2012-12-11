@@ -42,9 +42,6 @@ def main():
             tmdb3.set_locale(country=args.country, fallthrough=True)
     print 'Using locale: ' + str(tmdb3.get_locale())
 
-    # set up a list for storing failed matches
-    failed = list()
-    
     # move to the directory containing the movies and process it
     os.chdir(args.path)
     for f in os.listdir('./'):
@@ -62,10 +59,13 @@ def main():
         match = None
         try:
             match = videofile.get_match(args.assume)
+        except common.AssumedMatch as e:
+            match = e.movie
+            print e
         except common.NonzeroMatchlistNoMatches as e:
-            failed.append(e)
+            print e
         except common.ZeroMatchlist as e:
-            failed.append(e)
+            print e
         if not match:
             # no matches were found in non-interactive mode, continue to next
             if not args.interactive:
@@ -116,11 +116,6 @@ def main():
                 match.build_xml(videofile.basename, args.thumbnails)
         else:
             print 'No match found for %s'%(videofile.basename)
-    
-    if failed:
-        for failure in failed:
-            print failure
-        print 'Run in interactive mode to fix any failures manually.'
 
 if __name__ == '__main__':
     try:

@@ -1,18 +1,24 @@
 import re, unicodedata
 
+class AssumedMatch(Exception):
+    def __init__(self, name, movie):
+        self.name = name
+        self.movie = movie
+    def __str__(self):
+        return 'Assumed: ' + self.name
+
 class NonzeroMatchlistNoMatches(Exception):
     def __init__(self, name, results):
         self.name = name
         self.results = results
     def __str__(self):
-        return ('Failed: There were ' + str(self.results) + ' results ' 
-                'but no matches for ' + self.name)
+        return 'No matches in ' + str(self.results) + ' results: ' + self.name
 
 class ZeroMatchlist(Exception):
     def __init__(self, name):
         self.name = name
     def __str__(self):
-        return 'Failed: There were zero results for ' + self.name
+        return 'No results: ' + self.name
 
 def split(title):
     # get rid of any accents and other unicode characters
