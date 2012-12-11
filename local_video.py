@@ -178,7 +178,7 @@ class LocalVideo:
                           'Runtime: %s\n'
                           'IMDB id: %s\n'
                           'Overview: %s')%(item.title, item.get_genres(),
-                                         str(item.earliest_releasedate()),
+                                         str(item.year()),
                                          str(item.runtime), item.imdb,
                                          item.overview)
 

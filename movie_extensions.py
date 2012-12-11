@@ -21,7 +21,7 @@ def is_title_match(self, possible_matching_title):
         return True
     return False
 
-def earliest_releasedate(self):
+def _earliest_releasedate(self):
     '''
     return the initial release date known to tmdb, regardless of country
     if there's no release date information, return None
@@ -53,7 +53,7 @@ def year(self):
     '''
 
     # get the year of the earliest release date
-    earliest_available = self.earliest_releasedate()
+    earliest_available = self._earliest_releasedate()
     if earliest_available:
         year_found = re.search('\d\d\d\d', str(earliest_available))
     else:
@@ -160,7 +160,7 @@ def build_xml(self, destination, thumbnails):
 
 # give the tmdb3.Movie class our new methods
 tmdb3.Movie.is_title_match = MethodType(is_title_match, None, tmdb3.Movie)
-tmdb3.Movie.earliest_releasedate = MethodType(earliest_releasedate, None, 
+tmdb3.Movie._earliest_releasedate = MethodType(_earliest_releasedate, None, 
                                               tmdb3.Movie)
 tmdb3.Movie.year = MethodType(year, None, tmdb3.Movie)
 tmdb3.Movie.is_year_match = MethodType(is_year_match, None, tmdb3.Movie)
