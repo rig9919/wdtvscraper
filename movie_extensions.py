@@ -1,8 +1,12 @@
 import unicodedata, re, urllib
 from datetime import date
-from types import MethodType
 from pytmdb3 import tmdb3
 from common import split
+
+def extend_init(self):
+    self.year = self._get_year()
+    self.full_title = self._get_full_title()
+    self.genre_string = self._get_genres()
 
 def is_title_match(self, possible_matching_title):
     '''
@@ -21,7 +25,7 @@ def is_title_match(self, possible_matching_title):
         return True
     return False
 
-def _earliest_releasedate(self):
+def earliest_releasedate(self):
     '''
     return the initial release date known to tmdb, regardless of country
     if there's no release date information, return None
@@ -46,7 +50,7 @@ def _earliest_releasedate(self):
 #    releasedate = self.releases.get(country, default_country_release).releasedate
 #    return releasedate
 
-def year(self):
+def get_year(self):
     '''
     return the year of the object based on it's earliest release date
     if no release date or year is found, return '????'
@@ -68,17 +72,17 @@ def is_year_match(self, possible_matching_year):
     return true if object's year and <possible_matching_year> are the same
     '''
 
-    if self.year() == possible_matching_year:
+    if self.year == possible_matching_year:
         return True
     return False
 
-def full_title(self):
+def get_full_title(self):
     '''
     return object's title in the form 'Movie Title (YYYY)'
     example: 'X-Men Origins: Wolverine (2009)
     '''
 
-    return self.title + ' (' + str(self.year()) + ')'
+    return self.title + ' (' + str(self.year) + ')'
 
 def download_poster(self, size, name):
     '''
@@ -158,13 +162,17 @@ def build_xml(self, destination, thumbnails):
     f.close()
 
 
+# generate the extended attributes upon initialization
+# FIXME: this is bad practice because if tmdb3.Movie is given a __init__
+# function in the future it will be overriden by this one
+tmdb3.Movie.__init__ = extend_init
 # give the tmdb3.Movie class our new methods
-tmdb3.Movie.is_title_match = MethodType(is_title_match, None, tmdb3.Movie)
-tmdb3.Movie._earliest_releasedate = MethodType(_earliest_releasedate, None, 
-                                              tmdb3.Movie)
-tmdb3.Movie.year = MethodType(year, None, tmdb3.Movie)
-tmdb3.Movie.is_year_match = MethodType(is_year_match, None, tmdb3.Movie)
-tmdb3.Movie.full_title = MethodType(full_title, None, tmdb3.Movie)
-tmdb3.Movie.download_poster = MethodType(download_poster, None, tmdb3.Movie)
-tmdb3.Movie.get_genres = MethodType(get_genres, None, tmdb3.Movie)
-tmdb3.Movie.build_xml = MethodType(build_xml, None, tmdb3.Movie)
+tmdb3.Movie.is_title_match = is_title_match
+tmdb3.Movie._earliest_releasedate = earliest_releasedate
+tmdb3.Movie._get_year = get_year
+tmdb3.Movie.is_year_match = is_year_match
+tmdb3.Movie._get_full_title = get_full_title
+tmdb3.Movie.download_poster = download_poster
+tmdb3.Movie._get_genres = get_genres
+tmdb3.Movie.build_xml = build_xml
+

@@ -4,7 +4,7 @@ import movie_extensions
 from local_video import LocalVideo
 import common
 
-VERSION = '0.1'
+VERSION = '0.1.1'
 
 def main():
     parser = argparse.ArgumentParser(description='Scrape themoviedb.org for ' 
@@ -93,7 +93,7 @@ def main():
         if match:
             if args.verbose:
                 print 'Match for %s found: %s'%(videofile.basename, 
-                                                match.full_title())
+                                                match.full_title)
             if args.debug: 
                 continue
             if os.path.isfile(videofile.basename + '.metathumb'):

@@ -13,7 +13,7 @@ def print_possible_match_table(mlist):
     mlist: a list of Movies gotten from the search results
     '''
     for i,item in enumerate(mlist[0:MAXRESULTS]):
-        print '  %i) %s # %s'%(i, item.full_title(), item.overview[0:80])
+        print '  %i) %s # %s'%(i, item.full_title, item.overview[0:80])
 
 def get_input(prompt, valid_choice_pattern, choice_list_length=-1):
     '''
@@ -177,8 +177,8 @@ class LocalVideo:
                           'Initial Release: %s\n'
                           'Runtime: %s\n'
                           'IMDB id: %s\n'
-                          'Overview: %s')%(item.title, item.get_genres(),
-                                         str(item.year()),
+                          'Overview: %s')%(item.title, item.genre_string,
+                                         str(item.year),
                                          str(item.runtime), item.imdb,
                                          item.overview)
 

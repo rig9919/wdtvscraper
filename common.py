@@ -5,7 +5,7 @@ class AssumedMatch(Exception):
         self.name = name
         self.movie = movie
     def __str__(self):
-        return 'Assumed: ' + self.name + ' == ' + self.movie.full_title()
+        return 'Assumed: ' + self.name + ' == ' + self.movie.full_title
 
 class NonzeroMatchlistNoMatches(Exception):
     def __init__(self, name, results):
