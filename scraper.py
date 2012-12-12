@@ -6,7 +6,7 @@ import movie_extensions
 from local_video import LocalVideo
 import common
 
-VERSION = '0.1.1'
+VERSION = '0.1.2'
 
 def main():
     parser = argparse.ArgumentParser(description='Scrape themoviedb.org for ' 
