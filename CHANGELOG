@@ -1,2 +1,3 @@
 0.1     workable state
 0.1.1   tmdb3.Movie extensions are created as attributes on initialization
+0.1.2   added hashbang and made scraper.py executable

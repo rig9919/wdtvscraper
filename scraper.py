@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import os, re, argparse
 from pytmdb3 import tmdb3
 import movie_extensions
