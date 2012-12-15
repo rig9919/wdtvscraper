@@ -1,10 +1,4 @@
 import os, re
-try:
-    from PIL import Image
-except ImportError:
-    print 'python imaging library required'
-    print 'check your distros repository for \'pil\''
-    print 'or download from http://www.pythonware.com/products/pil/'
 from pytmdb3 import tmdb3
 from common import split
 import common
@@ -166,8 +160,11 @@ class LocalVideo:
                         if os.path.isfile(tmp + '.metathumb'):
                             os.remove(tmp + '.metathumb')
                         item.download_poster('w342', tmp)
-                        img = Image.open(tmp + '.metathumb')
+                        pil = __import__('PIL', fromlist = ['Image'])
+                        img = pil.Image.open(tmp + '.metathumb')
                         img.show()
+                    except ImportError:
+                        print 'Could not preview poster. PIL is required.'
                     except OSError:
                         pass
                     except:

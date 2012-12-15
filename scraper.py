@@ -1,14 +1,21 @@
 #!/usr/bin/python
 
-import os, re, argparse
+import os, re, argparse, imp
 from pytmdb3 import tmdb3
 import movie_extensions
 from local_video import LocalVideo
 import common
 
-VERSION = '0.1.5'
+VERSION = '0.1.5.1'
 
 def main():
+    try:
+        imp.find_module('PIL')
+    except ImportError:
+        print 'Warning: Python Imaging Library is required.'
+        print 'Warning: Check your distros repository for PIL.'
+        print 'Warning: Continuing without ability to preview posters.'
+
     parser = argparse.ArgumentParser(description='Scrape themoviedb.org for ' 
                                      'metadata of movies stored on a WDTV '
                                      'device.') 
