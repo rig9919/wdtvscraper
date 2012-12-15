@@ -81,15 +81,9 @@ class LocalVideo:
 
         # search for unicode movie title with year
         results = tmdb3.searchMovieWithYear(self.uni_full_title)
-        # if no results, search for ascii title with year
-        if not results:
-            results = tmdb3.searchMovieWithYear(self.full_title)
         # if no results, search for unicode title without year
         if not results:
             results = tmdb3.searchMovie(self.uni_title)
-        # if no results, search for ascii title without year
-        if not results:
-            results = tmdb3.searchMovie(self.title)
 
         return results
 
