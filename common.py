@@ -20,11 +20,25 @@ class ZeroMatchlist(Exception):
     def __str__(self):
         return 'No results: ' + self.name
 
-def split(title):
-    # get rid of any accents and other unicode characters
-    title = unicodedata.normalize('NFKD', 
-                                   unicode(title)).encode('ascii','ignore')
+def split(title, preserve_encoding = True):
+    '''
+    split the movie name
+    returns a dict consisting of title and year
+
+    preserve_encoding: determines if the accents and other unicode characters
+                       should be preserved or instead replaced with similar
+                       looking ascii characters
+    '''
+
+    # get rid of any accents and other unicode characters if told
+    if not preserve_encoding:
+        if isinstance(title, str):
+            title = title.decode('utf-8')
+        title = unicodedata.normalize('NFKD',unicode(title)).encode(
+                                                             'ascii','ignore')
+
     title = re.sub('&', 'and', title)
+
     # split a complete title into the title and the year
     words = re.findall('\w+', title)
     # if there's no words, return empty dict

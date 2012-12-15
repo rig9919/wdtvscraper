@@ -9,16 +9,32 @@ def is_title_match(self, possible_matching_title):
     compare object's title with <possible_matching_title>
     '''
 
-    # see if the movie title matches exactly
+    # <original title with punc> == <possible matching title> ?
+    if self.originaltitle.lower() == possible_matching_title.lower():
+        return True
+
+    # <title with punc> == <possible matching title> ?
     if self.title.lower() == possible_matching_title.lower():
         return True
-    # check to see if a Movie object's clean title matches with ours
-    if split(self.title)['title'].lower() == possible_matching_title.lower():
-        return True
-    # see if the original language title matches with ours
+
+    # <original title, no punc> == <possible matching title> ?
     if (split(self.originaltitle)['title'].lower() == 
                                               possible_matching_title.lower()):
         return True
+    # ... without unicode
+    if (split(self.originaltitle, False)['title'].lower() == 
+                                              possible_matching_title.lower()):
+        return True
+
+    # <title, no punc> == <possible matching title> ?
+    if split(self.title)['title'].lower() == possible_matching_title.lower():
+        return True
+    # ... without unicode
+    if (split(self.title, False)['title'].lower() == 
+                                              possible_matching_title.lower()):
+        return True
+
+    # nothing matches
     return False
 
 def earliest_releasedate(self):

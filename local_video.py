@@ -65,9 +65,12 @@ class LocalVideo:
         self.basename = self.__filename[0]
         self.ext = self.__filename[1]
         # extract the title and year from the basename
-        self.title = split(self.basename)['title']
+        self.title = split(self.basename, False)['title']
         self.year = split(self.basename)['year']
         self.full_title = self.title + ' (' + self.year + ')'
+        # unicode support
+        self.uni_title = split(self.basename)['title']
+        self.uni_full_title = self.uni_title + ' (' + self.year + ')'
 
     def __get_possible_match_list(self):
         '''
@@ -76,9 +79,18 @@ class LocalVideo:
         if no results for either search, return None
         '''
 
-        results = tmdb3.searchMovieWithYear(self.full_title)
-        if len(results) == 0:
+        # search for unicode movie title with year
+        results = tmdb3.searchMovieWithYear(self.uni_full_title)
+        # if no results, search for ascii title with year
+        if not results:
+            results = tmdb3.searchMovieWithYear(self.full_title)
+        # if no results, search for unicode title without year
+        if not results:
+            results = tmdb3.searchMovie(self.uni_title)
+        # if no results, search for ascii title without year
+        if not results:
             results = tmdb3.searchMovie(self.title)
+
         return results
 
     def get_match(self, assume_match=False):
@@ -102,6 +114,11 @@ class LocalVideo:
                 raise common.AssumedMatch(self.basename, possible_matches[0])
         for item in possible_matches:
             # if the year and title are the same, it is most likely a match
+            # first, check if unicode title matches
+            if (item.is_title_match(self.uni_title) and
+                item.is_year_match(self.year)):
+                return item
+            # now check if ascii title matches
             if (item.is_title_match(self.title) and 
                 item.is_year_match(self.year)):
                 return item
@@ -120,7 +137,7 @@ class LocalVideo:
         if custom_title != '':
             results = tmdb3.searchMovie(custom_title)
         else:
-            results = tmdb3.searchMovie(self.title)
+            results = tmdb3.searchMovie(self.uni_title)
        
         while True:
             # display the search results
