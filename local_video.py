@@ -1,5 +1,10 @@
 import os, re
-from PIL import Image
+try:
+    from PIL import Image
+except ImportError:
+    print 'python imaging library required'
+    print 'check your distros repository for \'pil\''
+    print 'or download from http://www.pythonware.com/products/pil/'
 from pytmdb3 import tmdb3
 from common import split
 import common

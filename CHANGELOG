@@ -3,3 +3,4 @@
 0.1.2   added hashbang and made scraper.py executable
 0.1.3   undid what was done in 0.1.1, it was too slow
 0.1.4   added dtd declaration and proper formatting to generated xml
+0.1.5   added dependency check for pil
