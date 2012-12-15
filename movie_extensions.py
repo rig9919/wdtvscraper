@@ -1,6 +1,7 @@
-import unicodedata, re, urllib
+import re, urllib
 from datetime import date
 from pytmdb3 import tmdb3
+import build_xml
 from common import split
 
 def is_title_match(self, possible_matching_title):
@@ -101,60 +102,9 @@ def get_genres(self):
         genre_names.append(item.name)
     return ', '.join(genre_names)
 
-def build_xml(self, destination, thumbnails):
-    '''
-    write meta information to a file
+def write_metadata(self, dest, use_thumbnails):
+    build_xml.write(self, dest, use_thumbnails)
 
-    destination: destination of file to write
-    thumbnails: boolean describing whether to include thumbnail URLs or not
-                this is included because on the WDTV if thumbnail URLs are
-                known, it will try and use those before the local .metathumb
-                files which slows movie browsing down
-    '''
-
-    xmlstring = '<details>'
-    xmlstring += '<id>' + str(self.id) + '</id>'
-    xmlstring += '<imdb_id>' + str(self.imdb) + '</imdb_id>'
-    xmlstring += '<title>' + self.title + '</title>'
-    if 'US' in self.releases:
-        xmlstring += '<mpaa>' + self.releases['US'].certification + '</mpaa>'
-    xmlstring += '<year>' + str(self.releasedate) + '</year>'
-    xmlstring += '<runtime>' + str(self.runtime) + '</runtime>'
-    xmlstring += '<rating>' + str(self.userrating) + '</rating>'
-    for trailer in self.youtube_trailers:
-        xmlstring += '<trailer>' + trailer.geturl() + '</trailer>'
-    for trailer in self.apple_trailers:
-        #best_quality = trailer.sizes()[len(trailer.sizes()) - 1]
-        #xmlstring += '<trailer>' + trailer.geturl(best_quality) + '</trailer>'
-        if '480p' in trailer.sizes():
-            xmlstring += '<trailer>' + trailer.geturl('480p') + '</trailer>'
-    for genre in self.genres:
-        xmlstring += '<genre>' + genre.name + '</genre>'
-    for studio in self.studios:
-        xmlstring += '<studio>' + studio.name + '</studio>'
-    xmlstring += '<plot>' + self.overview + '</plot>'
-    xmlstring += '<overview>' + self.overview + '</overview>'
-    for member in self.crew:
-        if member.job.lower() == 'director':
-            xmlstring += '<director>' + member.name + '</director>'
-    for actor in self.cast:
-        xmlstring += ('<actor>'
-                     '<name>' + actor.name + '</name>'
-                     '<role>' + actor.character + '</role>'
-                     '</actor>')
-    if thumbnails:
-        for poster in self.posters:
-            xmlstring += '<thumbnail>' + poster.geturl('w185') + '</thumbnail>'
-    for backdrop in self.backdrops:
-        xmlstring += '<backdrop>' + backdrop.geturl('w780') + '</backdrop>'
-    xmlstring += '</details>'
-    xmlstring = unicodedata.normalize('NFKD', unicode(xmlstring)).encode(
-                                                              'ascii','ignore')
-    xmlstring = re.sub('[&]', '&amp;', xmlstring)
-
-    f = open(destination + '.xml', 'w')
-    f.write(xmlstring)
-    f.close()
 
 
 # give the tmdb3.Movie class our new methods
@@ -165,5 +115,5 @@ tmdb3.Movie.is_year_match = is_year_match
 tmdb3.Movie.full_title = full_title
 tmdb3.Movie.download_poster = download_poster
 tmdb3.Movie.get_genres = get_genres
-tmdb3.Movie.build_xml = build_xml
+tmdb3.Movie.write_metadata = write_metadata
 

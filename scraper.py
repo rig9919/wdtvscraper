@@ -6,7 +6,7 @@ import movie_extensions
 from local_video import LocalVideo
 import common
 
-VERSION = '0.1.3'
+VERSION = '0.1.4'
 
 def main():
     parser = argparse.ArgumentParser(description='Scrape themoviedb.org for ' 
@@ -117,7 +117,7 @@ def main():
                 print 'Did not save metadata: %s already exists'%(
                         videofile.basename + '.xml')
             else:
-                match.build_xml(videofile.basename, args.thumbnails)
+                match.write_metadata(videofile.basename, args.thumbnails)
         else:
             print 'No match found for %s'%(videofile.basename)
 
