@@ -43,7 +43,7 @@ def write(mov, destination, thumbnails):
     xml.append('  <imdb_id>' + str(mov.imdb) + '</imdb_id>')
     xml.append('  <title>' + mov.title + '</title>')
     if 'US' in mov.releases:
-        xml.append(  '<mpaa>' + mov.releases['US'].certification + '</mpaa>')
+        xml.append('  <mpaa>' + mov.releases['US'].certification + '</mpaa>')
     xml.append('  <year>' + str(mov.releasedate) + '</year>')
     xml.append('  <runtime>' + str(mov.runtime) + '</runtime>')
     xml.append('  <rating>' + str(mov.userrating) + '</rating>')
