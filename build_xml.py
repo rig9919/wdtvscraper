@@ -1,4 +1,4 @@
-import unicodedata, re
+import unicodedata, re, codecs
 
 def write(mov, destination, thumbnails):
     '''
@@ -76,11 +76,11 @@ def write(mov, destination, thumbnails):
         xml.append('  <backdrop>' + backdrop.geturl('w780') + '</backdrop>')
     xml.append('</details>')
 
-    f = open(destination + '.xml', 'w')
+    f = codecs.open(destination + '.xml', encoding='utf-8', mode='w')
     for line in xml:
-        line = unicodedata.normalize('NFKD', unicode(line)).encode(
-                                                              'ascii','ignore')
-        line = re.sub('[&]', '&amp;', line)
-        f.write(line + '\n')
+        #line = unicodedata.normalize('NFKD', unicode(line)).encode(
+        #                                                      'ascii','ignore')
+        line = re.sub(u'[&]', u'&amp;', line)
+        f.write(unicode(line) + u'\n')
     f.close()
 

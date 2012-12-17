@@ -6,7 +6,7 @@ import movie_extensions
 from local_video import LocalVideo
 import common
 
-VERSION = '0.1.6'
+VERSION = '0.2'
 
 def main():
     try:

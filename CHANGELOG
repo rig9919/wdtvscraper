@@ -6,3 +6,4 @@
 0.1.5   added dependency check for pil
 0.1.5.1 fixed dependency check for pil
 0.1.6   fixed match on mis-punctuated filenames
+0.2     added unicode support
