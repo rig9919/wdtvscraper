@@ -25,6 +25,7 @@ def split(title):
     title = unicodedata.normalize('NFKD', 
                                    unicode(title)).encode('ascii','ignore')
     title = re.sub('&', 'and', title)
+    title = re.sub('\'', '', title)
     # split a complete title into the title and the year
     words = re.findall('\w+', title)
     # if there's no words, return empty dict

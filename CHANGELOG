@@ -5,3 +5,4 @@
 0.1.4   added dtd declaration and proper formatting to generated xml
 0.1.5   added dependency check for pil
 0.1.5.1 fixed dependency check for pil
+0.1.6   fixed match on mis-punctuated filenames
