@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/10/trunk/pytvdb/src/pytvdb
+END
+httphelper.py
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/6/trunk/pytvdb/src/pytvdb/httphelper.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/4/trunk/pytvdb/src/pytvdb/__init__.py
+END
+settings.py
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/8/trunk/pytvdb/src/pytvdb/settings.py
+END
+longsearch.py
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/10/trunk/pytvdb/src/pytvdb/longsearch.py
+END
+unziphelper.py
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/6/trunk/pytvdb/src/pytvdb/unziphelper.py
+END
+shortsearch.py
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/6/trunk/pytvdb/src/pytvdb/shortsearch.py
+END
