@@ -6,7 +6,7 @@ import movie_extensions
 from local_video import LocalVideo
 import common
 
-VERSION = '0.2'
+VERSION = '0.2.1'
 
 def main():
     try:
@@ -16,13 +16,16 @@ def main():
         print 'Warning: Check your distros repository for PIL.'
         print 'Warning: Continuing without ability to preview posters.'
 
-    parser = argparse.ArgumentParser(description='Scrape themoviedb.org for ' 
+    parser = argparse.ArgumentParser(prog='scraper',
+                                     usage='%(prog)s [options] '
+                                     '[-m movie-path] [-t tv-path]',
+                                     description='Scrape themoviedb.org for ' 
                                      'metadata of movies stored on a WDTV '
                                      'device.') 
     parser.add_argument('-V', '--version', action='version', version=VERSION)
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('-i', '--interactive', action='store_true')
-    parser.add_argument('-t', '--thumbnails', action='store_true',
+    parser.add_argument('-T', '--thumbnails', action='store_true',
                         help='Set to include remote thumbnail urls in xml. '
                              'This may slow thumbnail loading.')
     parser.add_argument('-l', '--language', default='', metavar='LN',
@@ -36,9 +39,14 @@ def main():
                         help='Assume match on 1 result. Not recommended '
                              'This can lead to mismatches.')
     parser.add_argument('-d', '--debug', action='store_true')
-    parser.add_argument('path', nargs='?', default=os.getcwd(), 
+    parser.add_argument('-m', '--movie-path', default=os.getcwd(),
+                         metavar='', 
                          help='The path to the directory containing your '
                               'movie files.')
+    parser.add_argument('-t', '--tv-path', default=os.getcwd(),
+                        metavar='',
+                        help='The path to the directory containing your tv '
+                             'series directories.')
     args = parser.parse_args()
     
     # configurations for tmdb api
@@ -53,7 +61,7 @@ def main():
     print 'Using locale: ' + str(tmdb3.get_locale())
 
     # move to the directory containing the movies and process it
-    os.chdir(args.path)
+    os.chdir(args.movie_path)
     for f in os.listdir('./'):
         if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|\.mov|\.dat|\.tp|'
                          '\.ts|\.m2t|\.m2ts|\.flv|.mp4)$', f):
