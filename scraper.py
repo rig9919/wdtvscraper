@@ -4,9 +4,10 @@ import os, re, argparse, imp
 from pytmdb3 import tmdb3
 import movie_extensions
 from local_video import LocalVideo
+from tv_series import get_series_match
 import common
 
-VERSION = '0.2.1'
+VERSION = '0.2.2'
 
 def main():
     try:
@@ -135,6 +136,25 @@ def main():
                 match.write_metadata(videofile.basename, args.thumbnails)
         else:
             print 'No match found for %s'%(videofile.basename)
+
+
+    # move to the tv series directory and process it
+    os.chdir(args.tv_path)
+    for d in os.listdir('./'):
+        if os.path.isdir(d):
+            series_match = get_series_match(d)
+            if not series_match:
+                print 'No tv series found for:', d
+                continue
+            print 'Match for', d, 'found:', series_match.name
+            os.chdir(d)
+            for episode in os.listdir('./'):
+                if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|\.mov|\.dat|'     
+                                 '\.tp|\.ts|\.m2t|\.m2ts|\.flv|.mp4)$',
+                                 episode):
+                    continue
+                print episode
+            os.chdir('./..')
 
 if __name__ == '__main__':
     try:

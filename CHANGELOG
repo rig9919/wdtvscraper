@@ -8,3 +8,4 @@
 0.1.6   fixed match on mis-punctuated filenames
 0.2     added unicode support
 0.2.1   updated argument parser in preparation for tv series support
+0.2.2   list tv series and episodes
