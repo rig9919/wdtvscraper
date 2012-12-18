@@ -10,3 +10,4 @@
 0.2.1   updated argument parser in preparation for tv series support
 0.2.2   list tv series and episodes
 0.2.3   pep8 code cleanup
+0.2.4   movie path and tv path must be specified with -m and -t options

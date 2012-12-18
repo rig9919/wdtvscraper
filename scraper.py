@@ -10,7 +10,7 @@ from local_video import LocalVideo
 from tv_series import get_series_match
 import common
 
-VERSION = '0.2.3'
+__version__ = '0.2.4'
 
 
 def main():
@@ -27,7 +27,8 @@ def main():
                                      description='Scrape themoviedb.org for '
                                      'metadata of movies stored on a WDTV '
                                      'device.')
-    parser.add_argument('-V', '--version', action='version', version=VERSION)
+    parser.add_argument('-V', '--version', action='version',
+                        version=__version__)
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('-i', '--interactive', action='store_true')
     parser.add_argument('-T', '--thumbnails', action='store_true',
@@ -44,11 +45,11 @@ def main():
                         help='Assume match on 1 result. Not recommended '
                              'This can lead to mismatches.')
     parser.add_argument('-d', '--debug', action='store_true')
-    parser.add_argument('-m', '--movie-path', default=os.getcwd(),
+    parser.add_argument('-m', '--movie-path', default='',
                          metavar='',
                          help='The path to the directory containing your '
                               'movie files.')
-    parser.add_argument('-t', '--tv-path', default=os.getcwd(),
+    parser.add_argument('-t', '--tv-path', default='',
                         metavar='',
                         help='The path to the directory containing your tv '
                              'series directories.')
@@ -65,8 +66,18 @@ def main():
             tmdb3.set_locale(country=args.country, fallthrough=True)
     print 'Using locale: ' + str(tmdb3.get_locale())
 
-    # move to the directory containing the movies and process it
-    os.chdir(args.movie_path)
+    # if user specified a movie path, process movies
+    if args.movie_path:
+        process_movies(args.movie_path, args.thumbnails, args.assume,
+                       args.interactive, args.verbose, args.debug)
+
+    # if user specified a tv path, process tv shows
+    if args.tv_path:
+        process_tv(args.tv_path)
+
+
+def process_movies(path, thumbnails, assume, interactive, verbose, debug):
+    os.chdir(path)
     for f in os.listdir('./'):
         if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|\.mov|\.dat|\.tp|'
                          '\.ts|\.m2t|\.m2ts|\.flv|.mp4)$', f):
@@ -74,14 +85,14 @@ def main():
             continue
         videofile = LocalVideo(f)
         if (os.path.isfile(videofile.basename + '.metathumb') and
-            os.path.isfile(videofile.basename + '.xml') and (not args.debug)):
+            os.path.isfile(videofile.basename + '.xml') and (not debug)):
             # metathumb and xml already exists for this movie
             continue
         # first, assume user has named their videos something using a standard
         # format such as the-movie-title-and-year.ext
         match = None
         try:
-            match = videofile.get_match(args.assume)
+            match = videofile.get_match(assume)
         except common.AssumedMatch as e:
             match = e.movie
             print e
@@ -91,7 +102,7 @@ def main():
             print e
         if not match:
             # no matches were found in non-interactive mode, continue to next
-            if not args.interactive:
+            if not interactive:
                 continue
             # ask user for some help finding their movie if in interactive mode
             match = videofile.get_chosen_match()
@@ -113,10 +124,10 @@ def main():
                     print 'Error: invalid choice'
                     continue
         if match:
-            if args.verbose:
+            if verbose:
                 print 'Match for', videofile.basename, 'found:', \
                        match.full_title()
-            if args.debug:
+            if debug:
                 continue
             if os.path.isfile(videofile.basename + '.metathumb'):
                 print 'Did not save poster image:', videofile.basename + \
@@ -137,12 +148,13 @@ def main():
                 print 'Did not save metadata:', videofile.basename + '.xml', \
                       'already exists'
             else:
-                match.write_metadata(videofile.basename, args.thumbnails)
+                match.write_metadata(videofile.basename, thumbnails)
         else:
             print 'No match found for', videofile.basename
 
-    # move to the tv series directory and process it
-    os.chdir(args.tv_path)
+
+def process_tv(path):
+    os.chdir(path)
     for d in os.listdir('./'):
         if os.path.isdir(d):
             series_match = get_series_match(d)

@@ -9,7 +9,8 @@ class AssumedMatch(Exception):
         self.movie = movie
 
     def __str__(self):
-        return 'Assumed: ' + self.name + ' == ' + self.movie.full_title()
+        return ('Assumed match for ' + self.name + ' found: ' +
+                self.movie.full_title())
 
 
 class NonzeroMatchlistNoMatches(Exception):
