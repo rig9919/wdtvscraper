@@ -21,7 +21,7 @@ def main():
         print 'Warning: Check your distros repository for PIL.'
         print 'Warning: Continuing without ability to preview posters.'
 
-    parser = argparse.ArgumentParser(prog='scraper',
+    parser = argparse.ArgumentParser(prog='scraper.py',
                                      usage='%(prog)s [options] '
                                      '[-m movie-path] [-t tv-path]',
                                      description='Scrape themoviedb.org for '
