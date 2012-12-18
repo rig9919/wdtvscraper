@@ -170,6 +170,7 @@ def process_tv(path):
                     continue
                 print episode
             os.chdir('./..')
+    print '*TV SCRAPING NOT IMPLEMENTED YET*'
 
 if __name__ == '__main__':
     try:
