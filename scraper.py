@@ -7,10 +7,10 @@ import imp
 from pytmdb3 import tmdb3
 import movie_extensions
 from local_video import LocalVideo
-from tv_series import get_series_match, get_series_info
+from tv_series import get_series_match, get_series_info, LocalEpisode
 import common
 
-__version__ = '0.2.5'
+__version__ = '0.2.6'
 
 
 def main():
@@ -160,6 +160,7 @@ def process_tv(path):
     os.chdir(path)
     for d in os.listdir('./'):
         if os.path.isdir(d):
+            print d
             series_match = get_series_match(d)
             if not series_match:
                 print 'No tv series found for:', d
@@ -173,6 +174,8 @@ def process_tv(path):
                                  '\.tp|\.ts|\.m2t|\.m2ts|\.flv|.mp4)$', f):
                     continue
                 # episode file found
+                episode = LocalEpisode(f)
+                print f, episode.season_num, episode.episode_num
             os.chdir('./..')
     print '*TV SCRAPING NOT IMPLEMENTED YET*'
 

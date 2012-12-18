@@ -3,7 +3,7 @@ import urllib
 from datetime import date
 from pytmdb3 import tmdb3
 import build_xml
-from common import split
+from common import split_full_title
 
 
 def is_title_match(self, possible_matching_title):
@@ -20,19 +20,20 @@ def is_title_match(self, possible_matching_title):
         return True
 
     # <original title, no punc> == <possible matching title> ?
-    if (split(self.originaltitle)['title'].lower() ==
+    if (split_full_title(self.originaltitle)['title'].lower() ==
         possible_matching_title.lower()):
         return True
     # ... without unicode
-    if (split(self.originaltitle, False)['title'].lower() ==
+    if (split_full_title(self.originaltitle, False)['title'].lower() ==
         possible_matching_title.lower()):
         return True
 
     # <title, no punc> == <possible matching title> ?
-    if split(self.title)['title'].lower() == possible_matching_title.lower():
+    if (split_full_title(self.title)['title'].lower() ==
+        possible_matching_title.lower()):
         return True
     # ... without unicode
-    if (split(self.title, False)['title'].lower() ==
+    if (split_full_title(self.title, False)['title'].lower() ==
         possible_matching_title.lower()):
         return True
 
