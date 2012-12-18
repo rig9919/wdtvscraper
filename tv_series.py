@@ -1,4 +1,4 @@
-from pytvdb import shortsearch, longsearch
+from pytvdb import shortsearch, longsearch, EpisodeData
 from common import split
 
 
@@ -14,3 +14,18 @@ def get_series_match(dir_name):
             split(dir_name, False)['title'].lower()):
             return series
     return
+
+
+def get_series_info(tvdbId):
+    return longsearch.searchForLongSeries(tvdbId)
+
+
+def is_match(self, season_num, episode_num, title=''):
+    if self.seasonNumber == season_num and self.episodeNumber == episode_num:
+        return True
+    if self.name == title:
+        return True
+    return False
+
+
+EpisodeData.is_match == is_match

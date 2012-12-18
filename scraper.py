@@ -7,10 +7,10 @@ import imp
 from pytmdb3 import tmdb3
 import movie_extensions
 from local_video import LocalVideo
-from tv_series import get_series_match
+from tv_series import get_series_match, get_series_info
 import common
 
-__version__ = '0.2.4'
+__version__ = '0.2.5'
 
 
 def main():
@@ -74,6 +74,9 @@ def main():
     # if user specified a tv path, process tv shows
     if args.tv_path:
         process_tv(args.tv_path)
+
+    if not args.movie_path and not args.tv_path:
+        print 'Use -m and/or -t to specify paths to scrape. See help menu'
 
 
 def process_movies(path, thumbnails, assume, interactive, verbose, debug):
@@ -162,13 +165,14 @@ def process_tv(path):
                 print 'No tv series found for:', d
                 continue
             print 'Match for', d, 'found:', series_match.name
+            series_info = get_series_info(series_match.tvdbId)
+            print series_info
             os.chdir(d)
-            for episode in os.listdir('./'):
+            for f in os.listdir('./'):
                 if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|\.mov|\.dat|'
-                                 '\.tp|\.ts|\.m2t|\.m2ts|\.flv|.mp4)$',
-                                 episode):
+                                 '\.tp|\.ts|\.m2t|\.m2ts|\.flv|.mp4)$', f):
                     continue
-                print episode
+                # episode file found
             os.chdir('./..')
     print '*TV SCRAPING NOT IMPLEMENTED YET*'
 
