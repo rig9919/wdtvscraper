@@ -1,26 +1,37 @@
-import re, unicodedata
+import re
+import unicodedata
+
 
 class AssumedMatch(Exception):
+
     def __init__(self, name, movie):
         self.name = name
         self.movie = movie
+
     def __str__(self):
         return 'Assumed: ' + self.name + ' == ' + self.movie.full_title()
 
+
 class NonzeroMatchlistNoMatches(Exception):
+
     def __init__(self, name, results):
         self.name = name
         self.results = results
+
     def __str__(self):
         return 'No matches in ' + str(self.results) + ' results: ' + self.name
 
+
 class ZeroMatchlist(Exception):
+
     def __init__(self, name):
         self.name = name
+
     def __str__(self):
         return 'No results: ' + self.name
 
-def split(title, preserve_encoding = True):
+
+def split(title, preserve_encoding=True):
     '''
     split the movie name
     returns a dict consisting of title and year
@@ -34,8 +45,8 @@ def split(title, preserve_encoding = True):
     if not preserve_encoding:
         if isinstance(title, str):
             title = title.decode('utf-8')
-        title = unicodedata.normalize('NFKD',unicode(title)).encode(
-                                                             'ascii','ignore')
+        title = unicodedata.normalize('NFKD', unicode(title)).encode(
+                                                             'ascii', 'ignore')
 
     title = re.sub('&', 'and', title)
     title = re.sub('\'', '', title)
@@ -46,13 +57,13 @@ def split(title, preserve_encoding = True):
     if len(words) == 0:
         return {'title': '', 'year': ''}
     # look at the last item in the words list
-    if words[len(words)-1].isdigit():
+    if words[len(words) - 1].isdigit():
         # if it's digits, then it represents the year and the
         # second-to-last item is the end of the title
-        return {'title': ' '.join(words[0:len(words)-1]), 
-                'year': words[len(words)-1]}
+        return {'title': ' '.join(words[0:len(words) - 1]),
+                'year': words[len(words) - 1]}
     else:
         # if it's not, then the year is not in the name so we make one up
         # and give title the entire contents of the word list
-        return {'title': ' '.join(words), 
+        return {'title': ' '.join(words),
                 'year': ''}

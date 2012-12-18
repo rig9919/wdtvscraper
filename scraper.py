@@ -1,12 +1,16 @@
 #!/usr/bin/python
 
-import os, re, argparse, imp
+import os
+import re
+import argparse
+import imp
 from pytmdb3 import tmdb3
 import movie_extensions
 from local_video import LocalVideo
 import common
 
-VERSION = '0.2'
+VERSION = '0.2.3'
+
 
 def main():
     try:
@@ -18,7 +22,7 @@ def main():
 
     parser = argparse.ArgumentParser(description='Scrape themoviedb.org for ' 
                                      'metadata of movies stored on a WDTV '
-                                     'device.') 
+                                     'device.')
     parser.add_argument('-V', '--version', action='version', version=VERSION)
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('-i', '--interactive', action='store_true')
@@ -37,10 +41,10 @@ def main():
                              'This can lead to mismatches.')
     parser.add_argument('-d', '--debug', action='store_true')
     parser.add_argument('path', nargs='?', default=os.getcwd(), 
-                         help='The path to the directory containing your '
+                        help='The path to the directory containing your '
                               'movie files.')
     args = parser.parse_args()
-    
+
     # configurations for tmdb api
     tmdb3.set_key('ae90cf3b0ab5da570880728198701ce0')
     if (not args.language) and (not args.country):
@@ -87,7 +91,7 @@ def main():
                     # keep asking until user gives up or gets their title
                     user_typed_title = raw_input('Enter a possible alternative'
                                                  ' title (S=skip): ')
-                    if (user_typed_title == '' or user_typed_title == 'S' or 
+                    if (user_typed_title == '' or user_typed_title == 'S' or
                         user_typed_title == 's'):
                         # user decides to skip
                         break
@@ -101,13 +105,13 @@ def main():
                     continue
         if match:
             if args.verbose:
-                print 'Match for %s found: %s'%(videofile.basename, 
-                                                match.full_title())
-            if args.debug: 
+                print 'Match for', videofile.basename, 'found:', \
+                       match.full_title()
+            if args.debug:
                 continue
             if os.path.isfile(videofile.basename + '.metathumb'):
-                print 'Did not save poster image: %s already exists'%(
-                        videofile.basename + '.metathumb')
+                print 'Did not save poster image:', videofile.basename + \
+                      '.metathumb', 'already exists'
             else:
             # if there's any posters available, download w342 size
             # preferably. otherwise, get the smallest available.
@@ -118,15 +122,15 @@ def main():
                         match.download_poster(match.poster.sizes()[0],
                                               videofile.basename)
                 else:
-                    print ('Did not save poster image: no available '
-                           'posters for %s'%(videofile.basename))
+                    print 'Did not save poster image: no available ' \
+                          'posters for', videofile.basename
             if os.path.isfile(videofile.basename + '.xml'):
-                print 'Did not save metadata: %s already exists'%(
-                        videofile.basename + '.xml')
+                print 'Did not save metadata:', videofile.basename + '.xml', \
+                      'already exists'
             else:
                 match.write_metadata(videofile.basename, args.thumbnails)
         else:
-            print 'No match found for %s'%(videofile.basename)
+           print 'No match found for', videofile.basename
 
 if __name__ == '__main__':
     try:
