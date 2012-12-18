@@ -19,7 +19,7 @@ them. The language and country options are for controlling what language the
 overview will be in and for deciding which title and poster to use.
 
 <pre>
-usage: scraper [options] [-m movie-path] [-t tv-path]
+usage: scraper.py [options] [-m movie-path] [-t tv-path]
 
 Scrape themoviedb.org for metadata of movies stored on a WDTV device.
 
