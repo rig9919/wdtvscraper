@@ -1,9 +1,11 @@
-import os, re
+import os
+import re
 from pytmdb3 import tmdb3
 from common import split
 import common
 
 MAXRESULTS = 20
+
 
 def print_possible_match_table(mlist):
     '''
@@ -11,14 +13,15 @@ def print_possible_match_table(mlist):
 
     mlist: a list of Movies gotten from the search results
     '''
-    for i,item in enumerate(mlist[0:MAXRESULTS]):
-        print '  %i) %s # %s'%(i, item.full_title(), item.overview[0:80])
+    for i, item in enumerate(mlist[0:MAXRESULTS]):
+        print str(i) + ')', item.full_title(), '#', item.overview[0:80]
+
 
 def get_input(prompt, valid_choice_pattern, choice_list_length=-1):
     '''
     use <prompt> to ask for input from a user
     validate their input with <valid_choice_pattern> and <choice_list_length>
-    
+
     prompt: message used to ask user for input
     valid_choice_pattern: regex used to match user input against
     choice_list_length: number used validate movie choice because regex
@@ -30,7 +33,7 @@ def get_input(prompt, valid_choice_pattern, choice_list_length=-1):
             user_input = raw_input(prompt)
             if re.match(valid_choice_pattern, user_input):
                 if re.match('\d{1,2}', user_input):
-                    valid_movies = int(re.match('\d{1,2}', 
+                    valid_movies = int(re.match('\d{1,2}',
                                                 user_input).group(0))
                     if valid_movies <= choice_list_length:
                         return user_input
@@ -113,14 +116,14 @@ class LocalVideo:
                 item.is_year_match(self.year)):
                 return item
             # now check if ascii title matches
-            if (item.is_title_match(self.title) and 
+            if (item.is_title_match(self.title) and
                 item.is_year_match(self.year)):
                 return item
-        raise common.NonzeroMatchlistNoMatches(self.basename, 
+        raise common.NonzeroMatchlistNoMatches(self.basename,
                                                len(possible_matches))
         return
 
-    def get_chosen_match(self, custom_title = ''):
+    def get_chosen_match(self, custom_title=''):
         '''
         allow user to choose from a list of results that were retrieved with
            by searching for the object's title
@@ -132,7 +135,7 @@ class LocalVideo:
             results = tmdb3.searchMovie(custom_title)
         else:
             results = tmdb3.searchMovie(self.uni_title)
-       
+
         while True:
             # display the search results
             print_possible_match_table(results)
@@ -171,7 +174,7 @@ class LocalVideo:
                         if os.path.isfile(tmp + '.metathumb'):
                             os.remove(tmp + '.metathumb')
                         item.download_poster('w342', tmp)
-                        pil = __import__('PIL', fromlist = ['Image'])
+                        pil = __import__('PIL', fromlist=['Image'])
                         img = pil.Image.open(tmp + '.metathumb')
                         img.show()
                     except ImportError:
@@ -185,36 +188,32 @@ class LocalVideo:
                             os.remove(tmp + '.metathumb')
 
                     # print some summary information
-                    print ('Title: %s\n'
-                          'Genres: %s\n'
-                          'Initial Release: %s\n'
-                          'Runtime: %s\n'
-                          'IMDB id: %s\n'
-                          'Overview: %s')%(item.title, item.get_genres(),
-                                         str(item.year()),
-                                         str(item.runtime), item.imdb,
-                                         item.overview)
+                    print 'Title:', item.title, '\n' \
+                          'Genres:', item.get_genres(), '\n' \
+                          'Initial Release:', str(item.year()), '\n' \
+                          'Runtime:', str(item.runtime), '\n' \
+                          'IMDB id:', item.imdb, '\n' \
+                          'Overview:', item.overview
 
                     # ask if this movie matches
                     user_input = get_input('Does this movie match yours? '
-                                           '(yes/No) ', 
+                                           '(yes/No) ',
                                           '(^$)|(^(Y|y)$)|(^(N|n)$)|(^(Q|q)$)')
                     # they chose yes, return this movie
                     if re.match('^(y|Y)$', user_input):
-                       return item
+                        return item
                     # they chose no, start from the top
                     elif re.match('(^$)|(^(N|n)$)', user_input):
-                       continue
+                        continue
                     # they chose to quit the program
                     elif re.match('^(q|Q)$', user_input):
-                       exit()
+                        exit()
             # they choose a movie from the search results
             elif re.match('^\d{1,2}$', user_input):
                 choice = int(user_input)
             break
-        
+
         # return the movie of their choice if it's valid
         if int(choice) < len(results):
             return results[int(choice)]
         return
-

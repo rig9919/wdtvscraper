@@ -1,4 +1,7 @@
-import unicodedata, re, codecs
+import unicodedata
+import re
+import codecs
+
 
 def write(mov, destination, thumbnails):
     '''
@@ -70,7 +73,7 @@ def write(mov, destination, thumbnails):
                          '  </actor>')
     if thumbnails:
         for poster in mov.posters:
-            xml.append('  <thumbnail>' + poster.geturl('w185') + 
+            xml.append('  <thumbnail>' + poster.geturl('w185') +
                                                                 '</thumbnail>')
     for backdrop in mov.backdrops:
         xml.append('  <backdrop>' + backdrop.geturl('w780') + '</backdrop>')
@@ -78,9 +81,6 @@ def write(mov, destination, thumbnails):
 
     f = codecs.open(destination + '.xml', encoding='utf-8', mode='w')
     for line in xml:
-        #line = unicodedata.normalize('NFKD', unicode(line)).encode(
-        #                                                      'ascii','ignore')
         line = re.sub(u'[&]', u'&amp;', line)
         f.write(unicode(line) + u'\n')
     f.close()
-

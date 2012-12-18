@@ -1,8 +1,10 @@
-import re, urllib
+import re
+import urllib
 from datetime import date
 from pytmdb3 import tmdb3
 import build_xml
 from common import split
+
 
 def is_title_match(self, possible_matching_title):
     '''
@@ -18,24 +20,25 @@ def is_title_match(self, possible_matching_title):
         return True
 
     # <original title, no punc> == <possible matching title> ?
-    if (split(self.originaltitle)['title'].lower() == 
-                                              possible_matching_title.lower()):
+    if (split(self.originaltitle)['title'].lower() ==
+        possible_matching_title.lower()):
         return True
     # ... without unicode
-    if (split(self.originaltitle, False)['title'].lower() == 
-                                              possible_matching_title.lower()):
+    if (split(self.originaltitle, False)['title'].lower() ==
+        possible_matching_title.lower()):
         return True
 
     # <title, no punc> == <possible matching title> ?
     if split(self.title)['title'].lower() == possible_matching_title.lower():
         return True
     # ... without unicode
-    if (split(self.title, False)['title'].lower() == 
-                                              possible_matching_title.lower()):
+    if (split(self.title, False)['title'].lower() ==
+        possible_matching_title.lower()):
         return True
 
     # nothing matches
     return False
+
 
 def earliest_releasedate(self):
     '''
@@ -43,24 +46,14 @@ def earliest_releasedate(self):
     if there's no release date information, return None
     '''
 
-    earliest = date(9999,12,31)
+    earliest = date(9999, 12, 31)
     for release in self.releases.iteritems():
         if release[1].releasedate < earliest:
             earliest = release[1].releasedate
-    if earliest == date(9999,12,31):
+    if earliest == date(9999, 12, 31):
         return
     return earliest
 
-
-# TODO: decide whether or not to allow matches based on local release date
-#def loc_releasedate(self):
-#    country = str(get_locale().country)
-#    print self.releases
-#    default_country_key = str(self.releases.keys()[0])
-#    default_country_release = self.releases.get(default_country_key)
-#    #print default_country_release
-#    releasedate = self.releases.get(country, default_country_release).releasedate
-#    return releasedate
 
 def year(self):
     '''
@@ -79,6 +72,7 @@ def year(self):
         return year_found.group(0)
     return '????'
 
+
 def is_year_match(self, possible_matching_year):
     '''
     return true if object's year and <possible_matching_year> are the same
@@ -88,6 +82,7 @@ def is_year_match(self, possible_matching_year):
         return True
     return False
 
+
 def full_title(self):
     '''
     return object's title in the form 'Movie Title (YYYY)'
@@ -96,10 +91,11 @@ def full_title(self):
 
     return self.title + ' (' + str(self.year()) + ')'
 
+
 def download_poster(self, size, name):
     '''
     download object's associated movie poster
-    
+
     size: w92, w154, w185, w342, w500, or original
           see http://help.themoviedb.org/kb/api/configuration
     name: name to save it as
@@ -107,6 +103,7 @@ def download_poster(self, size, name):
 
     poster_url = self.poster.geturl(size)
     urllib.urlretrieve(poster_url, name + '.metathumb')
+
 
 def get_genres(self):
     '''
@@ -118,9 +115,9 @@ def get_genres(self):
         genre_names.append(item.name)
     return ', '.join(genre_names)
 
+
 def write_metadata(self, dest, use_thumbnails):
     build_xml.write(self, dest, use_thumbnails)
-
 
 
 # give the tmdb3.Movie class our new methods
@@ -132,4 +129,3 @@ tmdb3.Movie.full_title = full_title
 tmdb3.Movie.download_poster = download_poster
 tmdb3.Movie.get_genres = get_genres
 tmdb3.Movie.write_metadata = write_metadata
-
