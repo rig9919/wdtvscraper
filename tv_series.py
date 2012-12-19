@@ -17,6 +17,13 @@ class LocalEpisode:
         self.season_num = int(get_episode_id(self.basename)['season'])
         self.episode_num = int(get_episode_id(self.basename)['episode'])
 
+    def get_match(self, episode_list):
+        for episode in episode_list:
+            if (int(episode.seasonNumber) == self.season_num 
+                and int(episode.episodeNumber) == self.episode_num):
+                return episode
+        return
+
 
 def clean_series_name(name, preserve_encoding=True):
     words = remove_punc(name, preserve_encoding)

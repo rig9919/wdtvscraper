@@ -13,3 +13,4 @@
 0.2.4   movie path and tv path must be specified with -m and -t options
 0.2.5   preparation for getting long series info
 0.2.6   split removed, split_full_title, remove_punc, clean_series_name added
+0.2.7   added beginnings of episode matching

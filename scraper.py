@@ -10,7 +10,7 @@ from local_video import LocalVideo
 from tv_series import get_series_match, get_series_info, LocalEpisode
 import common
 
-__version__ = '0.2.6'
+__version__ = '0.2.7'
 
 
 def main():
@@ -73,7 +73,7 @@ def main():
 
     # if user specified a tv path, process tv shows
     if args.tv_path:
-        process_tv(args.tv_path)
+        process_tv(args.tv_path, args.verbose, args.debug)
 
     if not args.movie_path and not args.tv_path:
         print 'Use -m and/or -t to specify paths to scrape. See help menu'
@@ -156,7 +156,7 @@ def process_movies(path, thumbnails, assume, interactive, verbose, debug):
             print 'No match found for', videofile.basename
 
 
-def process_tv(path):
+def process_tv(path, verbose, debug):
     os.chdir(path)
     for d in os.listdir('./'):
         if os.path.isdir(d):
@@ -165,9 +165,9 @@ def process_tv(path):
             if not series_match:
                 print 'No tv series found for:', d
                 continue
-            print 'Match for', d, 'found:', series_match.name
+            if verbose:
+                print 'Match for', d, 'found:', series_match.name
             series_info = get_series_info(series_match.tvdbId)
-            print series_info
             os.chdir(d)
             for f in os.listdir('./'):
                 if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|\.mov|\.dat|'
@@ -175,7 +175,16 @@ def process_tv(path):
                     continue
                 # episode file found
                 episode = LocalEpisode(f)
-                print f, episode.season_num, episode.episode_num
+                match = episode.get_match(series_info.episodes)
+                if match:
+                    if verbose:
+                        print 'Match for', episode.basename, 'found:', \
+                              episode.season_num, episode.episode_num
+                    print match.bannerUrl
+                    continue
+                else:
+                    print 'No match found for', episode.basename
+
             os.chdir('./..')
     print '*TV SCRAPING NOT IMPLEMENTED YET*'
 
