@@ -7,6 +7,12 @@ from common import remove_punc
 class LocalEpisode:
 
     def __init__(self, path):
+        '''
+        use episode identification information in <path>'s name to init
+
+        path: path to target episode file
+        '''
+
         # split pathname into useful things upon creation
         self.__abspath = os.path.abspath(path)
         self.__dirpath = os.path.split(self.__abspath)[0]
@@ -18,25 +24,50 @@ class LocalEpisode:
         self.episode_num = int(get_episode_id(self.basename)['episode'])
 
     def get_match(self, episode_list):
+        '''
+        search <episode_list> for an episode match
+        return any episode that matches
+        a match is defined as anything that has same season and episode numbers
+        '''
+
         for episode in episode_list:
-            if (int(episode.seasonNumber) == self.season_num 
+            if (int(episode.seasonNumber) == self.season_num
                 and int(episode.episodeNumber) == self.episode_num):
                 return episode
         return
 
 
 def clean_series_name(name, preserve_encoding=True):
+    '''
+    return a tv series name with all punctuation removed
+
+    preserve_encoding: used to determine whether or not to keep accents and
+                       other unicode characters or replace them with their
+                       most similar looking ascii counterparts
+    '''
+
     words = remove_punc(name, preserve_encoding)
     return ' '.join(words)
 
+
 def get_episode_id(name):
-    season = re.search('(S(?P<season>\d\d)E)', name, 
+    '''
+    returns a dict containing the season number and episode number of <name>
+    '''
+
+    season = re.search('(S(?P<season>\d\d)E)', name,
                        re.IGNORECASE).group('season')
-    episode = re.search('(E(?P<episode>\d\d)$)', name, 
+    episode = re.search('(E(?P<episode>\d\d)$)', name,
                         re.IGNORECASE).group('episode')
-    return { 'season': season, 'episode': episode }
+    return {'season': season, 'episode': episode}
+
 
 def get_series_match(dir_name):
+    '''
+    searches tvdb for a series with the title <dir_name>
+    returns any series that matches
+    '''
+
     base_results = shortsearch.searchForShortSeries(dir_name)
     for series in base_results:
         # check if unicode titles match
@@ -51,15 +82,8 @@ def get_series_match(dir_name):
 
 
 def get_series_info(tvdbId):
+    '''
+    returns information on a series with the id <tvdbId>
+    '''
+
     return longsearch.searchForLongSeries(tvdbId)
-
-
-def is_match(self, season_num, episode_num, title=''):
-    if self.seasonNumber == season_num and self.episodeNumber == episode_num:
-        return True
-    if self.name == title:
-        return True
-    return False
-
-
-longsearch.EpisodeData.is_match = is_match

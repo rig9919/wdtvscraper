@@ -10,7 +10,7 @@ from local_video import LocalVideo
 from tv_series import get_series_match, get_series_info, LocalEpisode
 import common
 
-__version__ = '0.2.7'
+__version__ = '0.2.8'
 
 
 def main():
@@ -160,7 +160,6 @@ def process_tv(path, verbose, debug):
     os.chdir(path)
     for d in os.listdir('./'):
         if os.path.isdir(d):
-            print d
             series_match = get_series_match(d)
             if not series_match:
                 print 'No tv series found for:', d

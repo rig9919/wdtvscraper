@@ -54,13 +54,13 @@ def remove_punc(name, preserve_encoding=True):
     words = re.findall('\w+', name)
     return words
 
+
 def split_full_title(title, preserve_encoding=True):
     '''
     get the title and year from the full title
     returns a dict consisting of the title and year
 
     title: the full title as a string
-    words: the full title split into a list
     '''
 
     words = remove_punc(title, preserve_encoding)
