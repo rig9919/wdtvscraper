@@ -8,3 +8,4 @@
 0.1.6   fixed match on mis-punctuated filenames
 0.2     added unicode support
 0.2.3   pep8 code cleanup
+1.0     milestone reached, version bump
