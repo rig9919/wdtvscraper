@@ -4,13 +4,14 @@ import os
 import re
 import argparse
 import imp
+import urllib
 from pytmdb3 import tmdb3
 import movie_extensions
 from local_video import LocalVideo
 from tv_series import get_series_match, get_series_info, LocalEpisode
 import common
 
-__version__ = '0.2.8'
+__version__ = '0.2.9'
 
 
 def main():
@@ -23,7 +24,7 @@ def main():
 
     parser = argparse.ArgumentParser(prog='scraper.py',
                                      usage='%(prog)s [options] '
-                                     '[-m movie-path] [-t tv-path]',
+                                     '-m PATH -t PATH',
                                      description='Scrape themoviedb.org for '
                                      'metadata of movies stored on a WDTV '
                                      'device.')
@@ -167,6 +168,11 @@ def process_tv(path, verbose, debug):
             if verbose:
                 print 'Match for', d, 'found:', series_match.name
             series_info = get_series_info(series_match.tvdbId)
+            # prepend series cover with 'aaaa' because the wdtv uses the first
+            #     file it finds as the series cover
+            if not debug:
+                urllib.urlretrieve(series_info.posterUrl,
+                                   d + '/aaaa-series-cover.metathumb')
             os.chdir(d)
             for f in os.listdir('./'):
                 if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|\.mov|\.dat|'
@@ -179,7 +185,9 @@ def process_tv(path, verbose, debug):
                     if verbose:
                         print 'Match for', episode.basename, 'found:', \
                               episode.season_num, episode.episode_num
-                    print match.bannerUrl
+                    if not debug:
+                        urllib.urlretrieve(match.bannerUrl,
+                                           episode.basename + '.metathumb')
                     continue
                 else:
                     print 'No match found for', episode.basename
