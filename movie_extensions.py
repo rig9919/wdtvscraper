@@ -119,7 +119,7 @@ def get_genres(self):
 
 
 def write_metadata(self, dest, use_thumbnails):
-    build_xml.write(self, dest, use_thumbnails)
+    build_xml.write_movie(self, dest, use_thumbnails)
 
 
 # give the tmdb3.Movie class our new methods
