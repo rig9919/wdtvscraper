@@ -3,7 +3,54 @@ import re
 import codecs
 
 
-def write(mov, destination, thumbnails):
+def write_tvshow(series, episode, destination):
+    xml = list()
+
+    xml.append('<?xml version="1.0"?>'
+                 '<!DOCTYPE note ['
+                 '<!ELEMENT details (id, title, series_name, episode_name, '
+                                    'season_number, episode_number, '
+                                    'firstaired, genre, runtime, director, '
+                                    'actor, overview)>'
+                 '<!ELEMENT id (#PCDATA)>'
+                 '<!ELEMENT title (#PCDATA)>'
+                 '<!ELEMENT series_name (#PCDATA)>'
+                 '<!ELEMENT episode_name (#PCDATA)>'
+                 '<!ELEMENT season_number (#PCDATA)>'
+                 '<!ELEMENT episode_number (#PCDATA)>'
+                 '<!ELEMENT firstaired (#PCDATA)>'
+                 '<!ELEMENT genre (#PCDATA)>'
+                 '<!ELEMENT runtime (#PCDATA)>'
+                 '<!ELEMENT director (#PCDATA)>'
+                 '<!ELEMENT actor (#PCDATA)>'
+                 '<!ELEMENT overview (#PCDATA)>'
+                 ']>')
+
+    xml.append('<details>')
+    xml.append('  <id>' + unicode(episode.tvdbId) + '</id>')
+    #title = '%s: S%sE%s %s' % (series.name, episode.seasonNumber.zfill(2),
+    #                           episode.episodeNumber.zfill(2), episode.name)
+    xml.append('  <title>' + unicode(episode.name) + '</title>') 
+    xml.append('  <series_name>' + unicode(series.name) + '</series_name>')
+    xml.append('  <episode_name>' + unicode(episode.name) + '</episode_name>')
+    xml.append('  <firstaired>' + unicode(episode.firstAired) + '</firstaired>')
+    # tv view does not give each genre its own item
+    xml.append('  <genre>' + '/'.join(series.genres) + '</genre>')
+    xml.append('  <runtime>' + 'N/A' + '</runtime>')
+    xml.append('  <director>' + '/'.join(episode.director) + '</director>')
+    # tv view does not give each actor their own item
+    xml.append('  <actor>' + '/'.join(actor.name for actor in series.actors) + '</actor>')
+    # overview is a list for some reason
+    if len(episode.overview) > 0:
+        xml.append('  <overview>' + episode.overview[0] + '</overview>')
+    xml.append('</details>')
+
+    f = codecs.open(destination + '.xml', encoding='utf-8', mode='w')
+    for line in xml:
+        f.write(unicode(line) + u'\n')
+    f.close()
+
+def write_movie(mov, destination, thumbnails):
     '''
     write meta information to a file
 
@@ -42,14 +89,14 @@ def write(mov, destination, thumbnails):
                  ']>')
 
     xml.append('<details>')
-    xml.append('  <id>' + str(mov.id) + '</id>')
-    xml.append('  <imdb_id>' + str(mov.imdb) + '</imdb_id>')
+    xml.append('  <id>' + unicode(mov.id) + '</id>')
+    xml.append('  <imdb_id>' + unicode(mov.imdb) + '</imdb_id>')
     xml.append('  <title>' + mov.title + '</title>')
     if 'US' in mov.releases:
         xml.append('  <mpaa>' + mov.releases['US'].certification + '</mpaa>')
-    xml.append('  <year>' + str(mov.releasedate) + '</year>')
-    xml.append('  <runtime>' + str(mov.runtime) + '</runtime>')
-    xml.append('  <rating>' + str(mov.userrating) + '</rating>')
+    xml.append('  <year>' + unicode(mov.releasedate) + '</year>')
+    xml.append('  <runtime>' + unicode(mov.runtime) + '</runtime>')
+    xml.append('  <rating>' + unicode(mov.userrating) + '</rating>')
     for trailer in mov.youtube_trailers:
         xml.append('  <trailer>' + trailer.geturl() + '</trailer>')
     for trailer in mov.apple_trailers:

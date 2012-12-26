@@ -2,6 +2,7 @@
 *.mov
 *.xml
 *.metathumb
-lastchange
-updateversion
-commit
+lastchange.sh
+updateversion.sh
+commit.sh
+printdocs.sh

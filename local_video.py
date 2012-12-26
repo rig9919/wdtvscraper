@@ -1,7 +1,7 @@
 import os
 import re
 from pytmdb3 import tmdb3
-from common import split
+from common import split_full_title
 import common
 
 MAXRESULTS = 20
@@ -68,11 +68,11 @@ class LocalVideo:
         self.basename = self.__filename[0]
         self.ext = self.__filename[1]
         # extract the title and year from the basename
-        self.title = split(self.basename, False)['title']
-        self.year = split(self.basename)['year']
+        self.title = split_full_title(self.basename, False)['title']
+        self.year = split_full_title(self.basename)['year']
         self.full_title = self.title + ' (' + self.year + ')'
         # unicode support
-        self.uni_title = split(self.basename)['title']
+        self.uni_title = split_full_title(self.basename)['title']
         self.uni_full_title = self.uni_title + ' (' + self.year + ')'
 
     def __get_possible_match_list(self):

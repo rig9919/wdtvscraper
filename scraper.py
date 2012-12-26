@@ -4,12 +4,15 @@ import os
 import re
 import argparse
 import imp
+import urllib
 from pytmdb3 import tmdb3
 import movie_extensions
 from local_video import LocalVideo
+from tv_series import get_series_match, get_series_info, LocalEpisode
 import common
+import build_xml
 
-VERSION = '0.2.3'
+__version__ = '0.2.11'
 
 
 def main():
@@ -20,13 +23,17 @@ def main():
         print 'Warning: Check your distros repository for PIL.'
         print 'Warning: Continuing without ability to preview posters.'
 
-    parser = argparse.ArgumentParser(description='Scrape themoviedb.org for ' 
+    parser = argparse.ArgumentParser(prog='scraper.py',
+                                     usage='%(prog)s [options] '
+                                     '-m PATH -t PATH',
+                                     description='Scrape themoviedb.org for '
                                      'metadata of movies stored on a WDTV '
                                      'device.')
-    parser.add_argument('-V', '--version', action='version', version=VERSION)
+    parser.add_argument('-V', '--version', action='version',
+                        version=__version__)
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('-i', '--interactive', action='store_true')
-    parser.add_argument('-t', '--thumbnails', action='store_true',
+    parser.add_argument('-T', '--thumbnails', action='store_true',
                         help='Set to include remote thumbnail urls in xml. '
                              'This may slow thumbnail loading.')
     parser.add_argument('-l', '--language', default='', metavar='LN',
@@ -40,9 +47,14 @@ def main():
                         help='Assume match on 1 result. Not recommended '
                              'This can lead to mismatches.')
     parser.add_argument('-d', '--debug', action='store_true')
-    parser.add_argument('path', nargs='?', default=os.getcwd(), 
-                        help='The path to the directory containing your '
+    parser.add_argument('-m', '--movie-path', nargs='+', default='',
+                         metavar='',
+                         help='The path to the directory containing your '
                               'movie files.')
+    parser.add_argument('-t', '--tv-path', nargs='+', default='',
+                        metavar='',
+                        help='The path to the directory containing your tv '
+                             'series directories.')
     args = parser.parse_args()
 
     # configurations for tmdb api
@@ -56,8 +68,21 @@ def main():
             tmdb3.set_locale(country=args.country, fallthrough=True)
     print 'Using locale: ' + str(tmdb3.get_locale())
 
-    # move to the directory containing the movies and process it
-    os.chdir(args.path)
+    if not args.movie_path and not args.tv_path:
+        print 'Must use -m and/or -t option. See help menu'
+
+    # if user specified a movie path, process movies
+    for path in args.movie_path:
+        process_movies(path, args.thumbnails, args.assume,
+                       args.interactive, args.verbose, args.debug)
+
+    # if user specified a tv path, process tv shows
+    for path in args.tv_path:
+        process_tv(path, args.verbose, args.debug)
+
+
+def process_movies(path, thumbnails, assume, interactive, verbose, debug):
+    os.chdir(path)
     for f in os.listdir('./'):
         if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|\.mov|\.dat|\.tp|'
                          '\.ts|\.m2t|\.m2ts|\.flv|.mp4)$', f):
@@ -65,14 +90,14 @@ def main():
             continue
         videofile = LocalVideo(f)
         if (os.path.isfile(videofile.basename + '.metathumb') and
-            os.path.isfile(videofile.basename + '.xml') and (not args.debug)):
+            os.path.isfile(videofile.basename + '.xml') and (not debug)):
             # metathumb and xml already exists for this movie
             continue
         # first, assume user has named their videos something using a standard
         # format such as the-movie-title-and-year.ext
         match = None
         try:
-            match = videofile.get_match(args.assume)
+            match = videofile.get_match(assume)
         except common.AssumedMatch as e:
             match = e.movie
             print e
@@ -82,7 +107,7 @@ def main():
             print e
         if not match:
             # no matches were found in non-interactive mode, continue to next
-            if not args.interactive:
+            if not interactive:
                 continue
             # ask user for some help finding their movie if in interactive mode
             match = videofile.get_chosen_match()
@@ -104,10 +129,10 @@ def main():
                     print 'Error: invalid choice'
                     continue
         if match:
-            if args.verbose:
+            if verbose:
                 print 'Match for', videofile.basename, 'found:', \
                        match.full_title()
-            if args.debug:
+            if debug:
                 continue
             if os.path.isfile(videofile.basename + '.metathumb'):
                 print 'Did not save poster image:', videofile.basename + \
@@ -128,9 +153,57 @@ def main():
                 print 'Did not save metadata:', videofile.basename + '.xml', \
                       'already exists'
             else:
-                match.write_metadata(videofile.basename, args.thumbnails)
+                match.write_metadata(videofile.basename, thumbnails)
         else:
-           print 'No match found for', videofile.basename
+            print 'No match found for', videofile.basename
+
+
+def process_tv(path, verbose, debug):
+    os.chdir(path)
+    for d in os.listdir('./'):
+        if os.path.isdir(d):
+            series_match = get_series_match(d)
+            if not series_match:
+                print 'No tv series found for:', d
+                continue
+            if verbose:
+                print 'Match for', d, 'found:', series_match.name
+            series_info = get_series_info(series_match.tvdbId)
+            # prepend series cover with 'aaaa' because the wdtv uses the first
+            #     file it finds as the series cover
+            if not debug:
+                urllib.urlretrieve(series_info.posterUrl,
+                                   d + '/aaaa-series-cover.metathumb')
+            os.chdir(d)
+            for f in os.listdir('./'):
+                if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|\.mov|\.dat|'
+                                 '\.tp|\.ts|\.m2t|\.m2ts|\.flv|.mp4)$', f):
+                    continue
+                # episode file found
+                episode = LocalEpisode(f)
+                match = episode.get_match(series_info.episodes)
+                if match:
+                    if verbose:
+                        print 'Match for', episode.basename, 'found:', \
+                              episode.season_num, episode.episode_num
+                    if debug:
+                        continue
+                    if os.path.isfile(episode.basename + '.metathumb'):
+                        print 'Did not save poster image:', episode.basename \
+                              + '.metathumb', 'already exists'
+                    urllib.urlretrieve(match.bannerUrl,
+                                       episode.basename + '.metathumb')
+                    if os.path.isfile(episode.basename + '.xml'):
+                        print 'Did not save metadata:', episode.basename + \
+                              '.xml', 'already exists'
+                    build_xml.write_tvshow(series_info, match,
+                                           episode.basename)
+                    continue
+                else:
+                    print 'No match found for', episode.basename
+
+            os.chdir('./..')
+    print '*TV SCRAPING NOT IMPLEMENTED YET*'
 
 if __name__ == '__main__':
     try:

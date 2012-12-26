@@ -9,7 +9,9 @@ class AssumedMatch(Exception):
         self.movie = movie
 
     def __str__(self):
-        return 'Assumed: ' + self.name + ' == ' + self.movie.full_title()
+        return ('Assumed match for ' + self.name + ' found: ' +
+                self.movie.full_title())
+
 
 
 class NonzeroMatchlistNoMatches(Exception):
@@ -31,10 +33,10 @@ class ZeroMatchlist(Exception):
         return 'No results: ' + self.name
 
 
-def split(title, preserve_encoding=True):
+def remove_punc(name, preserve_encoding=True):
     '''
-    split the movie name
-    returns a dict consisting of title and year
+    remove the punctuation from <name>
+    returns a list of words in <name>
 
     preserve_encoding: determines if the accents and other unicode characters
                        should be preserved or instead replaced with similar
@@ -43,16 +45,27 @@ def split(title, preserve_encoding=True):
 
     # get rid of any accents and other unicode characters if told
     if not preserve_encoding:
-        if isinstance(title, str):
-            title = title.decode('utf-8')
-        title = unicodedata.normalize('NFKD', unicode(title)).encode(
-                                                             'ascii', 'ignore')
+        if isinstance(name, str):
+            name = name.decode('utf-8')
+        name = unicodedata.normalize('NFKD',
+                                      unicode(name)).encode('ascii', 'ignore')
+    name = re.sub('&', 'and', name)
+    name = re.sub('\'', '', name)
+    # get the list of words
+    words = re.findall('\w+', name)
+    return words
 
-    title = re.sub('&', 'and', title)
-    title = re.sub('\'', '', title)
 
-    # split a complete title into the title and the year
-    words = re.findall('\w+', title)
+def split_full_title(title, preserve_encoding=True):
+    '''
+    get the title and year from the full title
+    returns a dict consisting of the title and year
+
+    title: the full title as a string
+    '''
+
+    words = remove_punc(title, preserve_encoding)
+
     # if there's no words, return empty dict
     if len(words) == 0:
         return {'title': '', 'year': ''}
