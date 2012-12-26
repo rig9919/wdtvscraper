@@ -203,7 +203,6 @@ def process_tv(path, verbose, debug):
                     print 'No match found for', episode.basename
 
             os.chdir('./..')
-    print '*TV SCRAPING NOT IMPLEMENTED YET*'
 
 if __name__ == '__main__':
     try:
