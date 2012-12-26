@@ -92,6 +92,8 @@ def process_movies(path, thumbnails, assume, interactive, verbose, debug):
         if (os.path.isfile(videofile.basename + '.metathumb') and
             os.path.isfile(videofile.basename + '.xml') and (not debug)):
             # metathumb and xml already exists for this movie
+            print 'Skipping', videofile.basename, ':', '.metathumb and ' + \
+                  '.xml already exist'
             continue
         # first, assume user has named their videos something using a standard
         # format such as the-movie-title-and-year.ext
@@ -176,6 +178,19 @@ def process_tv(path, verbose, debug):
                                      '\.flv|.mp4)$', f):        
                         continue                                          
                     episode = LocalEpisode(f, series.seriesname)
+                    if (os.path.isfile(d + '/' + episode.basename + 
+                        '.metathumb') and
+                        os.path.isfile(d + '/' + episode.basename + '.xml') and
+                        (not debug)):
+                        print 'Skipping', d + '/' + episode.basename + ':', \
+                              '.metathumb and .xml already exist'
+                        continue
+                    if verbose:
+                        if not episode.episode_data:
+                            print 'No match found for', episode.basename
+                            continue
+                        print 'Match for', episode.basename, 'found:', \
+                              episode.episode_data.name
                     try:
                         episode.save_poster(d + '/' + episode.basename +
                                             '.metathumb')

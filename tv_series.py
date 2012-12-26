@@ -2,6 +2,7 @@ import os
 import urllib
 import re
 from pytvdb import shortsearch, longsearch
+import common
 from common import remove_punc
 import build_xml
 
@@ -11,7 +12,8 @@ class LocalSeries(object):
         self.seriesname = name
         match = self.__get_series_match(self.seriesname)
         if not match:
-            raise NoSeriesException('No series found: ' + self.seriesname)
+            raise common.NoSeriesException('No series found: ' +
+                                           self.seriesname)
         self.series_data = self.__get_series_info(match.tvdbId)
 
     def save_poster(self, destination):

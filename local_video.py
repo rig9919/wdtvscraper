@@ -14,7 +14,9 @@ def print_possible_match_table(mlist):
     mlist: a list of Movies gotten from the search results
     '''
     for i, item in enumerate(mlist[0:MAXRESULTS]):
-        print str(i) + ')', item.full_title(), '#', item.overview[0:80]
+        s = unicode(i) + ') ' + item.full_title() + ' # ' + item.overview
+        print s[0:80]
+        #print str(i) + ')', item.full_title(), '#', item.overview[0:80]
 
 
 def get_input(prompt, valid_choice_pattern, choice_list_length=-1):
