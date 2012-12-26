@@ -10,8 +10,9 @@ import movie_extensions
 from local_video import LocalVideo
 from tv_series import get_series_match, get_series_info, LocalEpisode
 import common
+import build_xml
 
-__version__ = '0.2.9'
+__version__ = '0.2.10'
 
 
 def main():
@@ -185,9 +186,18 @@ def process_tv(path, verbose, debug):
                     if verbose:
                         print 'Match for', episode.basename, 'found:', \
                               episode.season_num, episode.episode_num
-                    if not debug:
-                        urllib.urlretrieve(match.bannerUrl,
-                                           episode.basename + '.metathumb')
+                    if debug:
+                        continue
+                    if os.path.isfile(episode.basename + '.metathumb'):
+                        print 'Did not save poster image:', episode.basename \
+                              + '.metathumb', 'already exists'
+                    urllib.urlretrieve(match.bannerUrl,
+                                       episode.basename + '.metathumb')
+                    if os.path.isfile(episode.basename + '.xml'):
+                        print 'Did not save metadata:', episode.basename + \
+                              '.xml', 'already exists'
+                    build_xml.write_tvshow(series_info, match,
+                                           episode.basename)
                     continue
                 else:
                     print 'No match found for', episode.basename
