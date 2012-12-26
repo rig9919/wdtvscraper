@@ -55,10 +55,13 @@ def get_episode_id(name):
     returns a dict containing the season number and episode number of <name>
     '''
 
-    season = re.search('(S(?P<season>\d\d)E)', name,
+    season = re.search('(S(?P<season>\d\d)E\d\d)', name,
                        re.IGNORECASE).group('season')
-    episode = re.search('(E(?P<episode>\d\d)$)', name,
-                        re.IGNORECASE).group('episode')
+    # must use findall because sometimes files may consist of two episodes
+    # such as star-trek-deep-space-nine-s04e01-s04e02.mkv
+    # always use first episode number in these cases
+    episode = re.findall('(S\d\dE(?P<episode>\d\d))', name,
+                        re.IGNORECASE)[0][1]
     return {'season': season, 'episode': episode}
 
 

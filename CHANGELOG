@@ -17,3 +17,4 @@
 0.2.8   added/updated docstrings, cleaned up
 0.2.9   added series cover and episode screenshot retrieval
 0.2.10  added episode metadata retrieval
+0.2.11  2 part episodes give better information, multiple path args possible

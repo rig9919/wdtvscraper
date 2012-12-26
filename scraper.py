@@ -12,7 +12,7 @@ from tv_series import get_series_match, get_series_info, LocalEpisode
 import common
 import build_xml
 
-__version__ = '0.2.10'
+__version__ = '0.2.11'
 
 
 def main():
@@ -47,11 +47,11 @@ def main():
                         help='Assume match on 1 result. Not recommended '
                              'This can lead to mismatches.')
     parser.add_argument('-d', '--debug', action='store_true')
-    parser.add_argument('-m', '--movie-path', default='',
+    parser.add_argument('-m', '--movie-path', nargs='+', default='',
                          metavar='',
                          help='The path to the directory containing your '
                               'movie files.')
-    parser.add_argument('-t', '--tv-path', default='',
+    parser.add_argument('-t', '--tv-path', nargs='+', default='',
                         metavar='',
                         help='The path to the directory containing your tv '
                              'series directories.')
@@ -68,17 +68,17 @@ def main():
             tmdb3.set_locale(country=args.country, fallthrough=True)
     print 'Using locale: ' + str(tmdb3.get_locale())
 
+    if not args.movie_path and not args.tv_path:
+        print 'Must use -m and/or -t option. See help menu'
+
     # if user specified a movie path, process movies
-    if args.movie_path:
-        process_movies(args.movie_path, args.thumbnails, args.assume,
+    for path in args.movie_path:
+        process_movies(path, args.thumbnails, args.assume,
                        args.interactive, args.verbose, args.debug)
 
     # if user specified a tv path, process tv shows
-    if args.tv_path:
-        process_tv(args.tv_path, args.verbose, args.debug)
-
-    if not args.movie_path and not args.tv_path:
-        print 'Use -m and/or -t to specify paths to scrape. See help menu'
+    for path in args.tv_path:
+        process_tv(path, args.verbose, args.debug)
 
 
 def process_movies(path, thumbnails, assume, interactive, verbose, debug):

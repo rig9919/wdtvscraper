@@ -28,9 +28,9 @@ def write_tvshow(series, episode, destination):
 
     xml.append('<details>')
     xml.append('  <id>' + unicode(episode.tvdbId) + '</id>')
-    title = '%s: S%sE%s %s' % (series.name, episode.seasonNumber.zfill(2),
-                               episode.episodeNumber.zfill(2), episode.name)
-    xml.append('  <title>' + title + '</title>') 
+    #title = '%s: S%sE%s %s' % (series.name, episode.seasonNumber.zfill(2),
+    #                           episode.episodeNumber.zfill(2), episode.name)
+    xml.append('  <title>' + unicode(episode.name) + '</title>') 
     xml.append('  <series_name>' + unicode(series.name) + '</series_name>')
     xml.append('  <episode_name>' + unicode(episode.name) + '</episode_name>')
     xml.append('  <firstaired>' + unicode(episode.firstAired) + '</firstaired>')
@@ -41,12 +41,12 @@ def write_tvshow(series, episode, destination):
     # tv view does not give each actor their own item
     xml.append('  <actor>' + '/'.join(actor.name for actor in series.actors) + '</actor>')
     # overview is a list for some reason
-    xml.append('  <overview>' + episode.overview[0] + '</overview>')
+    if len(episode.overview) > 0:
+        xml.append('  <overview>' + episode.overview[0] + '</overview>')
     xml.append('</details>')
 
     f = codecs.open(destination + '.xml', encoding='utf-8', mode='w')
     for line in xml:
-        line = re.sub(u'[&]', u'&amp;', line)
         f.write(unicode(line) + u'\n')
     f.close()
 
