@@ -45,7 +45,7 @@ def write_tvshow(series, episode, destination):
         xml.append('  <overview>' + episode.overview[0] + '</overview>')
     xml.append('</details>')
 
-    f = codecs.open(destination + '.xml', encoding='utf-8', mode='w')
+    f = codecs.open(destination, encoding='utf-8', mode='w')
     for line in xml:
         f.write(unicode(line) + u'\n')
     f.close()

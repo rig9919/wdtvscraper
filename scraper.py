@@ -8,7 +8,7 @@ import urllib
 from pytmdb3 import tmdb3
 import movie_extensions
 from local_video import LocalVideo
-from tv_series import get_series_match, get_series_info, LocalEpisode
+from tv_series import LocalSeries, LocalEpisode
 import common
 import build_xml
 
@@ -162,47 +162,34 @@ def process_tv(path, verbose, debug):
     os.chdir(path)
     for d in os.listdir('./'):
         if os.path.isdir(d):
-            series_match = get_series_match(d)
-            if not series_match:
-                print 'No tv series found for:', d
+            try:
+                series = LocalSeries(d)
+                if debug:
+                    continue
+                try:
+                    series.save_poster(d + '/aaaa-series-cover.metathumb')
+                except IOError as e:
+                    print e
+                for f in os.listdir(d):
+                    if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|'
+                                     '\.mov|\.dat|\.tp|\.ts|\.m2t|\.m2ts|'
+                                     '\.flv|.mp4)$', f):        
+                        continue                                          
+                    episode = LocalEpisode(f, series.seriesname)
+                    try:
+                        episode.save_poster(d + '/' + episode.basename +
+                                            '.metathumb')
+                    except IOError as e:
+                        print e
+                    try:
+                        episode.save_metadata(d + '/' + episode.basename +
+                                              '.xml')
+                    except IOError as e:
+                        print e
+            except common.NoSeriesException as e:
+                print e
                 continue
-            if verbose:
-                print 'Match for', d, 'found:', series_match.name
-            series_info = get_series_info(series_match.tvdbId)
-            # prepend series cover with 'aaaa' because the wdtv uses the first
-            #     file it finds as the series cover
-            if not debug:
-                urllib.urlretrieve(series_info.posterUrl,
-                                   d + '/aaaa-series-cover.metathumb')
-            os.chdir(d)
-            for f in os.listdir('./'):
-                if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|\.mov|\.dat|'
-                                 '\.tp|\.ts|\.m2t|\.m2ts|\.flv|.mp4)$', f):
-                    continue
-                # episode file found
-                episode = LocalEpisode(f)
-                match = episode.get_match(series_info.episodes)
-                if match:
-                    if verbose:
-                        print 'Match for', episode.basename, 'found:', \
-                              episode.season_num, episode.episode_num
-                    if debug:
-                        continue
-                    if os.path.isfile(episode.basename + '.metathumb'):
-                        print 'Did not save poster image:', episode.basename \
-                              + '.metathumb', 'already exists'
-                    urllib.urlretrieve(match.bannerUrl,
-                                       episode.basename + '.metathumb')
-                    if os.path.isfile(episode.basename + '.xml'):
-                        print 'Did not save metadata:', episode.basename + \
-                              '.xml', 'already exists'
-                    build_xml.write_tvshow(series_info, match,
-                                           episode.basename)
-                    continue
-                else:
-                    print 'No match found for', episode.basename
-
-            os.chdir('./..')
+    os.chdir('./..')
 
 if __name__ == '__main__':
     try:

@@ -20,3 +20,4 @@
 1.0.10  added episode metadata retrieval
 1.0.11  2 part episodes give better information, multiple path args possible
 1.1     tv support added (merged tvsupport into master)
+1.1.1   cleanup: more object oriented

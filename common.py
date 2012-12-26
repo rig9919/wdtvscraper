@@ -1,6 +1,9 @@
 import re
 import unicodedata
 
+class NoSeriesException(Exception):
+    pass
+
 
 class AssumedMatch(Exception):
 
