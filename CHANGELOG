@@ -24,3 +24,4 @@
 1.1.2   added more user notifications
 1.1.3   updating error messages
 1.1.4   filenames containing only digits are treated as titles
+1.1.5   removed remnants of multiple path support, fixed NoEpisode error mesg

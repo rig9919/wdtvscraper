@@ -71,13 +71,13 @@ def main():
         print 'Must use -m and/or -t option. See help menu'
 
     # if user specified a movie path, process movies
-    for path in args.movie_path:
-        process_movies(path, args.thumbnails, args.assume,
+    if args.movie_path:
+        process_movies(args.movie_path, args.thumbnails, args.assume,
                        args.interactive, args.quiet, args.debug)
 
     # if user specified a tv path, process tv shows
-    for path in args.tv_path:
-        process_tv(path, args.quiet, args.debug)
+    if args.tv_path:
+        process_tv(args.tv_path, args.quiet, args.debug)
 
 
 def process_movies(path, thumbnails, assume, interactive, quiet, debug):
@@ -162,6 +162,7 @@ def process_tv(path, quiet, debug):
     os.chdir(path)
     for d in os.listdir('./'):
         if os.path.isdir(d):
+            print 'dir:', d
             try:
                 series = LocalSeries(d)
                 if not quiet:
