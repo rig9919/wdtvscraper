@@ -31,7 +31,8 @@ def main():
                                      'device.')
     parser.add_argument('-V', '--version', action='version',
                         version=__version__)
-    parser.add_argument('-v', '--verbose', action='store_true')
+    parser.add_argument('-q', '--quiet', action='store_true',
+                        help='Suppress unimportant messages.')
     parser.add_argument('-i', '--interactive', action='store_true')
     parser.add_argument('-T', '--thumbnails', action='store_true',
                         help='Set to include remote thumbnail urls in xml. '
@@ -47,12 +48,10 @@ def main():
                         help='Assume match on 1 result. Not recommended '
                              'This can lead to mismatches.')
     parser.add_argument('-d', '--debug', action='store_true')
-    parser.add_argument('-m', '--movie-path', nargs='+', default='',
-                         metavar='',
+    parser.add_argument('-m', '--movie-path', default='', metavar='',
                          help='The path to the directory containing your '
                               'movie files.')
-    parser.add_argument('-t', '--tv-path', nargs='+', default='',
-                        metavar='',
+    parser.add_argument('-t', '--tv-path', default='', metavar='',
                         help='The path to the directory containing your tv '
                              'series directories.')
     args = parser.parse_args()
@@ -74,14 +73,14 @@ def main():
     # if user specified a movie path, process movies
     for path in args.movie_path:
         process_movies(path, args.thumbnails, args.assume,
-                       args.interactive, args.verbose, args.debug)
+                       args.interactive, args.quiet, args.debug)
 
     # if user specified a tv path, process tv shows
     for path in args.tv_path:
-        process_tv(path, args.verbose, args.debug)
+        process_tv(path, args.quiet, args.debug)
 
 
-def process_movies(path, thumbnails, assume, interactive, verbose, debug):
+def process_movies(path, thumbnails, assume, interactive, quiet, debug):
     os.chdir(path)
     for f in os.listdir('./'):
         if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|\.mov|\.dat|\.tp|'
@@ -92,8 +91,8 @@ def process_movies(path, thumbnails, assume, interactive, verbose, debug):
         if (os.path.isfile(videofile.basename + '.metathumb') and
             os.path.isfile(videofile.basename + '.xml') and (not debug)):
             # metathumb and xml already exists for this movie
-            print 'Skipping', videofile.basename, ':', '.metathumb and ' + \
-                  '.xml already exist'
+            print 'Skipped poster/metadata:', videofile.basename + ':',  \
+                  '.metathumb and .xml already exist'
             continue
         # first, assume user has named their videos something using a standard
         # format such as the-movie-title-and-year.ext
@@ -131,14 +130,14 @@ def process_movies(path, thumbnails, assume, interactive, verbose, debug):
                     print 'Error: invalid choice'
                     continue
         if match:
-            if verbose:
-                print 'Match for', videofile.basename, 'found:', \
-                       match.full_title()
+            if not quiet:
+                print 'Found movie:', videofile.basename, '==', \
+                      match.full_title()
             if debug:
                 continue
             if os.path.isfile(videofile.basename + '.metathumb'):
-                print 'Did not save poster image:', videofile.basename + \
-                      '.metathumb', 'already exists'
+                print 'Skipped poster:', videofile.basename + ':', \
+                      '.metathumb already exists'
             else:
             # if there's any posters available, download w342 size
             # preferably. otherwise, get the smallest available.
@@ -149,23 +148,24 @@ def process_movies(path, thumbnails, assume, interactive, verbose, debug):
                         match.download_poster(match.poster.sizes()[0],
                                               videofile.basename)
                 else:
-                    print 'Did not save poster image: no available ' \
-                          'posters for', videofile.basename
+                    print 'Skipped poster:', videofile.basename, ': n/a'
             if os.path.isfile(videofile.basename + '.xml'):
-                print 'Did not save metadata:', videofile.basename + '.xml', \
-                      'already exists'
+                print 'Skipped metadata:', videofile.basename + ':', \
+                      '.xml already exists'
             else:
                 match.write_metadata(videofile.basename, thumbnails)
         else:
-            print 'No match found for', videofile.basename
+            print 'No movie:', videofile.basename
 
 
-def process_tv(path, verbose, debug):
+def process_tv(path, quiet, debug):
     os.chdir(path)
     for d in os.listdir('./'):
         if os.path.isdir(d):
             try:
                 series = LocalSeries(d)
+                if not quiet:
+                    print 'Found series:', series.seriesname
                 if debug:
                     continue
                 try:
@@ -182,14 +182,14 @@ def process_tv(path, verbose, debug):
                         '.metathumb') and
                         os.path.isfile(d + '/' + episode.basename + '.xml') and
                         (not debug)):
-                        print 'Skipping', d + '/' + episode.basename + ':', \
+                        print 'Skipped poster/metadata:', \
+                              d + '/' + episode.basename + ':', \
                               '.metathumb and .xml already exist'
                         continue
-                    if verbose:
+                    if not quiet:
                         if not episode.episode_data:
-                            print 'No match found for', episode.basename
-                            continue
-                        print 'Match for', episode.basename, 'found:', \
+                            raise common.NoEpisodeException(episode.basename)
+                        print 'Found episode:', episode.basename, '==', \
                               episode.episode_data.name
                     try:
                         episode.save_poster(d + '/' + episode.basename +
@@ -202,6 +202,9 @@ def process_tv(path, verbose, debug):
                     except IOError as e:
                         print e
             except common.NoSeriesException as e:
+                print e
+                continue
+            except common.NoEpisodeException as e:
                 print e
                 continue
     os.chdir('./..')

@@ -26,7 +26,7 @@ Scrape themoviedb.org for metadata of movies stored on a WDTV device.
 optional arguments:
   -h, --help            show this help message and exit
   -V, --version         show program's version number and exit
-  -v, --verbose
+  -q, --quiet
   -i, --interactive
   -T, --thumbnails      Set to include remote thumbnail urls in xml. This may
                         slow thumbnail loading.

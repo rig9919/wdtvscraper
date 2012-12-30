@@ -2,8 +2,21 @@ import re
 import unicodedata
 
 class NoSeriesException(Exception):
-    pass
 
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return 'No series: %s' % (self.name)
+
+
+class NoEpisodeException(Exception):
+
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return 'No episode: %s' % (self.name)
 
 class AssumedMatch(Exception):
 
@@ -12,8 +25,7 @@ class AssumedMatch(Exception):
         self.movie = movie
 
     def __str__(self):
-        return ('Assumed match for ' + self.name + ' found: ' +
-                self.movie.full_title())
+        return 'Assumed: %s == %s' % (self.name, self.movie.full_title())
 
 
 
@@ -21,10 +33,10 @@ class NonzeroMatchlistNoMatches(Exception):
 
     def __init__(self, name, results):
         self.name = name
-        self.results = results
+        self.results = str(results)
 
     def __str__(self):
-        return 'No matches in ' + str(self.results) + ' results: ' + self.name
+        return 'No matches: %s: %s results' % (self.name, self.results)
 
 
 class ZeroMatchlist(Exception):
@@ -33,7 +45,7 @@ class ZeroMatchlist(Exception):
         self.name = name
 
     def __str__(self):
-        return 'No results: ' + self.name
+        return 'No results: %s' % (self.name)
 
 
 def remove_punc(name, preserve_encoding=True):

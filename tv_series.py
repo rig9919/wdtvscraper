@@ -12,8 +12,7 @@ class LocalSeries(object):
         self.seriesname = name
         match = self.__get_series_match(self.seriesname)
         if not match:
-            raise common.NoSeriesException('No series found: ' +
-                                           self.seriesname)
+            raise common.NoSeriesException('No series: ' + self.seriesname)
         self.series_data = self.__get_series_info(match.tvdbId)
 
     def save_poster(self, destination):
@@ -105,7 +104,7 @@ class LocalEpisode(LocalSeries):
             if (int(episode.seasonNumber) == self.season_num
                 and int(episode.episodeNumber) == self.episode_num):
                 return episode
-        return
+        raise common.NoEpisodeException('No episode: ' + self.basename)
 
     def __get_episode_id(self):
         '''
