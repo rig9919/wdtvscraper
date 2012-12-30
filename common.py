@@ -84,6 +84,10 @@ def split_full_title(title, preserve_encoding=True):
     # if there's no words, return empty dict
     if len(words) == 0:
         return {'title': '', 'year': ''}
+    # if the words list contains only a number, treat it as title
+    if len(words) == 1:
+        if words[0].isdigit():
+            return {'title': words[0], 'year': ''}
     # look at the last item in the words list
     if words[len(words) - 1].isdigit():
         # if it's digits, then it represents the year and the
