@@ -6,6 +6,7 @@ import common
 from common import remove_punc
 import build_xml
 
+
 class LocalSeries(object):
 
     def __init__(self, name):
@@ -24,7 +25,7 @@ class LocalSeries(object):
         searches tvdb for a series with the title <name>
         returns any series that matches
         '''
-    
+
         base_results = shortsearch.searchForShortSeries(name)
         for series in base_results:
             # check if unicode titles match
@@ -36,7 +37,7 @@ class LocalSeries(object):
                 self.__clean_series_name(name, False).lower()):
                 return series
         raise common.NoSeriesException(self.seriesname)
-        
+
     def __get_series_info(self, tvdbId):
         '''
         returns information on a series with the id <tvdbId>
@@ -47,15 +48,15 @@ class LocalSeries(object):
     def __clean_series_name(self, name, preserve_encoding=True):
         '''
         return a tv series name with all punctuation removed
-    
+
         preserve_encoding: used to determine whether or not to keep accents and
                            other unicode characters or replace them with their
                            most similar looking ascii counterparts
         '''
-    
+
         words = remove_punc(name, preserve_encoding)
         return ' '.join(words)
-    
+
 
 class LocalEpisode(LocalSeries):
 
@@ -108,7 +109,7 @@ class LocalEpisode(LocalSeries):
         '''
         returns a dict containing season number and episode number of object
         '''
-    
+
         season = re.search('(S(?P<season>\d\d)E\d\d)', self.basename,
                            re.IGNORECASE).group('season')
         # must use findall because sometimes files may consist of two episodes

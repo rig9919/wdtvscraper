@@ -6,7 +6,6 @@ import build_xml
 from common import split_full_title
 
 
-
 def is_title_match(self, possible_matching_title):
     '''
     compare object's title with <possible_matching_title>

@@ -12,7 +12,7 @@ from tv_series import LocalSeries, LocalEpisode
 import common
 import build_xml
 
-__version__ = '1.1.8'
+__version__ = '1.1.9'
 
 
 def main():
@@ -121,7 +121,8 @@ def process_movies(path, thumbnails, assume, interactive, quiet, debug,
                         break
                     elif user_typed_title == 'q' or user_typed_title == 'Q':
                         exit()
-                    videofile.tmdb_data = videofile.get_chosen_match(user_typed_title)
+                    videofile.tmdb_data = videofile.get_chosen_match(
+                                                              user_typed_title)
                 except (SystemExit, KeyboardInterrupt):
                     exit()
                 except (ValueError, EOFError):
@@ -141,17 +142,20 @@ def process_movies(path, thumbnails, assume, interactive, quiet, debug,
             # preferably. otherwise, get the smallest available.
                 if videofile.tmdb_data.poster:
                     if 'w342' in videofile.tmdb_data.poster.sizes():
-                        videofile.tmdb_data.download_poster('w342', videofile.basename)
+                        videofile.tmdb_data.download_poster('w342',
+                                                            videofile.basename)
                     else:
-                        videofile.tmdb_data.download_poster(videofile.tmdb_data.poster.sizes()[0],
-                                              videofile.basename)
+                        videofile.tmdb_data.download_poster(
+                                         videofile.tmdb_data.poster.sizes()[0],
+                                         videofile.basename)
                 else:
                     print 'Skipped poster:', videofile.basename, ': n/a'
             if os.path.isfile(videofile.basename + '.xml'):
                 print 'Skipped metadata:', videofile.basename + ':', \
                       '.xml already exists'
             else:
-                videofile.tmdb_data.write_metadata(videofile.basename, thumbnails)
+                videofile.tmdb_data.write_metadata(videofile.basename,
+                                                   thumbnails)
         else:
             print 'No movie:', videofile.basename
 
@@ -174,10 +178,10 @@ def process_tv(path, quiet, debug):
                 for f in os.listdir(d):
                     if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|'
                                      '\.mov|\.dat|\.tp|\.ts|\.m2t|\.m2ts|'
-                                     '\.flv|.mp4)$', f):        
-                        continue                                          
+                                     '\.flv|.mp4)$', f):
+                        continue
                     episode = LocalEpisode(f, series.seriesname)
-                    if (os.path.isfile(d + '/' + episode.basename + 
+                    if (os.path.isfile(d + '/' + episode.basename +
                         '.metathumb') and
                         os.path.isfile(d + '/' + episode.basename + '.xml') and
                         (not debug)):
