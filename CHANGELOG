@@ -27,3 +27,4 @@
 1.1.5   removed remnants of multiple path support, fixed NoEpisode error mesg
 1.1.6   fixed broken version display
 1.1.7   moved tmdb api setup to process_movies
+1.1.8   fixed misuse of exceptions

@@ -18,16 +18,6 @@ class NoEpisodeException(Exception):
     def __str__(self):
         return 'No episode: %s' % (self.name)
 
-class AssumedMatch(Exception):
-
-    def __init__(self, name, movie):
-        self.name = name
-        self.movie = movie
-
-    def __str__(self):
-        return 'Assumed: %s == %s' % (self.name, self.movie.full_title())
-
-
 
 class NonzeroMatchlistNoMatches(Exception):
 

@@ -12,7 +12,7 @@ from tv_series import LocalSeries, LocalEpisode
 import common
 import build_xml
 
-__version__ = '1.1.7'
+__version__ = '1.1.8'
 
 
 def main():
@@ -96,25 +96,21 @@ def process_movies(path, thumbnails, assume, interactive, quiet, debug,
             print 'Skipped poster/metadata:', videofile.basename + ':',  \
                   '.metathumb and .xml already exist'
             continue
-        # first, assume user has named their videos something using a standard
-        # format such as the-movie-title-and-year.ext
-        match = None
         try:
-            match = videofile.get_match(assume)
-        except common.AssumedMatch as e:
-            match = e.movie
-            print e
+            videofile.get_match(assume)
+            if videofile.is_assumed:
+                print 'Assumed:', videofile.basename
         except common.NonzeroMatchlistNoMatches as e:
             print e
         except common.ZeroMatchlist as e:
             print e
-        if not match:
+        if not videofile.tmdb_data:
             # no matches were found in non-interactive mode, continue to next
             if not interactive:
                 continue
             # ask user for some help finding their movie if in interactive mode
-            match = videofile.get_chosen_match()
-            while not match:
+            videofile.tmdb_data = videofile.get_chosen_match()
+            while not videofile.tmdb_data:
                 try:
                     # keep asking until user gives up or gets their title
                     user_typed_title = raw_input('Enter a possible alternative'
@@ -125,16 +121,16 @@ def process_movies(path, thumbnails, assume, interactive, quiet, debug,
                         break
                     elif user_typed_title == 'q' or user_typed_title == 'Q':
                         exit()
-                    match = videofile.get_chosen_match(user_typed_title)
+                    videofile.tmdb_data = videofile.get_chosen_match(user_typed_title)
                 except (SystemExit, KeyboardInterrupt):
                     exit()
                 except (ValueError, EOFError):
                     print 'Error: invalid choice'
                     continue
-        if match:
+        if videofile.tmdb_data:
             if not quiet:
                 print 'Found movie:', videofile.basename, '==', \
-                      match.full_title()
+                      videofile.tmdb_data.full_title()
             if debug:
                 continue
             if os.path.isfile(videofile.basename + '.metathumb'):
@@ -143,11 +139,11 @@ def process_movies(path, thumbnails, assume, interactive, quiet, debug,
             else:
             # if there's any posters available, download w342 size
             # preferably. otherwise, get the smallest available.
-                if match.poster:
-                    if 'w342' in match.poster.sizes():
-                        match.download_poster('w342', videofile.basename)
+                if videofile.tmdb_data.poster:
+                    if 'w342' in videofile.tmdb_data.poster.sizes():
+                        videofile.tmdb_data.download_poster('w342', videofile.basename)
                     else:
-                        match.download_poster(match.poster.sizes()[0],
+                        videofile.tmdb_data.download_poster(videofile.tmdb_data.poster.sizes()[0],
                                               videofile.basename)
                 else:
                     print 'Skipped poster:', videofile.basename, ': n/a'
@@ -155,7 +151,7 @@ def process_movies(path, thumbnails, assume, interactive, quiet, debug,
                 print 'Skipped metadata:', videofile.basename + ':', \
                       '.xml already exists'
             else:
-                match.write_metadata(videofile.basename, thumbnails)
+                videofile.tmdb_data.write_metadata(videofile.basename, thumbnails)
         else:
             print 'No movie:', videofile.basename
 
