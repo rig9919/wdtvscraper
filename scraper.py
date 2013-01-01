@@ -12,7 +12,7 @@ from tv_series import LocalSeries, LocalEpisode
 import common
 import build_xml
 
-__version__ = '1.1.6'
+__version__ = '1.1.7'
 
 
 def main():
@@ -56,31 +56,33 @@ def main():
                              'series directories.')
     args = parser.parse_args()
 
-    # configurations for tmdb api
-    tmdb3.set_key('ae90cf3b0ab5da570880728198701ce0')
-    if (not args.language) and (not args.country):
-        tmdb3.set_locale(fallthrough=True)
-    else:
-        if args.language:
-            tmdb3.set_locale(language=args.language, fallthrough=True)
-        if args.country:
-            tmdb3.set_locale(country=args.country, fallthrough=True)
-    print 'Using locale: ' + str(tmdb3.get_locale())
-
     if not args.movie_path and not args.tv_path:
         print 'Must use -m and/or -t option. See help menu'
 
     # if user specified a movie path, process movies
     if args.movie_path:
         process_movies(args.movie_path, args.thumbnails, args.assume,
-                       args.interactive, args.quiet, args.debug)
+                       args.interactive, args.quiet, args.debug,
+                       args.language, args.country)
 
     # if user specified a tv path, process tv shows
     if args.tv_path:
         process_tv(args.tv_path, args.quiet, args.debug)
 
 
-def process_movies(path, thumbnails, assume, interactive, quiet, debug):
+def process_movies(path, thumbnails, assume, interactive, quiet, debug,
+                   language, country):
+    # configurations for tmdb api
+    tmdb3.set_key('ae90cf3b0ab5da570880728198701ce0')
+    if (not language) and (not country):
+        tmdb3.set_locale(fallthrough=True)
+    else:
+        if language:
+            tmdb3.set_locale(language=language, fallthrough=True)
+        if country:
+            tmdb3.set_locale(country=country, fallthrough=True)
+    print 'Using locale: ' + str(tmdb3.get_locale())
+
     os.chdir(path)
     for f in os.listdir('./'):
         if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|\.mov|\.dat|\.tp|'

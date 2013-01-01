@@ -26,3 +26,4 @@
 1.1.4   filenames containing only digits are treated as titles
 1.1.5   removed remnants of multiple path support, fixed NoEpisode error mesg
 1.1.6   fixed broken version display
+1.1.7   moved tmdb api setup to process_movies
