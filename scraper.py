@@ -171,7 +171,6 @@ def process_movies(path, thumbnails, assume, interactive, quiet, debug,
 
 
 def process_tv(path, quiet, debug):
-    print 'process_tv:', path
     # process each directory in path
     os.chdir(path)
     for d in os.listdir('./'):
