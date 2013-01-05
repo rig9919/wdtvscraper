@@ -29,3 +29,4 @@
 1.1.7   moved tmdb api setup to process_movies
 1.1.8   fixed misuse of exceptions
 1.1.9   cleanup
+1.1.10  cleanup, added comments

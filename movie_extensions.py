@@ -5,10 +5,18 @@ from pytmdb3 import tmdb3
 import build_xml
 from common import split_full_title
 
+'''
+This is a set of helper methods for the tmdb3.Movie class.
+'''
+
+# FIXME: Ideally, these additions to the tmdb3.Movie class would not be needed.
+# LocalVideo should be a child of tmdb3.Movie and should contain these methods
+# itself. Unfortunately, due to the way tmdb3.Movie objects are created, it is
+# unknown at this time how to proceed.
 
 def is_title_match(self, possible_matching_title):
     '''
-    compare object's title with <possible_matching_title>
+    compare title with <possible_matching_title>
     '''
 
     # <original title with punc> == <possible matching title> ?
@@ -76,7 +84,7 @@ def year(self):
 
 def is_year_match(self, possible_matching_year):
     '''
-    return true if object's year and <possible_matching_year> are the same
+    return true if the year and <possible_matching_year> are the same
     '''
 
     if self.year() == possible_matching_year:
@@ -86,7 +94,7 @@ def is_year_match(self, possible_matching_year):
 
 def full_title(self):
     '''
-    return object's title in the form 'Movie Title (YYYY)'
+    return title in the form 'Movie Title (YYYY)'
     example: 'X-Men Origins: Wolverine (2009)
     '''
 
@@ -95,7 +103,7 @@ def full_title(self):
 
 def download_poster(self, size, name):
     '''
-    download object's associated movie poster
+    download associated movie poster
 
     size: w92, w154, w185, w342, w500, or original
           see http://help.themoviedb.org/kb/api/configuration
@@ -108,7 +116,7 @@ def download_poster(self, size, name):
 
 def get_genres(self):
     '''
-    return a string listing all the genres of the object
+    return a string listing all the genres
     '''
 
     genre_names = list()

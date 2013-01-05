@@ -12,7 +12,7 @@ from tv_series import LocalSeries, LocalEpisode
 import common
 import build_xml
 
-__version__ = '1.1.9'
+__version__ = '1.1.10'
 
 
 def main():
@@ -24,8 +24,8 @@ def main():
         print 'Warning: Continuing without ability to preview posters.'
 
     parser = argparse.ArgumentParser(prog='scraper.py',
-                                     usage='%(prog)s [options] '
-                                     '-m PATH -t PATH',
+                       usage='%(prog)s [options] -m movie-path\n'
+                      '       %(prog)s [options] -t tv-path',
                                      description='Scrape themoviedb.org for '
                                      'metadata of movies stored on a WDTV '
                                      'device.')
@@ -56,6 +56,7 @@ def main():
                              'series directories.')
     args = parser.parse_args()
 
+    # if user didn't specify a tv path or movie path, tell them
     if not args.movie_path and not args.tv_path:
         print 'Must use -m and/or -t option. See help menu'
 
@@ -83,12 +84,14 @@ def process_movies(path, thumbnails, assume, interactive, quiet, debug,
             tmdb3.set_locale(country=country, fallthrough=True)
     print 'Using locale: ' + str(tmdb3.get_locale())
 
+    # change to the movie path and process each movie file
     os.chdir(path)
     for f in os.listdir('./'):
         if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|\.mov|\.dat|\.tp|'
                          '\.ts|\.m2t|\.m2ts|\.flv|.mp4)$', f):
             # not a format wdtv supports
             continue
+        # create a new LocalVideo object using the movie file
         videofile = LocalVideo(f)
         if (os.path.isfile(videofile.basename + '.metathumb') and
             os.path.isfile(videofile.basename + '.xml') and (not debug)):
@@ -96,6 +99,7 @@ def process_movies(path, thumbnails, assume, interactive, quiet, debug,
             print 'Skipped poster/metadata:', videofile.basename + ':',  \
                   '.metathumb and .xml already exist'
             continue
+        # find a matching title from tmdb
         try:
             videofile.get_match(assume)
             if videofile.is_assumed:
@@ -104,6 +108,8 @@ def process_movies(path, thumbnails, assume, interactive, quiet, debug,
             print e
         except common.ZeroMatchlist as e:
             print e
+
+        # if no matches are found, either ask user for help or continue
         if not videofile.tmdb_data:
             # no matches were found in non-interactive mode, continue to next
             if not interactive:
@@ -115,11 +121,10 @@ def process_movies(path, thumbnails, assume, interactive, quiet, debug,
                     # keep asking until user gives up or gets their title
                     user_typed_title = raw_input('Enter a possible alternative'
                                                  ' title (S=skip): ')
-                    if (user_typed_title == '' or user_typed_title == 'S' or
-                        user_typed_title == 's'):
-                        # user decides to skip
+                    if user_typed_title in 'Ss' or not user_typed_title:
+                        # user decides to give up
                         break
-                    elif user_typed_title == 'q' or user_typed_title == 'Q':
+                    elif user_typed_title in 'Qq':
                         exit()
                     videofile.tmdb_data = videofile.get_chosen_match(
                                                               user_typed_title)
@@ -128,12 +133,15 @@ def process_movies(path, thumbnails, assume, interactive, quiet, debug,
                 except (ValueError, EOFError):
                     print 'Error: invalid choice'
                     continue
+
         if videofile.tmdb_data:
             if not quiet:
                 print 'Found movie:', videofile.basename, '==', \
                       videofile.tmdb_data.full_title()
             if debug:
                 continue
+
+            # deal with poster
             if os.path.isfile(videofile.basename + '.metathumb'):
                 print 'Skipped poster:', videofile.basename + ':', \
                       '.metathumb already exists'
@@ -150,6 +158,8 @@ def process_movies(path, thumbnails, assume, interactive, quiet, debug,
                                          videofile.basename)
                 else:
                     print 'Skipped poster:', videofile.basename, ': n/a'
+
+            # deal with metadata
             if os.path.isfile(videofile.basename + '.xml'):
                 print 'Skipped metadata:', videofile.basename + ':', \
                       '.xml already exists'
@@ -161,55 +171,72 @@ def process_movies(path, thumbnails, assume, interactive, quiet, debug,
 
 
 def process_tv(path, quiet, debug):
+    print 'process_tv:', path
+    # process each directory in path
     os.chdir(path)
     for d in os.listdir('./'):
         if os.path.isdir(d):
-            print 'dir:', d
+            # assume the directory name is a tv show name and create a
+            # LocalSeries object using it
             try:
                 series = LocalSeries(d)
-                if not quiet:
-                    print 'Found series:', series.seriesname
-                if debug:
-                    continue
-                try:
-                    series.save_poster(d + '/aaaa-series-cover.metathumb')
-                except IOError as e:
-                    print e
-                for f in os.listdir(d):
-                    if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|'
-                                     '\.mov|\.dat|\.tp|\.ts|\.m2t|\.m2ts|'
-                                     '\.flv|.mp4)$', f):
-                        continue
-                    episode = LocalEpisode(f, series.seriesname)
-                    if (os.path.isfile(d + '/' + episode.basename +
-                        '.metathumb') and
-                        os.path.isfile(d + '/' + episode.basename + '.xml') and
-                        (not debug)):
-                        print 'Skipped poster/metadata:', \
-                              d + '/' + episode.basename + ':', \
-                              '.metathumb and .xml already exist'
-                        continue
-                    if not quiet:
-                        if not episode.episode_data:
-                            raise common.NoEpisodeException(episode.basename)
-                        print 'Found episode:', episode.basename, '==', \
-                              episode.episode_data.name
-                    try:
-                        episode.save_poster(d + '/' + episode.basename +
-                                            '.metathumb')
-                    except IOError as e:
-                        print e
-                    try:
-                        episode.save_metadata(d + '/' + episode.basename +
-                                              '.xml')
-                    except IOError as e:
-                        print e
             except common.NoSeriesException as e:
                 print e
                 continue
-            except common.NoEpisodeException as e:
-                print e
+
+            if not quiet:
+                print 'Found series:', series.seriesname
+            if debug:
                 continue
+
+            try:
+                series.save_poster(d + '/aaaa-series-cover.metathumb')
+            except IOError as e:
+                print e
+
+            # process each video in the directory
+            for f in os.listdir(d):
+                if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|'
+                                 '\.mov|\.dat|\.tp|\.ts|\.m2t|\.m2ts|'
+                                 '\.flv|.mp4)$', f):
+                    continue
+
+                # make a LocalEpisode object using the video's information
+                try:
+                    episode = LocalEpisode(f, series.seriesname)
+                except common.NoEpisodeException as e:
+                    print e
+                    continue
+
+                # check to see if a poster and metadata file already exist
+                if (os.path.isfile(d + '/' + episode.basename +
+                    '.metathumb') and
+                    os.path.isfile(d + '/' + episode.basename + '.xml') and
+                    (not debug)):
+                    print 'Skipped poster/metadata:', \
+                          d + '/' + episode.basename + ':', \
+                          '.metathumb and .xml already exist'
+                    continue
+
+                if not quiet:
+                    if not episode.episode_data:
+                        raise common.NoEpisodeException(episode.basename)
+                    print 'Found episode:', episode.basename, '==', \
+                          episode.episode_data.name
+
+                # these are separate try blocks because if one fails
+                # the other should still be completed
+                try:
+                    episode.save_poster(d + '/' + episode.basename +
+                                        '.metathumb')
+                except IOError as e:
+                    print e
+                try:
+                    episode.save_metadata(d + '/' + episode.basename +
+                                          '.xml')
+                except IOError as e:
+                    print e
+
     os.chdir('./..')
 
 if __name__ == '__main__':
