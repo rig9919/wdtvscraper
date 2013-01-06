@@ -30,3 +30,4 @@
 1.1.8   fixed misuse of exceptions
 1.1.9   cleanup
 1.1.10  cleanup, added comments
+1.1.11  added support for episodes using SxE names such as alphas-1x4.mkv

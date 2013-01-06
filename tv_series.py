@@ -110,11 +110,20 @@ class LocalEpisode(LocalSeries):
         returns a dict containing season number and episode number of object
         '''
 
-        season = re.search('(S(?P<season>\d\d)E\d\d)', self.basename,
-                           re.IGNORECASE).group('season')
-        # must use findall because sometimes files may consist of two episodes
-        # such as star-trek-deep-space-nine-s04e01-s04e02.mkv
-        # always use first episode number in these cases
-        episode = re.findall('(S\d\dE(?P<episode>\d\d))', self.basename,
-                            re.IGNORECASE)[0][1]
+        if re.search('S\d\dE\d\d', self.basename, re.IGNORECASE):
+            season = re.search('(S(?P<season>\d\d)E\d\d)', self.basename,
+                               re.IGNORECASE).group('season')
+            # must use findall because sometimes files may consist of two episodes
+            # such as star-trek-deep-space-nine-s04e01-s04e02.mkv
+            # always use first episode number in these cases
+            episode = re.findall('(S\d\dE(?P<episode>\d\d))', self.basename,
+                                 re.IGNORECASE)[0][1]
+        elif re.search('\d+(x|X)\d+', self.basename, re.IGNORECASE):
+            season = re.search('(?P<season>\d+)(x|X)\d+', self.basename,
+                               re.IGNORECASE).group('season')
+            episode = re.findall('\d+(x|X)(?P<episode>\d+)', self.basename,
+                                 re.IGNORECASE)[0][1]
+        else:
+            season = ''
+            episode = ''
         return {'season': season, 'episode': episode}
