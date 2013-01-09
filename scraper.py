@@ -12,7 +12,7 @@ from tv_series import LocalSeries, LocalEpisode
 import common
 import build_xml
 
-__version__ = '1.1.11'
+__version__ = '1.1.12'
 
 
 def main():
@@ -60,14 +60,20 @@ def main():
     if not args.movie_path and not args.tv_path:
         print 'Must use -m and/or -t option. See help menu'
 
+    print os.getcwd()
+
     # if user specified a movie path, process movies
     if args.movie_path:
+        args.movie_path = os.path.join(os.getcwd(), args.movie_path)
+        print args.movie_path
         process_movies(args.movie_path, args.thumbnails, args.assume,
                        args.interactive, args.quiet, args.debug,
                        args.language, args.country)
 
     # if user specified a tv path, process tv shows
     if args.tv_path:
+        args.tv_path = os.path.join(os.getcwd(), args.tv_path)
+        print args.tv_path
         process_tv(args.tv_path, args.quiet, args.debug)
 
 
@@ -85,6 +91,7 @@ def process_movies(path, thumbnails, assume, interactive, quiet, debug,
     print 'Using locale: ' + str(tmdb3.get_locale())
 
     # change to the movie path and process each movie file
+    orig_path = os.getcwd()
     os.chdir(path)
     for f in os.listdir('./'):
         if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|\.mov|\.dat|\.tp|'
@@ -168,10 +175,13 @@ def process_movies(path, thumbnails, assume, interactive, quiet, debug,
                                                    thumbnails)
         else:
             print 'No movie:', videofile.basename
+    # go back to original path we started with
+    os.chdir(orig_path)
 
 
 def process_tv(path, quiet, debug):
     # process each directory in path
+    orig_path = os.getcwd()
     os.chdir(path)
     for d in os.listdir('./'):
         if os.path.isdir(d):
@@ -235,8 +245,8 @@ def process_tv(path, quiet, debug):
                                           '.xml')
                 except IOError as e:
                     print e
-
-    os.chdir('./..')
+    # go back to original path we started with
+    os.chdir(orig_path)
 
 if __name__ == '__main__':
     try:
