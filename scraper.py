@@ -60,12 +60,9 @@ def main():
     if not args.movie_path and not args.tv_path:
         print 'Must use -m and/or -t option. See help menu'
 
-    print os.getcwd()
-
     # if user specified a movie path, process movies
     if args.movie_path:
         args.movie_path = os.path.join(os.getcwd(), args.movie_path)
-        print args.movie_path
         process_movies(args.movie_path, args.thumbnails, args.assume,
                        args.interactive, args.quiet, args.debug,
                        args.language, args.country)
@@ -73,7 +70,6 @@ def main():
     # if user specified a tv path, process tv shows
     if args.tv_path:
         args.tv_path = os.path.join(os.getcwd(), args.tv_path)
-        print args.tv_path
         process_tv(args.tv_path, args.quiet, args.debug)
 
 
