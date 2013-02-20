@@ -12,7 +12,7 @@ from tv_series import LocalSeries, LocalEpisode
 import common
 import build_xml
 
-__version__ = '1.1.12'
+__version__ = '1.1.13'
 
 
 def main():
@@ -179,68 +179,71 @@ def process_tv(path, quiet, debug):
     # process each directory in path
     orig_path = os.getcwd()
     os.chdir(path)
-    for d in os.listdir('./'):
-        if os.path.isdir(d):
-            # assume the directory name is a tv show name and create a
-            # LocalSeries object using it
+    dirname = os.path.basename(os.getcwd())
+    # for d in os.listdir('./'):
+    if os.path.isdir(path):
+        # assume the directory name is a tv show name and create a
+        # LocalSeries object using it
+        try:
+            series = LocalSeries(dirname)
+        except common.NoSeriesException as e:
+            print e
+            return
+            # continue
+
+        if not quiet:
+            print 'Found series:', series.seriesname
+        if debug:
+            return
+            # continue
+
+        try:
+            series.save_poster(path + '/aaaa-series-cover.metathumb')
+        except IOError as e:
+            print e
+
+        # process each video in the directory
+        for f in os.listdir(path):
+            if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|'
+                             '\.mov|\.dat|\.tp|\.ts|\.m2t|\.m2ts|'
+                             '\.flv|.mp4)$', f):
+                continue
+
+            # make a LocalEpisode object using the video's information
             try:
-                series = LocalSeries(d)
-            except common.NoSeriesException as e:
+                episode = LocalEpisode(f, series.seriesname)
+            except common.NoEpisodeException as e:
                 print e
+                continue
+
+            # check to see if a poster and metadata file already exist
+            if (os.path.isfile(path + '/' + episode.basename +
+                '.metathumb') and
+                os.path.isfile(path + '/' + episode.basename + '.xml') and
+                (not debug)):
+                print 'Skipped poster/metadata:', \
+                      path + '/' + episode.basename + ':', \
+                      '.metathumb and .xml already exist'
                 continue
 
             if not quiet:
-                print 'Found series:', series.seriesname
-            if debug:
-                continue
+                if not episode.episode_data:
+                    raise common.NoEpisodeException(episode.basename)
+                print 'Found episode:', episode.basename, '==', \
+                      episode.episode_data.name
 
+            # these are separate try blocks because if one fails
+            # the other should still be completed
             try:
-                series.save_poster(d + '/aaaa-series-cover.metathumb')
+                episode.save_poster(path + '/' + episode.basename +
+                                    '.metathumb')
             except IOError as e:
                 print e
-
-            # process each video in the directory
-            for f in os.listdir(d):
-                if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|'
-                                 '\.mov|\.dat|\.tp|\.ts|\.m2t|\.m2ts|'
-                                 '\.flv|.mp4)$', f):
-                    continue
-
-                # make a LocalEpisode object using the video's information
-                try:
-                    episode = LocalEpisode(f, series.seriesname)
-                except common.NoEpisodeException as e:
-                    print e
-                    continue
-
-                # check to see if a poster and metadata file already exist
-                if (os.path.isfile(d + '/' + episode.basename +
-                    '.metathumb') and
-                    os.path.isfile(d + '/' + episode.basename + '.xml') and
-                    (not debug)):
-                    print 'Skipped poster/metadata:', \
-                          d + '/' + episode.basename + ':', \
-                          '.metathumb and .xml already exist'
-                    continue
-
-                if not quiet:
-                    if not episode.episode_data:
-                        raise common.NoEpisodeException(episode.basename)
-                    print 'Found episode:', episode.basename, '==', \
-                          episode.episode_data.name
-
-                # these are separate try blocks because if one fails
-                # the other should still be completed
-                try:
-                    episode.save_poster(d + '/' + episode.basename +
-                                        '.metathumb')
-                except IOError as e:
-                    print e
-                try:
-                    episode.save_metadata(d + '/' + episode.basename +
-                                          '.xml')
-                except IOError as e:
-                    print e
+            try:
+                episode.save_metadata(path + '/' + episode.basename +
+                                      '.xml')
+            except IOError as e:
+                print e
     # go back to original path we started with
     os.chdir(orig_path)
 

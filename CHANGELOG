@@ -32,3 +32,4 @@
 1.1.10  cleanup, added comments
 1.1.11  added support for episodes using SxE names such as alphas-1x4.mkv
 1.1.12  fixed problem with original directory not being returned to
+1.1.13  tvshows are specified and scraped individually
