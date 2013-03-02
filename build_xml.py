@@ -30,9 +30,13 @@ def write_tvshow(series, episode, destination):
     xml.append('  <id>' + unicode(episode.tvdbId) + '</id>')
     #title = '%s: S%sE%s %s' % (series.name, episode.seasonNumber.zfill(2),
     #                           episode.episodeNumber.zfill(2), episode.name)
-    xml.append('  <title>' + unicode(episode.name) + '</title>') 
+    title = '%s%s: %s' % (episode.seasonNumber, episode.episodeNumber.zfill(2),
+                         episode.name)
+    xml.append('  <title>' + unicode(title) + '</title>') 
     xml.append('  <series_name>' + unicode(series.name) + '</series_name>')
     xml.append('  <episode_name>' + unicode(episode.name) + '</episode_name>')
+    xml.append('  <season_number>' + episode.seasonNumber + '</season_number>')
+    xml.append('  <episode_number>' + episode.episodeNumber + '</episode_number>')
     xml.append('  <firstaired>' + unicode(episode.firstAired) + '</firstaired>')
     # tv view does not give each genre its own item
     xml.append('  <genre>' + '/'.join(series.genres) + '</genre>')
