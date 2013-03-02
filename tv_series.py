@@ -15,9 +15,6 @@ class LocalSeries(object):
         self.series_data = self.__get_series_info(match.tvdbId)
 
     def save_poster(self, destination):
-        if os.path.isfile(destination):
-            raise IOError('Did not save poster: ' + destination +
-                          ' already exists')
         urllib.urlretrieve(self.series_data.posterUrl, destination)
 
     def __get_series_match(self, name):
@@ -80,15 +77,9 @@ class LocalEpisode(LocalSeries):
         self.episode_data = self.__get_match(self.series_data.episodes)
 
     def save_poster(self, destination):
-        if os.path.isfile(destination):
-            raise IOError('Did not save poster: ' + destination +
-                          ' already exists')
         urllib.urlretrieve(self.episode_data.bannerUrl, destination)
 
     def save_metadata(self, destination):
-        if os.path.isfile(destination):
-            raise IOError('Did not save metadata: ' + destination +
-                          ' already exists')
         build_xml.write_tvshow(self.series_data, self.episode_data,
                                destination)
 

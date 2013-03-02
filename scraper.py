@@ -12,7 +12,7 @@ from tv_series import LocalSeries, LocalEpisode
 import common
 import build_xml
 
-__version__ = '1.1.14'
+__version__ = '1.1.15'
 
 
 def main():
@@ -47,7 +47,8 @@ def main():
     parser.add_argument('-a', '--assume', action='store_true',
                         help='Assume match on 1 result. Not recommended '
                              'This can lead to mismatches.')
-    parser.add_argument('-d', '--debug', action='store_true')
+    parser.add_argument('-f', '--force-overwrite', action='store_true',
+                        help='Force overwrite of metadata and poster files.')
     parser.add_argument('-m', '--movie-path', default='', metavar='',
                          help='The path to the directory containing your '
                               'movie files.')
@@ -64,16 +65,16 @@ def main():
     if args.movie_path:
         args.movie_path = os.path.join(os.getcwd(), args.movie_path)
         process_movies(args.movie_path, args.thumbnails, args.assume,
-                       args.interactive, args.quiet, args.debug,
+                       args.interactive, args.quiet, args.force_overwrite,
                        args.language, args.country)
 
     # if user specified a tv path, process tv shows
     if args.tv_path:
         args.tv_path = os.path.join(os.getcwd(), args.tv_path)
-        process_tv(args.tv_path, args.quiet, args.debug)
+        process_tv(args.tv_path, args.quiet, args.force_overwrite)
 
 
-def process_movies(path, thumbnails, assume, interactive, quiet, debug,
+def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite,
                    language, country):
     # configurations for tmdb api
     tmdb3.set_key('ae90cf3b0ab5da570880728198701ce0')
@@ -97,7 +98,7 @@ def process_movies(path, thumbnails, assume, interactive, quiet, debug,
         # create a new LocalVideo object using the movie file
         videofile = LocalVideo(f)
         if (os.path.isfile(videofile.basename + '.metathumb') and
-            os.path.isfile(videofile.basename + '.xml') and (not debug)):
+            os.path.isfile(videofile.basename + '.xml') and (not force_overwrite)):
             # metathumb and xml already exists for this movie
             print 'Skipped poster/metadata:', videofile.basename + ':',  \
                   '.metathumb and .xml already exist'
@@ -141,8 +142,6 @@ def process_movies(path, thumbnails, assume, interactive, quiet, debug,
             if not quiet:
                 print 'Found movie:', videofile.basename, '==', \
                       videofile.tmdb_data.full_title()
-            if debug:
-                continue
 
             # deal with poster
             if os.path.isfile(videofile.basename + '.metathumb'):
@@ -175,7 +174,7 @@ def process_movies(path, thumbnails, assume, interactive, quiet, debug,
     os.chdir(orig_path)
 
 
-def process_tv(path, quiet, debug):
+def process_tv(path, quiet, force_overwrite):
     # process each directory in path
     orig_path = os.getcwd()
     os.chdir(path)
@@ -193,9 +192,6 @@ def process_tv(path, quiet, debug):
 
         if not quiet:
             print 'Found series:', series.seriesname
-        if debug:
-            return
-            # continue
 
         try:
             series.save_poster(path + '/aaaa-series-cover.metathumb')
@@ -220,7 +216,7 @@ def process_tv(path, quiet, debug):
             if (os.path.isfile(path + '/' + episode.basename +
                 '.metathumb') and
                 os.path.isfile(path + '/' + episode.basename + '.xml') and
-                (not debug)):
+                (not force_overwrite)):
                 print 'Skipped poster/metadata:', \
                       path + '/' + episode.basename + ':', \
                       '.metathumb and .xml already exist'

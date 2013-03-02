@@ -34,3 +34,4 @@
 1.1.12  fixed problem with original directory not being returned to
 1.1.13  tvshows are specified and scraped individually
 1.1.14  episode titles are prefixed by season and ep number
+1.1.15  converted debug switch to force-overwrite switch
