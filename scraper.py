@@ -12,7 +12,7 @@ from tv_series import LocalSeries, LocalEpisode
 import common
 import build_xml
 
-__version__ = '1.1.15'
+__version__ = '1.1.16'
 
 
 def main():
@@ -194,7 +194,7 @@ def process_tv(path, quiet, force_overwrite):
             print 'Found series:', series.seriesname
 
         try:
-            series.save_poster(path + '/aaaa-series-cover.metathumb')
+            series.save_poster(path + 'aaaa-series-cover.metathumb')
         except IOError as e:
             print e
 
@@ -231,7 +231,7 @@ def process_tv(path, quiet, force_overwrite):
             # these are separate try blocks because if one fails
             # the other should still be completed
             try:
-                episode.save_poster(path + '/' + episode.basename +
+                episode.save_poster(path + episode.basename +
                                     '.metathumb')
             except IOError as e:
                 print e
