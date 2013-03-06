@@ -38,3 +38,4 @@
 1.1.16  posters that are too large for wdtv are resized
 1.1.17  changed readme to include imagemagick as prerequisite
 1.1.18  posters are made compatible by resizing geometry as a quick ugly hack
+1.1.19  posters that are too large are stripped of profiles

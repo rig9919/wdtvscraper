@@ -20,8 +20,8 @@ class LocalSeries(object):
         while os.path.getsize(destination) > max_size:
             size = os.path.getsize(destination)
             print 'Poster > 900K:', self.basename, '==', str(size/1024) + 'K'
-            r = os.system('convert "' + destination + '" -density 24 ' +
-                           '-geometry 50x50% "' + destination + '"')
+            r = os.system('convert -strip "' + destination + '" -geometry 50x50% ' +
+                           '"' + destination + '"')
             if r or os.path.getsize(destination) == size:
                 raise IOError('Could not reduce poster size.')
 
@@ -90,8 +90,8 @@ class LocalEpisode(LocalSeries):
         while os.path.getsize(destination) > max_size:
             size = os.path.getsize(destination)
             print 'Poster > 40K:', self.basename, '==', str(size/1024) + 'K'
-            r = os.system('convert "' + destination + '" -density 24 ' +
-                           '-geometry 50x50% "' + destination + '"')
+            r = os.system('convert -strip "' + destination + '" -geometry 50x50% ' +
+                           '"' + destination + '"')
             if r or os.path.getsize(destination) == size:
                 raise IOError('Could not reduce poster size.')
 
