@@ -15,15 +15,8 @@ class LocalSeries(object):
         self.series_data = self.__get_series_info(match.tvdbId)
 
     def save_poster(self, destination):
-        max_size = 900*1024
-        urllib.urlretrieve(self.series_data.posterUrl, destination)
-        while os.path.getsize(destination) > max_size:
-            size = os.path.getsize(destination)
-            print 'Poster > 900K:', self.basename, '==', str(size/1024) + 'K'
-            r = os.system('convert -strip "' + destination + '" -geometry 50x50% ' +
-                           '"' + destination + '"')
-            if r or os.path.getsize(destination) == size:
-                raise IOError('Could not reduce poster size.')
+        _save_poster(self.series_data.posterUrl, destination,
+                     self.seriesname, 900)
 
     def __get_series_match(self, name):
         '''
@@ -85,16 +78,8 @@ class LocalEpisode(LocalSeries):
         self.episode_data = self.__get_match(self.series_data.episodes)
 
     def save_poster(self, destination):
-        max_size = 40*1024
-        urllib.urlretrieve(self.episode_data.bannerUrl, destination)
-        while os.path.getsize(destination) > max_size:
-            size = os.path.getsize(destination)
-            print 'Poster > 40K:', self.basename, '==', str(size/1024) + 'K'
-            r = os.system('convert -strip "' + destination + '" -geometry 50x50% ' +
-                           '"' + destination + '"')
-            if r or os.path.getsize(destination) == size:
-                raise IOError('Could not reduce poster size.')
-
+        _save_poster(self.episode_data.bannerUrl, destination,
+                     self.basename, 40)
 
     def save_metadata(self, destination):
         build_xml.write_tvshow(self.series_data, self.episode_data,
@@ -135,3 +120,18 @@ class LocalEpisode(LocalSeries):
             season = ''
             episode = ''
         return {'season': season, 'episode': episode}
+
+
+def _save_poster(location, destination, basename, max_size):
+    max_size = max_size*1024
+    urllib.urlretrieve(location, destination)
+    while os.path.getsize(destination) > max_size:
+        size = os.path.getsize(destination)
+        print 'Size >', str(max_size/1024) + 'K', 'reducing quality by 10%:',\
+              basename, '==', str(size/1024) + 'K'
+        r = os.system('convert -strip "' + destination + '" -quality 90% ' +
+                       'JPEG:"' + destination + '"')
+        if r or os.path.getsize(destination) == size:
+            raise IOError('Could not reduce poster size.')
+
+
