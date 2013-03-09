@@ -40,3 +40,4 @@
 1.1.18  posters are made compatible by resizing geometry as a quick ugly hack
 1.1.19  posters that are too large are stripped of profiles
 1.1.20  posters are made compatible by reducing quality instead of geometry
+1.1.21  language is no longer ignored when tv scraping

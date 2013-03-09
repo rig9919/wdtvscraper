@@ -12,7 +12,7 @@ from tv_series import LocalSeries, LocalEpisode
 import common
 import build_xml
 
-__version__ = '1.1.20'
+__version__ = '1.1.21'
 
 
 def main():
@@ -71,7 +71,8 @@ def main():
     # if user specified a tv path, process tv shows
     if args.tv_path:
         args.tv_path = os.path.join(os.getcwd(), args.tv_path)
-        process_tv(args.tv_path, args.quiet, args.force_overwrite)
+        process_tv(args.tv_path, args.quiet, args.force_overwrite,
+                   args.language)
 
 
 def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite,
@@ -174,7 +175,9 @@ def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite
     os.chdir(orig_path)
 
 
-def process_tv(path, quiet, force_overwrite):
+def process_tv(path, quiet, force_overwrite, language):
+    if not language:
+        language = 'en'
     # process each directory in path
     orig_path = os.getcwd()
     os.chdir(path)
@@ -184,7 +187,7 @@ def process_tv(path, quiet, force_overwrite):
         # assume the directory name is a tv show name and create a
         # LocalSeries object using it
         try:
-            series = LocalSeries(dirname)
+            series = LocalSeries(dirname, language)
         except common.NoSeriesException as e:
             print e
             return
@@ -207,7 +210,7 @@ def process_tv(path, quiet, force_overwrite):
 
             # make a LocalEpisode object using the video's information
             try:
-                episode = LocalEpisode(f, series.seriesname)
+                episode = LocalEpisode(f, series.seriesname, language)
             except common.NoEpisodeException as e:
                 print e
                 continue

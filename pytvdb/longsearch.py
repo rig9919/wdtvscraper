@@ -14,7 +14,6 @@ import re
 sizeRegex = re.compile(r'(\d{1,5})x(\d{1,5})')
 
 searchForFullSeriesUrlPrefix = r'/api/' + settings.apikey + r'/series/'
-searchForFullSeriesUrlSuffix = r'/all/en.zip'
 
 mirrorUrl = r'http://www.thetvdb.com/'
 mirrorPort = '80'
@@ -67,7 +66,8 @@ class LongSeriesData(shortsearch.ShortSeriesData):
     zap2itId = ''
     updatedTime = ''
 
-def buildFullSeriesURL(tvdbId):
+def buildFullSeriesURL(tvdbId, language):
+    searchForFullSeriesUrlSuffix = r'/all/' + language + r'.zip'
     output = searchForFullSeriesUrlPrefix + tvdbId + searchForFullSeriesUrlSuffix
     return output
 
@@ -291,8 +291,8 @@ def getServerTime():
     timeSinceEpoch = timeElement[0].text
     return timeSinceEpoch
 
-def searchForLongSeries(tvdbId):
-    path = buildFullSeriesURL(tvdbId)
+def searchForLongSeries(tvdbId, language):
+    path = buildFullSeriesURL(tvdbId, language)
     params = {}
     response = httphelper.doGetRequest(mirrorUrl, mirrorPort, path, params)
     
@@ -304,7 +304,7 @@ def searchForLongSeries(tvdbId):
     unZipper = unziphelper.unzip()
     unZipper.extract(zipFile, unZipDir)
     
-    seriesXML = os.path.join(unZipDir, 'en.xml')
+    seriesXML = os.path.join(unZipDir, language + '.xml')
     if os.path.isfile(seriesXML):
         seriesXMLFile = open(seriesXML)
         series = XMLToLongSeries(seriesXMLFile)

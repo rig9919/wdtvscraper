@@ -1,5 +1,6 @@
 import os
 import urllib
+import urllib2
 import re
 from pytvdb import shortsearch, longsearch
 import common
@@ -9,10 +10,10 @@ import build_xml
 
 class LocalSeries(object):
 
-    def __init__(self, name):
+    def __init__(self, name, language):
         self.seriesname = name
         match = self.__get_series_match(self.seriesname)
-        self.series_data = self.__get_series_info(match.tvdbId)
+        self.series_data = self.__get_series_info(match.tvdbId, language)
 
     def save_poster(self, destination):
         _save_poster(self.series_data.posterUrl, destination,
@@ -36,12 +37,22 @@ class LocalSeries(object):
                 return series
         raise common.NoSeriesException(self.seriesname)
 
-    def __get_series_info(self, tvdbId):
+    def __get_series_info(self, tvdbId, language):
         '''
         returns information on a series with the id <tvdbId>
         '''
 
-        return longsearch.searchForLongSeries(tvdbId)
+        try:
+            return longsearch.searchForLongSeries(tvdbId, language)
+        except urllib2.HTTPError as e:
+            if e.code == 404:
+                print 'HTTP Error 404:', language, 'is not a valid language.'
+            elif e.code == 504:
+                print 'HTTP Error 504: thetvdb.com is not responding.'
+            elif e.code == 503:
+                print 'HTTP Error 503: thetvdb.com is overloaded.',\
+                      'Try again later.'
+            exit()
 
     def __clean_series_name(self, name, preserve_encoding=True):
         '''
@@ -58,7 +69,7 @@ class LocalSeries(object):
 
 class LocalEpisode(LocalSeries):
 
-    def __init__(self, path, series_name):
+    def __init__(self, path, series_name, language):
         '''
         use episode identification information in <path>'s name to init
 
@@ -74,7 +85,7 @@ class LocalEpisode(LocalSeries):
         # extract the season and episode number from the basename
         self.season_num = int(self.__get_episode_id()['season'])
         self.episode_num = int(self.__get_episode_id()['episode'])
-        super(LocalEpisode, self).__init__(series_name)
+        super(LocalEpisode, self).__init__(series_name, language)
         self.episode_data = self.__get_match(self.series_data.episodes)
 
     def save_poster(self, destination):
@@ -127,8 +138,8 @@ def _save_poster(location, destination, basename, max_size):
     urllib.urlretrieve(location, destination)
     while os.path.getsize(destination) > max_size:
         size = os.path.getsize(destination)
-        print 'Size >', str(max_size/1024) + 'K', 'reducing quality by 10%:',\
-              basename, '==', str(size/1024) + 'K'
+        print 'Poster size (' + str(size/1024) + 'K)', 'over 40K,',\
+              'reducing quality by 10%.'
         r = os.system('convert -strip "' + destination + '" -quality 90% ' +
                        'JPEG:"' + destination + '"')
         if r or os.path.getsize(destination) == size:
