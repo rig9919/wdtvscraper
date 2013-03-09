@@ -23,7 +23,7 @@ overview will be in and for deciding which title and poster to use.
 usage: scraper.py [options] -m movie-path
        scraper.py [options] -t tv-path
 
-Scrape themoviedb.org for metadata of movies and tv series stored on a WDTV
+Scrape themoviedb.org and thetvdb.com for metadata of movies and tv series stored on a WDTV
 device.
 
 requirements:
