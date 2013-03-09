@@ -20,26 +20,37 @@ them. The language and country options are for controlling what language the
 overview will be in and for deciding which title and poster to use.
 
 <pre>
-usage: scraper.py [options] [-m movie-path] [-t tv-path]
+usage: scraper.py [options] -m movie-path
+       scraper.py [options] -t tv-path
 
-Scrape themoviedb.org for metadata of movies stored on a WDTV device.
+Scrape themoviedb.org for metadata of movies and tv series stored on a WDTV
+device.
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -V, --version         show program's version number and exit
-  -q, --quiet
-  -i, --interactive
-  -T, --thumbnails      Set to include remote thumbnail urls in xml. This may
-                        slow thumbnail loading.
-  -l LN, --language LN  Where LN is a language code from ISO 639-1. Common
-                        codes include en/de/nl/es/it/fr/pl
-  -c CN, --country CN   Where CN is a country code from ISO 3166-1 alpha-2.
-                        Common codes include us/gb/de/nl/it/fr/pl
-  -a, --assume          Assume match on 1 result. Not recommended This can
-                        lead to mismatches.
-  -d, --debug
+requirements:
+  at least one is required
+
   -m , --movie-path     The path to the directory containing your movie files.
   -t , --tv-path        The path to the directory containing your tv series
                         directories.
- 
+
+global options:
+  -l LN, --language LN  Where LN is a language code from ISO 639-1. Common
+                        codes include en/de/nl/es/it/fr/pl
+  -q, --quiet           Suppress unimportant messages.
+  -f, --force-overwrite
+                        Force overwrite of metadata and poster files.
+
+movie scraping options:
+  -c CN, --country CN   Where CN is a country code from ISO 3166-1 alpha-2.
+                        Common codes include us/gb/de/nl/it/fr/pl
+  -i, --interactive
+  -a, --assume          Assume match on 1 result. Not recommended. This can
+                        lead to mismatches.
+  -T, --thumbnails      Set to include remote thumbnail urls in xml. This may
+                        slow thumbnail loading.
+
+informational arguments:
+  -V, --version         show program's version number and exit
+  -h, --help
+
 </pre>

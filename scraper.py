@@ -12,7 +12,7 @@ from tv_series import LocalSeries, LocalEpisode
 import common
 import build_xml
 
-__version__ = '1.1.21'
+__version__ = '1.1.22'
 
 
 def main():
@@ -23,38 +23,44 @@ def main():
         print 'Warning: Check your distros repository for PIL.'
         print 'Warning: Continuing without ability to preview posters.'
 
-    parser = argparse.ArgumentParser(prog='scraper.py',
+    parser = argparse.ArgumentParser(prog='scraper.py', add_help=False,
                        usage='%(prog)s [options] -m movie-path\n'
                       '       %(prog)s [options] -t tv-path',
                                      description='Scrape themoviedb.org for '
-                                     'metadata of movies stored on a WDTV '
-                                     'device.')
-    parser.add_argument('-V', '--version', action='version',
-                        version=__version__)
-    parser.add_argument('-q', '--quiet', action='store_true',
-                        help='Suppress unimportant messages.')
-    parser.add_argument('-i', '--interactive', action='store_true')
-    parser.add_argument('-T', '--thumbnails', action='store_true',
-                        help='Set to include remote thumbnail urls in xml. '
-                             'This may slow thumbnail loading.')
-    parser.add_argument('-l', '--language', default='', metavar='LN',
+                                     'metadata of movies and tv series stored'
+                                     ' on a WDTV device.')
+    required_args = parser.add_argument_group('requirements',
+                                              'at least one is required')
+    required_args.add_argument('-m', '--movie-path', default='', metavar='',
+                         help='The path to the directory containing your '
+                              'movie files.')
+    required_args.add_argument('-t', '--tv-path', default='', metavar='',
+                        help='The path to the directory containing your tv '
+                             'series directories.')
+    global_opts = parser.add_argument_group('global options')
+    global_opts.add_argument('-l', '--language', default='', metavar='LN',
                         help='Where LN is a language code from ISO 639-1. '
                              'Common codes include en/de/nl/es/it/fr/pl')
-    parser.add_argument('-c', '--country', default='', metavar='CN',
+    global_opts.add_argument('-q', '--quiet', action='store_true',
+                        help='Suppress unimportant messages.')
+    global_opts.add_argument('-f', '--force-overwrite', action='store_true',
+                        help='Force overwrite of metadata and poster files.')
+    movie_opts = parser.add_argument_group('movie scraping options')
+    movie_opts.add_argument('-c', '--country', default='', metavar='CN',
                         help='Where CN is a country code from '
                              'ISO 3166-1 alpha-2. '
                              'Common codes include us/gb/de/nl/it/fr/pl')
-    parser.add_argument('-a', '--assume', action='store_true',
-                        help='Assume match on 1 result. Not recommended '
+    movie_opts.add_argument('-i', '--interactive', action='store_true')
+    movie_opts.add_argument('-a', '--assume', action='store_true',
+                        help='Assume match on 1 result. Not recommended. '
                              'This can lead to mismatches.')
-    parser.add_argument('-f', '--force-overwrite', action='store_true',
-                        help='Force overwrite of metadata and poster files.')
-    parser.add_argument('-m', '--movie-path', default='', metavar='',
-                         help='The path to the directory containing your '
-                              'movie files.')
-    parser.add_argument('-t', '--tv-path', default='', metavar='',
-                        help='The path to the directory containing your tv '
-                             'series directories.')
+    movie_opts.add_argument('-T', '--thumbnails', action='store_true',
+                        help='Set to include remote thumbnail urls in xml. '
+                             'This may slow thumbnail loading.')
+    info_opts = parser.add_argument_group('informational arguments')
+    info_opts.add_argument('-V', '--version', action='version',
+                        version=__version__)
+    info_opts.add_argument('-h', '--help', action='help')
     args = parser.parse_args()
 
     # if user didn't specify a tv path or movie path, tell them
