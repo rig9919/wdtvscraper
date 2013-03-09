@@ -12,7 +12,7 @@ from tv_series import LocalSeries, LocalEpisode
 import common
 import build_xml
 
-__version__ = '1.1.22'
+__version__ = '1.1.23'
 
 
 def main():
@@ -26,9 +26,9 @@ def main():
     parser = argparse.ArgumentParser(prog='scraper.py', add_help=False,
                        usage='%(prog)s [options] -m movie-path\n'
                       '       %(prog)s [options] -t tv-path',
-                                     description='Scrape themoviedb.org for '
-                                     'metadata of movies and tv series stored'
-                                     ' on a WDTV device.')
+                                     description='Scrape themoviedb.org and'
+                                     ' thetvdb.com for metadata of movies and'
+                                     ' tv series stored on a WDTV device.')
     required_args = parser.add_argument_group('requirements',
                                               'at least one is required')
     required_args.add_argument('-m', '--movie-path', default='', metavar='',
