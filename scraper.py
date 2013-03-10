@@ -12,7 +12,7 @@ from tv_series import LocalSeries, LocalEpisode
 import common
 import build_xml
 
-__version__ = '1.1.27'
+__version__ = '1.1.28'
 
 
 def main():
@@ -23,7 +23,7 @@ def main():
         print 'Warning: Check your distros repository for PIL.'
         print 'Warning: Continuing without ability to preview posters.'
 
-    parser = argparse.ArgumentParser(prog='scraper.py', add_help=False,
+    parser = argparse.ArgumentParser(prog='wdtvscraper', add_help=False,
                        usage='%(prog)s [options] -m movie-path\n'
                       '       %(prog)s [options] -t tv-path',
                                      description='Scrape themoviedb.org and'
@@ -229,7 +229,7 @@ def process_tv(path, quiet, force_overwrite, language):
                 os.path.isfile(path + '/' + episode.basename + '.xml') and
                 (not force_overwrite)):
                 print 'Skipped poster/metadata:', \
-                      path + '/' + episode.basename + ':', \
+                      path + episode.basename + ':', \
                       '.metathumb and .xml already exist'
                 continue
 

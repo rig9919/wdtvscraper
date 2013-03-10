@@ -47,3 +47,4 @@
 1.1.25  series data is no longer retrieved during episode retrieval
 1.1.26  --force-overwrite option is no longer ignored when scraping movies
 1.1.27  beginning preparation for packaging
+1.1.28  renamed script to wdtvscraper and fixed a typo
