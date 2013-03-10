@@ -12,7 +12,7 @@ from tv_series import LocalSeries, LocalEpisode
 import common
 import build_xml
 
-__version__ = '1.1.25'
+__version__ = '1.1.26'
 
 
 def main():
@@ -151,7 +151,8 @@ def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite
                       videofile.tmdb_data.full_title()
 
             # deal with poster
-            if os.path.isfile(videofile.basename + '.metathumb'):
+            if (os.path.isfile(videofile.basename + '.metathumb')
+               and not force_overwrite):
                 print 'Skipped poster:', videofile.basename + ':', \
                       '.metathumb already exists'
             else:
@@ -169,7 +170,8 @@ def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite
                     print 'Skipped poster:', videofile.basename, ': n/a'
 
             # deal with metadata
-            if os.path.isfile(videofile.basename + '.xml'):
+            if (os.path.isfile(videofile.basename + '.xml')
+               and not force_overwrite):
                 print 'Skipped metadata:', videofile.basename + ':', \
                       '.xml already exists'
             else:
