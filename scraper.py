@@ -12,7 +12,7 @@ from tv_series import LocalSeries, LocalEpisode
 import common
 import build_xml
 
-__version__ = '1.1.24'
+__version__ = '1.1.25'
 
 
 def main():
@@ -216,7 +216,7 @@ def process_tv(path, quiet, force_overwrite, language):
 
             # make a LocalEpisode object using the video's information
             try:
-                episode = LocalEpisode(f, series.seriesname, language)
+                episode = LocalEpisode(f, series.series_data)
             except common.NoEpisodeException as e:
                 print e
                 continue

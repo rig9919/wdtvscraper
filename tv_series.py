@@ -26,6 +26,9 @@ class LocalSeries(object):
         '''
 
         base_results = shortsearch.searchForShortSeries(name)
+        for s in base_results:
+            print s.name
+		
         for series in base_results:
             # check if unicode titles match
             if (self.__clean_series_name(series.name).lower() ==
@@ -67,15 +70,16 @@ class LocalSeries(object):
         return ' '.join(words)
 
 
-class LocalEpisode(LocalSeries):
+class LocalEpisode(object):
 
-    def __init__(self, path, series_name, language):
+    def __init__(self, path, series_data):
         '''
         use episode identification information in <path>'s name to init
 
         path: path to target episode file
         '''
 
+        self.series_data = series_data
         # split pathname into useful things upon creation
         self.__abspath = os.path.abspath(path)
         self.__dirpath = os.path.split(self.__abspath)[0]
@@ -85,7 +89,7 @@ class LocalEpisode(LocalSeries):
         # extract the season and episode number from the basename
         self.season_num = int(self.__get_episode_id()['season'])
         self.episode_num = int(self.__get_episode_id()['episode'])
-        super(LocalEpisode, self).__init__(series_name, language)
+        # retrieve episode data
         self.episode_data = self.__get_match(self.series_data.episodes)
 
     def save_poster(self, destination):
