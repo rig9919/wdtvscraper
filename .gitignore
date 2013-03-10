@@ -6,3 +6,5 @@ lastchange.sh
 updateversion.sh
 commit.sh
 printdocs.sh
+description-pak
+doc-pak
