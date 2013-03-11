@@ -8,3 +8,4 @@ commit.sh
 printdocs.sh
 description-pak
 doc-pak
+*.patch
