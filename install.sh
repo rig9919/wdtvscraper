@@ -5,5 +5,5 @@ if [ ! -d "$INSTALL_DIR" ]; then
 	mkdir "$INSTALL_DIR"
 fi
 
-cp -r *.py pytmdb3 pytvdb "$INSTALL_DIR"
+cp -r ./src/*.py ./src/pytmdb3 ./src/pytvdb "$INSTALL_DIR"
 ln -s "$INSTALL_DIR/scraper.py" "$BINARY_DIR/wdtvscraper"
