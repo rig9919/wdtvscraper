@@ -15,7 +15,7 @@ sizeRegex = re.compile(r'(\d{1,5})x(\d{1,5})')
 
 searchForFullSeriesUrlPrefix = r'/api/' + settings.apikey + r'/series/'
 
-mirrorUrl = r'http://www.thetvdb.com/'
+mirrorUrl = r'http://thetvdb.com/'
 mirrorPort = '80'
 
 serverTimePath = r'api/Updates.php'
@@ -151,6 +151,8 @@ def XMLToLongSeries(seriesXMLFile):
             continue
         
         if element.tag == 'Overview':
+            if not output.overview:
+              continue
             output.overview = element.text.splitlines()
             continue
             

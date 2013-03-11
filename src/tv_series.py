@@ -106,7 +106,6 @@ class LocalEpisode(object):
         return any episode that matches
         a match is defined as anything that has same season and episode numbers
         '''
-
         for episode in episode_list:
             if (int(episode.seasonNumber) == self.season_num
                 and int(episode.episodeNumber) == self.episode_num):
@@ -117,27 +116,30 @@ class LocalEpisode(object):
         '''
         returns a dict containing season number and episode number of object
         '''
-
-        if re.search('S\d\dE\d\d', self.basename, re.IGNORECASE):
-            season = re.search('(S(?P<season>\d\d)E\d\d)', self.basename,
+        if re.search('S\d+E\d+', re.escape(self.basename), re.IGNORECASE):
+            season = re.search('(S(?P<season>\d+)E\d+)', re.escape(self.basename),
                                re.IGNORECASE).group('season')
             # must use findall because sometimes files may consist of two episodes
             # such as star-trek-deep-space-nine-s04e01-s04e02.mkv
             # always use first episode number in these cases
-            episode = re.findall('(S\d\dE(?P<episode>\d\d))', self.basename,
+            episode = re.findall('(S\d+E(?P<episode>\d+))', re.escape(self.basename),
                                  re.IGNORECASE)[0][1]
-        elif re.search('\d+(x|X)\d+', self.basename, re.IGNORECASE):
-            season = re.search('(?P<season>\d+)(x|X)\d+', self.basename,
+        elif re.search('\d+(x|X)\d+', re.escape(self.basename), re.IGNORECASE):
+            season = re.search('(?P<season>\d+)(x|X)\d+', re.escape(self.basename),
                                re.IGNORECASE).group('season')
-            episode = re.findall('\d+(x|X)(?P<episode>\d+)', self.basename,
+            episode = re.findall('\d+(x|X)(?P<episode>\d+)', re.escape(self.basename),
                                  re.IGNORECASE)[0][1]
         else:
-            season = ''
-            episode = ''
+            season = '0'
+            episode = '0'
         return {'season': season, 'episode': episode}
 
 
 def _save_poster(location, destination, basename, max_size):
+    # If there is no art, carry on
+    if location == '':
+        print "No poster available: %s" % (basename)
+        return
     max_size = max_size*1024
     urllib.urlretrieve(location, destination)
     while os.path.getsize(destination) > max_size:

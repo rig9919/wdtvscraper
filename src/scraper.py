@@ -12,7 +12,7 @@ from tv_series import LocalSeries, LocalEpisode
 import common
 import build_xml
 
-__version__ = '1.1.29'
+__version__ = '1.1.30'
 
 
 def main():
@@ -98,7 +98,7 @@ def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite
     orig_path = os.getcwd()
     os.chdir(path)
     for f in os.listdir('./'):
-        if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|\.mov|\.dat|\.tp|'
+        if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|\.m4v|\.mov|\.dat|\.tp|'
                          '\.ts|\.m2t|\.m2ts|\.flv|.mp4)$', f):
             # not a format wdtv supports
             continue
@@ -205,13 +205,13 @@ def process_tv(path, quiet, force_overwrite, language):
             print 'Found series:', series.seriesname
 
         try:
-            series.save_poster(path + 'aaaa-series-cover.metathumb')
+            series.save_poster(path + '00aa-series-cover.metathumb')
         except IOError as e:
             print e
 
         # process each video in the directory
         for f in os.listdir(path):
-            if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|'
+            if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|\.m4v|'
                              '\.mov|\.dat|\.tp|\.ts|\.m2t|\.m2ts|'
                              '\.flv|.mp4)$', f):
                 continue

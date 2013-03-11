@@ -7,7 +7,7 @@ Created on Feb 19, 2010
 from xml.etree import ElementTree
 from pytvdb import httphelper
 
-mirrorUrl = r'http://www.thetvdb.com/'
+mirrorUrl = r'http://thetvdb.com/'
 mirrorPort = '80'
 
 searchForShortSeriesPath = 'api/GetSeries.php'

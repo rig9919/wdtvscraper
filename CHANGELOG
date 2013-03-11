@@ -49,3 +49,4 @@
 1.1.27  beginning preparation for packaging
 1.1.28  renamed script to wdtvscraper and fixed a typo
 1.1.29  updated readme
+1.1.30  tv series titles containing special characters are handled properly
