@@ -26,8 +26,9 @@ class LocalSeries(object):
         '''
 
         base_results = shortsearch.searchForShortSeries(name)
-        for s in base_results:
-            print s.name
+        #TODO: if more than one result, let user choose
+        #for s in base_results:
+        #    print s.name
 		
         for series in base_results:
             # check if unicode titles match

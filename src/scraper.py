@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import sys
 import os
 import re
 import argparse
@@ -12,16 +13,17 @@ from tv_series import LocalSeries, LocalEpisode
 import common
 import build_xml
 
-__version__ = '1.1.30'
+__version__ = '1.1.31'
 
 
 def main():
     try:
         imp.find_module('PIL')
     except ImportError:
-        print 'Warning: Python Imaging Library is required.'
-        print 'Warning: Check your distros repository for PIL.'
-        print 'Warning: Continuing without ability to preview posters.'
+        print >> sys.stderr, 'Warning: Python Imaging Library is required.'
+        print >> sys.stderr, 'Warning: Check your distros repository for PIL.'
+        print >> sys.stderr, 'Warning: Continuing without ability to preview '\
+                             'posters.'
 
     parser = argparse.ArgumentParser(prog='wdtvscraper', add_help=False,
                        usage='%(prog)s [options] -m movie-path\n'
@@ -92,7 +94,8 @@ def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite
             tmdb3.set_locale(language=language, fallthrough=True)
         if country:
             tmdb3.set_locale(country=country, fallthrough=True)
-    print 'Using locale: ' + str(tmdb3.get_locale())
+    if not quiet:
+        print 'Using locale: ' + str(tmdb3.get_locale())
 
     # change to the movie path and process each movie file
     orig_path = os.getcwd()
@@ -107,8 +110,9 @@ def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite
         if (os.path.isfile(videofile.basename + '.metathumb') and
             os.path.isfile(videofile.basename + '.xml') and (not force_overwrite)):
             # metathumb and xml already exists for this movie
-            print 'Skipped poster/metadata:', videofile.basename + ':',  \
-                  '.metathumb and .xml already exist'
+            print >> sys.stderr, 'Skipped poster/metadata:',\
+                                  videofile.basename + ':',  \
+                                  '.metathumb and .xml already exist'
             continue
         # find a matching title from tmdb
         try:
@@ -116,9 +120,9 @@ def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite
             if videofile.is_assumed:
                 print 'Assumed:', videofile.basename
         except common.NonzeroMatchlistNoMatches as e:
-            print e
+            print >> sys.stderr, e
         except common.ZeroMatchlist as e:
-            print e
+            print >> sys.stderr, e
 
         # if no matches are found, either ask user for help or continue
         if not videofile.tmdb_data:
@@ -153,8 +157,9 @@ def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite
             # deal with poster
             if (os.path.isfile(videofile.basename + '.metathumb')
                and not force_overwrite):
-                print 'Skipped poster:', videofile.basename + ':', \
-                      '.metathumb already exists'
+                print >> sys.stderr, 'Skipped poster:', \
+                                      videofile.basename + ':', \
+                                      '.metathumb already exists'
             else:
             # if there's any posters available, download w342 size
             # preferably. otherwise, get the smallest available.
@@ -167,18 +172,20 @@ def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite
                                          videofile.tmdb_data.poster.sizes()[0],
                                          videofile.basename)
                 else:
-                    print 'Skipped poster:', videofile.basename, ': n/a'
+                    print >> sys.stderr, 'Skipped poster:', \
+                                          videofile.basename, ': n/a'
 
             # deal with metadata
             if (os.path.isfile(videofile.basename + '.xml')
                and not force_overwrite):
-                print 'Skipped metadata:', videofile.basename + ':', \
-                      '.xml already exists'
+                print >> sys.stderr, 'Skipped metadata:', \
+                                      videofile.basename + ':', \
+                                      '.xml already exists'
             else:
                 videofile.tmdb_data.write_metadata(videofile.basename,
                                                    thumbnails)
         else:
-            print 'No movie:', videofile.basename
+            print >> sys.stderr, 'No movie:', videofile.basename
     # go back to original path we started with
     os.chdir(orig_path)
 
@@ -197,7 +204,7 @@ def process_tv(path, quiet, force_overwrite, language):
         try:
             series = LocalSeries(dirname, language)
         except common.NoSeriesException as e:
-            print e
+            print >> sys.stderr, e
             return
             # continue
 
@@ -207,7 +214,7 @@ def process_tv(path, quiet, force_overwrite, language):
         try:
             series.save_poster(path + '00aa-series-cover.metathumb')
         except IOError as e:
-            print e
+            print >> sys.stderr, e
 
         # process each video in the directory
         for f in os.listdir(path):
@@ -220,7 +227,7 @@ def process_tv(path, quiet, force_overwrite, language):
             try:
                 episode = LocalEpisode(f, series.series_data)
             except common.NoEpisodeException as e:
-                print e
+                print >> sys.stderr, e
                 continue
 
             # check to see if a poster and metadata file already exist
@@ -228,9 +235,9 @@ def process_tv(path, quiet, force_overwrite, language):
                 '.metathumb') and
                 os.path.isfile(path + '/' + episode.basename + '.xml') and
                 (not force_overwrite)):
-                print 'Skipped poster/metadata:', \
-                      path + episode.basename + ':', \
-                      '.metathumb and .xml already exist'
+                print  >> sys.stderr, 'Skipped poster/metadata:', \
+                                       path + episode.basename + ':', \
+                                      '.metathumb and .xml already exist'
                 continue
 
             if not quiet:
@@ -245,12 +252,12 @@ def process_tv(path, quiet, force_overwrite, language):
                 episode.save_poster(path + episode.basename +
                                     '.metathumb')
             except IOError as e:
-                print e
+                print >> sys.stderr, e
             try:
                 episode.save_metadata(path + '/' + episode.basename +
                                       '.xml')
             except IOError as e:
-                print e
+                print >> sys.stderr, e
     # go back to original path we started with
     os.chdir(orig_path)
 
