@@ -15,12 +15,14 @@ class LocalSeries(object):
         match = self.__get_series_match(self.seriesname)
         self.series_data = self.__get_series_info(match.tvdbId, language)
 
-    def save_poster(self, destination):
-        poster_qty = _get_all_posters(self.series_data.posterUrl)
-        print 'Posters available: %i' % (poster_qty)
-        _draw_mosaic(poster_qty)
-        #_save_poster(self.series_data.posterUrl, destination,
-        #             self.seriesname, 900)
+    def save_poster(self, destination, interactive):
+        if interactive:
+            print 'Creating image selection palette(s)...'
+            poster_qty = _get_all_posters(self.series_data.posterUrl)
+            _draw_mosaic(poster_qty)
+        else:
+            _save_poster(self.series_data.posterUrl, destination,
+                         self.seriesname, 900)
 
     def __get_series_match(self, name):
         '''
@@ -158,7 +160,6 @@ def _get_all_posters(location):
     try:
         while True:
             location = baseurl + '/' + seriesno + '-' + str(i) + '.' + ext
-            print 'location:', location
             _download_file(location, '/tmp/wdposter' + str(i) + '.' + ext)
             i = i + 1
     except urllib2.HTTPError as e:
@@ -168,7 +169,11 @@ def _draw_mosaic(poster_qty):
     palette = Image.new('RGB', (1000,650))
     draw = ImageDraw.Draw(palette)
     pildir = os.path.dirname(Image.__file__)
-    font = ImageFont.load(pildir + '/ter28-16.pil')
+    srcdir = os.path.dirname(os.path.realpath(__file__))
+    try:
+        font = ImageFont.load(pildir + '/ter28-16.pil')
+    except:
+        font = ImageFont.load(srcdir + '/ter28-16.pil')
     i = 1
     x = 0
     y = 0

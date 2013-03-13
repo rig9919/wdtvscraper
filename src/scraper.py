@@ -13,7 +13,7 @@ from tv_series import LocalSeries, LocalEpisode
 import common
 import build_xml
 
-__version__ = '1.2.1'
+__version__ = '1.2.2'
 
 
 def main():
@@ -79,8 +79,8 @@ def main():
     # if user specified a tv path, process tv shows
     if args.tv_path:
         args.tv_path = os.path.join(os.getcwd(), args.tv_path)
-        process_tv(args.tv_path, args.quiet, args.force_overwrite,
-                   args.language)
+        process_tv(args.tv_path, args.interactive, args.quiet,
+                   args.force_overwrite, args.language)
 
 
 def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite,
@@ -190,7 +190,7 @@ def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite
     os.chdir(orig_path)
 
 
-def process_tv(path, quiet, force_overwrite, language):
+def process_tv(path, interactive, quiet, force_overwrite, language):
     if not language:
         language = 'en'
     # process each directory in path
@@ -212,7 +212,8 @@ def process_tv(path, quiet, force_overwrite, language):
             print 'Found series:', series.seriesname
 
         try:
-            series.save_poster(path + '00aa-series-cover.metathumb')
+            series.save_poster(path + '00aa-series-cover.metathumb',
+                               interactive)
         except IOError as e:
             print >> sys.stderr, e
 
