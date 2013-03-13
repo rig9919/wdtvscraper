@@ -51,3 +51,4 @@
 1.1.29  updated readme
 1.1.30  tv series titles containing special characters are handled properly
 1.1.31  error messages are written to stderr
+1.2.1   mosaic of available tv series posters is shown

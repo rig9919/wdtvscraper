@@ -2,11 +2,11 @@ import os
 import urllib
 import urllib2
 import re
+from PIL import Image, ImageDraw, ImageFont
 from pytvdb import shortsearch, longsearch
 import common
 from common import remove_punc
 import build_xml
-
 
 class LocalSeries(object):
 
@@ -16,8 +16,11 @@ class LocalSeries(object):
         self.series_data = self.__get_series_info(match.tvdbId, language)
 
     def save_poster(self, destination):
-        _save_poster(self.series_data.posterUrl, destination,
-                     self.seriesname, 900)
+        poster_qty = _get_all_posters(self.series_data.posterUrl)
+        print 'Posters available: %i' % (poster_qty)
+        _draw_mosaic(poster_qty)
+        #_save_poster(self.series_data.posterUrl, destination,
+        #             self.seriesname, 900)
 
     def __get_series_match(self, name):
         '''
@@ -135,6 +138,57 @@ class LocalEpisode(object):
             episode = '0'
         return {'season': season, 'episode': episode}
 
+def _get_all_posters(location):
+    '''
+    download all available posters that share series with the one at location
+    return number of available posters
+    '''
+
+    # delete all temporary wdposters so series arent accidentally mixed
+    filelist = os.listdir('/tmp')
+    for f in filelist:
+        if f.startswith('wdposter'):
+            os.remove('/tmp/' + f)
+
+    baseurl = '/'.join(location.split('/')[:-1])
+    filename = location.split('/')[-1]
+    basename, ext = filename.split('.')
+    seriesno, posterno = basename.split('-')
+    i = 1
+    try:
+        while True:
+            location = baseurl + '/' + seriesno + '-' + str(i) + '.' + ext
+            print 'location:', location
+            _download_file(location, '/tmp/wdposter' + str(i) + '.' + ext)
+            i = i + 1
+    except urllib2.HTTPError as e:
+        return i-1
+
+def _draw_mosaic(poster_qty):
+    palette = Image.new('RGB', (1000,650))
+    draw = ImageDraw.Draw(palette)
+    pildir = os.path.dirname(Image.__file__)
+    font = ImageFont.load(pildir + '/ter28-16.pil')
+    i = 1
+    x = 0
+    y = 0
+    while i <= poster_qty:
+        poster = Image.open('/tmp/wdposter' + str(i) + '.jpg')
+        poster = poster.resize((200,290), Image.ANTIALIAS)
+        palette.paste(poster, (x,y))   
+        draw.text((x+90, y+290), str(i), fill=(255,255,255), font=font)
+        i = i + 1
+        x = x + 200
+        if x > 800:
+            x = 0
+            y = y + 325
+        if y > 325 and i < poster_qty:
+            palette.show()
+            x = 0
+            y = 0
+            palette = Image.new('RGB', (1000,650))
+            draw = ImageDraw.Draw(palette)
+    palette.show()
 
 def _save_poster(location, destination, basename, max_size):
     # If there is no art, carry on
@@ -152,4 +206,8 @@ def _save_poster(location, destination, basename, max_size):
         if r or os.path.getsize(destination) == size:
             raise IOError('Could not reduce poster size.')
 
+def _download_file(location, destination):
+    remote = urllib2.urlopen(location)
+    local = open(destination, 'wb')
+    local.write(remote.read())
 
