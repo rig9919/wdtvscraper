@@ -1,4 +1,5 @@
 import re
+import sys
 import unicodedata
 
 class NoSeriesException(Exception):
@@ -7,7 +8,7 @@ class NoSeriesException(Exception):
         self.name = name
 
     def __str__(self):
-        return 'No series: %s' % (self.name)
+        return '%s: matches no series' % (self.name)
 
 
 class NoEpisodeException(Exception):
@@ -16,7 +17,7 @@ class NoEpisodeException(Exception):
         self.name = name
 
     def __str__(self):
-        return 'No episode: %s' % (self.name)
+        return '%s: matches no episodes' % (self.name)
 
 
 class NonzeroMatchlistNoMatches(Exception):
@@ -26,7 +27,8 @@ class NonzeroMatchlistNoMatches(Exception):
         self.results = str(results)
 
     def __str__(self):
-        return 'No matches: %s: %s results' % (self.name, self.results)
+        return ('%s: %s results found but none matched'
+                % (self.name, self.results))
 
 
 class ZeroMatchlist(Exception):
@@ -35,8 +37,10 @@ class ZeroMatchlist(Exception):
         self.name = name
 
     def __str__(self):
-        return 'No results: %s' % (self.name)
+        return '%s: no results' % (self.name)
 
+def notify(identity, message, stream=sys.stdout):
+    print >> stream, identity + ':', message
 
 def remove_punc(name, preserve_encoding=True):
     '''

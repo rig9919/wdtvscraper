@@ -1,11 +1,12 @@
 import os
+import sys
 import urllib
 import urllib2
 import re
 from PIL import Image, ImageDraw, ImageFont
 from pytvdb import shortsearch, longsearch
 import common
-from common import remove_punc, get_input
+from common import remove_punc, get_input, notify
 import build_xml
 
 class LocalSeries(object):
@@ -23,6 +24,8 @@ class LocalSeries(object):
             choice = get_input('Choose an image to use for series poster: ',
                                '(^$)|(^(Q|q)$)|(^\d{1,2}$)',
                                poster_qty)
+            if re.match('^(Q|q)$', choice):
+                exit()
             posterUrl = re.sub('(http://.*)-(\d{1,2})\.(.{3,4})',
                                '\\1-' + choice + '.\\3',
                                self.series_data.posterUrl)
@@ -205,18 +208,21 @@ def _draw_mosaic(poster_qty):
 def _save_poster(location, destination, basename, max_size):
     # If there is no art, carry on
     if location == '':
-        print "No poster available: %s" % (basename)
+        notify(basename, 'no image available')
         return
     max_size = max_size*1024
     urllib.urlretrieve(location, destination)
+    is_reduced = False
     while os.path.getsize(destination) > max_size:
         size = os.path.getsize(destination)
-        print 'Poster size (' + str(size/1024) + 'K)', 'over 40K,',\
-              'reducing quality by 10%.'
         r = os.system('convert -strip "' + destination + '" -quality 90% ' +
                        'JPEG:"' + destination + '"')
         if r or os.path.getsize(destination) == size:
-            raise IOError('Could not reduce poster size.')
+            is_reduced = True
+            break
+    if is_reduced:
+        notify(basename, 'image quality reduced and useless data removed',
+               sys.stderr)
 
 def _download_file(location, destination):
     remote = urllib2.urlopen(location)

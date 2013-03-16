@@ -4,27 +4,20 @@ import sys
 import os
 import re
 import argparse
-import imp
+import PIL
 import urllib
 from pytmdb3 import tmdb3
 import movie_extensions
 from local_video import LocalVideo
 from tv_series import LocalSeries, LocalEpisode
+from common import notify
 import common
 import build_xml
 
-__version__ = '1.2.3'
+__version__ = '1.2.4'
 
 
 def main():
-    try:
-        imp.find_module('PIL')
-    except ImportError:
-        print >> sys.stderr, 'Warning: Python Imaging Library is required.'
-        print >> sys.stderr, 'Warning: Check your distros repository for PIL.'
-        print >> sys.stderr, 'Warning: Continuing without ability to preview '\
-                             'posters.'
-
     parser = argparse.ArgumentParser(prog='wdtvscraper', add_help=False,
                        usage='%(prog)s [options] -m movie-path\n'
                       '       %(prog)s [options] -t tv-path',
@@ -110,15 +103,13 @@ def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite
         if (os.path.isfile(videofile.basename + '.metathumb') and
             os.path.isfile(videofile.basename + '.xml') and (not force_overwrite)):
             # metathumb and xml already exists for this movie
-            print >> sys.stderr, 'Skipped poster/metadata:',\
-                                  videofile.basename + ':',  \
-                                  '.metathumb and .xml already exist'
+            notify(videofile.basename, 'skipped poster/metadata', sys.stderr)
             continue
         # find a matching title from tmdb
         try:
             videofile.get_match(assume)
             if videofile.is_assumed:
-                print 'Assumed:', videofile.basename
+                notify(videofile.basename, 'assumed only result matched')
         except common.NonzeroMatchlistNoMatches as e:
             print >> sys.stderr, e
         except common.ZeroMatchlist as e:
@@ -151,15 +142,13 @@ def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite
 
         if videofile.tmdb_data:
             if not quiet:
-                print 'Found movie:', videofile.basename, '==', \
-                      videofile.tmdb_data.full_title()
+                notify(videofile.basename,
+                       'matches ' + videofile.tmdb_data.full_title())
 
             # deal with poster
             if (os.path.isfile(videofile.basename + '.metathumb')
                and not force_overwrite):
-                print >> sys.stderr, 'Skipped poster:', \
-                                      videofile.basename + ':', \
-                                      '.metathumb already exists'
+                notify(videofile.basename, 'skipped poster', sys.stderr)
             else:
             # if there's any posters available, download w342 size
             # preferably. otherwise, get the smallest available.
@@ -172,25 +161,24 @@ def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite
                                          videofile.tmdb_data.poster.sizes()[0],
                                          videofile.basename)
                 else:
-                    print >> sys.stderr, 'Skipped poster:', \
-                                          videofile.basename, ': n/a'
+                    notify(videofile.basename,
+                           'skipped poster, none available', sys.stderr)
 
             # deal with metadata
             if (os.path.isfile(videofile.basename + '.xml')
                and not force_overwrite):
-                print >> sys.stderr, 'Skipped metadata:', \
-                                      videofile.basename + ':', \
-                                      '.xml already exists'
+                notify(videofile.basename, 'skipped metadata', sys.stderr)
             else:
                 videofile.tmdb_data.write_metadata(videofile.basename,
                                                    thumbnails)
         else:
-            print >> sys.stderr, 'No movie:', videofile.basename
+            notify(videofile.basename, 'not found', sys.stderr)
     # go back to original path we started with
     os.chdir(orig_path)
 
 
 def process_tv(path, interactive, quiet, force_overwrite, language):
+    series_cover = path + '/00aa-series-cover.metathumb'
     if not language:
         language = 'en'
     # process each directory in path
@@ -209,11 +197,13 @@ def process_tv(path, interactive, quiet, force_overwrite, language):
             # continue
 
         if not quiet:
-            print 'Found series:', series.seriesname
+            notify(dirname, 'matches ' + series.series_data.name)
 
         try:
-            series.save_poster(path + '00aa-series-cover.metathumb',
-                               interactive)
+            if os.path.isfile(series_cover) and not force_overwrite:
+                notify(dirname, 'skipped cover', sys.stderr)
+            else:
+                series.save_poster(series_cover, interactive)
         except IOError as e:
             print >> sys.stderr, e
 
@@ -236,21 +226,19 @@ def process_tv(path, interactive, quiet, force_overwrite, language):
                 '.metathumb') and
                 os.path.isfile(path + '/' + episode.basename + '.xml') and
                 (not force_overwrite)):
-                print  >> sys.stderr, 'Skipped poster/metadata:', \
-                                       path + episode.basename + ':', \
-                                      '.metathumb and .xml already exist'
+                notify(episode.basename, 'skipped screenshot/metadata',
+                       sys.stderr)
                 continue
 
             if not quiet:
                 if not episode.episode_data:
                     raise common.NoEpisodeException(episode.basename)
-                print 'Found episode:', episode.basename, '==', \
-                      episode.episode_data.name
+                notify(episode.basename, 'matches ' + episode.episode_data.name)
 
             # these are separate try blocks because if one fails
             # the other should still be completed
             try:
-                episode.save_poster(path + episode.basename +
+                episode.save_poster(path + '/' + episode.basename +
                                     '.metathumb')
             except IOError as e:
                 print >> sys.stderr, e
