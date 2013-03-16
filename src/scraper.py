@@ -14,7 +14,7 @@ from common import notify
 import common
 import build_xml
 
-__version__ = '1.2.4.1'
+__version__ = '1.2.4.2'
 
 
 def main():

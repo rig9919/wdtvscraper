@@ -12,14 +12,14 @@ Fetching movie information:
 ---------------------------
 Run in non-interactive mode while supressing messages of success to get the 
 metadata of easy titles and display any titles that failed: 
-    wdtvscraper --quiet --movie-path /path/to/movies 
+```wdtvscraper --quiet --movie-path /path/to/movies```
 
 Possible reasons of failure are misspellings or having the wrong year attached 
 to a movie's filename. 
 
 If everything is correct, run in interactive-mode so when a title couldn't be 
 found it gives you some options. 
-    wdtvscraper --interactive --movie-path /path/to/movies 
+```wdtvscraper --interactive --movie-path /path/to/movies```
 
 Fetching tv series information:
 -------------------------------
@@ -29,11 +29,11 @@ series it finds. (this could change in the future)
 
 You must supply the directory of the tv series itself, not a parent directory 
 of all your tv series directories. 
-    wdtvscraper --tv-path /path/to/tvshows/<seriesname> 
+```wdtvscraper --tv-path /path/to/tvshows/<seriesname>```
 
 To get the same functionality as if specifying the tvshows directory directly 
 use a loop for now. Below is an example for bash users. 
-    for d in /path/to/tvshows/*; do wdtvscraper --tv-path "$d"; done; 
+```for d in /path/to/tvshows/*; do wdtvscraper --tv-path "$d"; done;```
 
 Assume option: 
 --------------
