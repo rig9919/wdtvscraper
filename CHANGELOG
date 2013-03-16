@@ -53,3 +53,4 @@
 1.1.31  error messages are written to stderr
 1.2.1   mosaic of available tv series posters is shown
 1.2.2   interactive switch controls whether selection mosaic is made or not
+1.2.3   user is asked which series cover to be used

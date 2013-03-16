@@ -5,7 +5,7 @@ import re
 from PIL import Image, ImageDraw, ImageFont
 from pytvdb import shortsearch, longsearch
 import common
-from common import remove_punc
+from common import remove_punc, get_input
 import build_xml
 
 class LocalSeries(object):
@@ -20,6 +20,13 @@ class LocalSeries(object):
             print 'Creating image selection palette(s)...'
             poster_qty = _get_all_posters(self.series_data.posterUrl)
             _draw_mosaic(poster_qty)
+            choice = get_input('Choose an image to use for series poster: ',
+                               '(^$)|(^(Q|q)$)|(^\d{1,2}$)',
+                               poster_qty)
+            posterUrl = re.sub('(http://.*)-(\d{1,2})\.(.{3,4})',
+                               '\\1-' + choice + '.\\3',
+                               self.series_data.posterUrl)
+            _save_poster(posterUrl, destination, self.seriesname, 900)
         else:
             _save_poster(self.series_data.posterUrl, destination,
                          self.seriesname, 900)

@@ -13,7 +13,7 @@ from tv_series import LocalSeries, LocalEpisode
 import common
 import build_xml
 
-__version__ = '1.2.2'
+__version__ = '1.2.3'
 
 
 def main():

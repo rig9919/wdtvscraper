@@ -1,7 +1,7 @@
 import os
 import re
 from pytmdb3 import tmdb3
-from common import split_full_title
+from common import split_full_title, get_input
 import common
 
 MAXRESULTS = 20
@@ -17,37 +17,6 @@ def print_possible_match_table(mlist):
         s = unicode(i) + ') ' + item.full_title() + ' # ' + item.overview
         print s[0:80]
         #print str(i) + ')', item.full_title(), '#', item.overview[0:80]
-
-
-def get_input(prompt, valid_choice_pattern, choice_list_length=-1):
-    '''
-    use <prompt> to ask for input from a user
-    validate their input with <valid_choice_pattern> and <choice_list_length>
-
-    prompt: message used to ask user for input
-    valid_choice_pattern: regex used to match user input against
-    choice_list_length: number used validate movie choice because regex
-                        can't match number ranges
-    '''
-
-    while True:
-        try:
-            user_input = raw_input(prompt)
-            if re.match(valid_choice_pattern, user_input):
-                if re.match('\d{1,2}', user_input):
-                    valid_movies = int(re.match('\d{1,2}',
-                                                user_input).group(0))
-                    if valid_movies <= choice_list_length:
-                        return user_input
-                    else:
-                        raise ValueError
-                return user_input
-            else:
-                raise ValueError
-        except (SystemExit, KeyboardInterrupt):
-            exit()
-        except (ValueError, EOFError):
-            print 'invalid choice'
 
 
 class LocalVideo:
