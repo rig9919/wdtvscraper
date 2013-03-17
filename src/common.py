@@ -1,6 +1,12 @@
 import re
+import os
 import sys
+import urllib
 import unicodedata
+from PIL import Image
+from pytmdb3 import tmdb3
+from pytvdb import shortsearch
+
 
 class NoSeriesException(Exception):
 
@@ -122,5 +128,144 @@ def get_input(prompt, valid_choice_pattern, choice_list_length=-1):
         except (SystemExit, KeyboardInterrupt):
             exit()
         except (ValueError, EOFError):
-            print 'invalid choice'
+            notify('error', 'invalid choice')
+
+def print_possible_match_table(mlist, max_results=20):
+    '''
+    print summarized information of everything contained in <mlist>
+
+    list: a list of possible matches gotten from the search results
+    '''
+
+    if not mlist:
+        print 'no possible matches'
+        return
+
+    for i, item in enumerate(mlist[0:max_results]):
+        if isinstance(item, shortsearch.ShortSeriesData):
+            title = item.name
+            if item.overview:
+                overview = item.overview[0]
+            else:
+                overview = 'no overview available'
+        else:
+            title = item.full_title()
+            overview = item.overview
+        s = unicode(i) + ') ' + title + ' # ' + overview
+        print s[0:80]
+
+def get_chosen_match(basename, results, max_results=20):
+    '''
+    allow user to choose from a list of results that were retrieved with
+       by searching for the object's title
+    '''
+
+    if not results:
+        return
+
+    while True:
+        # display the search results
+        print_possible_match_table(results)
+        if len(results) < max_results:
+            valid_movies = len(results) - 1
+        else:
+            valid_movies = max_results - 1
+
+        # ask user to decide which title matches
+        user_input = get_input('Which title matches ' + basename +
+                              '? (N=none/#m=more detail) ',
+                              '(^$)|(^(N|n)$)|(^(Q|q)$)|(^\d{1,2}(M||m)$)',
+                              valid_movies)
+        # they chose none so return None
+        if re.match('(^$)|(^(N|n)$)', user_input):
+            return
+        # they chose to quit the program
+        elif re.match('^(Q|q)$', user_input):
+            exit()
+        # they want more information on a movie
+        elif re.match('^\d{1,2}(m|M)$', user_input):
+            option = re.search('.$', user_input).group(0)
+            choice = re.search('^\d{1,2}', user_input).group(0)
+            # make sure they picked a valid movie choice
+            if int(choice) < max_results and int(choice) < len(results):
+                item = results[int(choice)]
+            else:
+                # their choice was invalid, start from the top
+                continue
+
+            # show more information if they chose option m
+            if re.match('^(m|M)$', option):
+                # give user a preview of the poster
+                preview_available = False
+                tmp = '/tmp/wdpreview'
+                if os.path.isfile(tmp):
+                    os.remove(tmp)
+                if isinstance(item, tmdb3.Movie):
+                    item.download_poster('w342', tmp)
+                elif isinstance(item, shortsearch.ShortSeriesData):
+                    if item.bannerUrl:
+                        urllib.urlretrieve(item.bannerUrl, tmp)
+                if os.path.isfile(tmp):
+                    preview_available = True
+                    img = Image.open(tmp)
+                    img.show(tmp)
+                    os.remove(tmp)
+
+                # print some summary information
+                if isinstance(item, tmdb3.Movie):
+                    print 'Title:', item.title, '\n' \
+                          'Genres:', item.get_genres(), '\n' \
+                          'Initial Release:', str(item.year()), '\n' \
+                          'Runtime:', str(item.runtime), '\n' \
+                          'IMDB id:', item.imdb, '\n' \
+                          'Overview:', item.overview, '\n' \
+                          'Preview available:', preview_available
+                elif isinstance(item, shortsearch.ShortSeriesData):
+                    if item.overview:
+                        overview = item.overview[0]
+                    else:
+                        overview = 'no overview available'
+                    print 'Title:', item.name, '\n' \
+                          'Airdate:', item.firstAiredDate, '\n' \
+                          'TVDB id:', item.tvdbId, '\n' \
+                          'Overview:', overview, '\n' \
+                          'Preview available:', preview_available
+
+                # ask if this movie matches
+                user_input = get_input('Does this movie match yours? '
+                                       '(yes/No) ',
+                                      '(^$)|(^(Y|y)$)|(^(N|n)$)|(^(Q|q)$)')
+                # they chose yes, return this movie
+                if re.match('^(y|Y)$', user_input):
+                    return item
+                # they chose no, start from the top
+                elif re.match('(^$)|(^(N|n)$)', user_input):
+                    continue
+                # they chose to quit the program
+                elif re.match('^(q|Q)$', user_input):
+                    exit()
+        # they choose a movie from the search results
+        elif re.match('^\d{1,2}$', user_input):
+            choice = int(user_input)
+        break
+
+    # return the movie of their choice if it's valid
+    if int(choice) < len(results):
+        return results[int(choice)]
+    return
+
+def ask_alternative():
+    try:
+        user_typed_title = raw_input('Enter a possible alternative'
+                                     ' title (S=skip): ')
+        if user_typed_title in 'Ss' or not user_typed_title:
+            return
+        elif user_typed_title in 'Qq':
+            exit()
+        return user_typed_title
+    except (SystemExit, KeyboardInterrupt):
+        exit()
+    except (ValueError, EOFError):
+        notify('error', 'invalid choice')
+        return
 

@@ -1,22 +1,9 @@
 import os
 import re
+from PIL import Image
 from pytmdb3 import tmdb3
-from common import split_full_title, get_input
+from common import split_full_title, get_input, print_possible_match_table
 import common
-
-MAXRESULTS = 20
-
-
-def print_possible_match_table(mlist):
-    '''
-    print summarized information of every Movie contained in <mlist>
-
-    mlist: a list of Movies gotten from the search results
-    '''
-    for i, item in enumerate(mlist[0:MAXRESULTS]):
-        s = unicode(i) + ') ' + item.full_title() + ' # ' + item.overview
-        print s[0:80]
-        #print str(i) + ')', item.full_title(), '#', item.overview[0:80]
 
 
 class LocalVideo:
@@ -100,97 +87,4 @@ class LocalVideo:
         raise common.NonzeroMatchlistNoMatches(self.basename,
                                                len(possible_matches))
 
-    def get_chosen_match(self, custom_title=''):
-        '''
-        allow user to choose from a list of results that were retrieved with
-           by searching for the object's title
-        if <custom_title> is used, user chooses from results retrieved by
-           searching for that instead
-        '''
 
-        if custom_title != '':
-            results = tmdb3.searchMovie(custom_title)
-        else:
-            results = tmdb3.searchMovie(self.uni_title)
-
-        while True:
-            # display the search results
-            print_possible_match_table(results)
-            if len(results) < MAXRESULTS:
-                valid_movies = len(results) - 1
-            else:
-                valid_movies = MAXRESULTS - 1
-
-            # ask user to decide which title matches
-            user_input = get_input('Which title matches ' + self.basename +
-                                  '? (N=none/#m=more detail) ',
-                                  '(^$)|(^(N|n)$)|(^(Q|q)$)|(^\d{1,2}(M||m)$)',
-                                  valid_movies)
-            # they chose none so return None
-            if re.match('(^$)|(^(N|n)$)', user_input):
-                return
-            # they chose to quit the program
-            elif re.match('^(Q|q)$', user_input):
-                exit()
-            # they want more information on a movie
-            elif re.match('^\d{1,2}(m|M)$', user_input):
-                option = re.search('.$', user_input).group(0)
-                choice = re.search('^\d{1,2}', user_input).group(0)
-                # make sure they picked a valid movie choice
-                if int(choice) < MAXRESULTS and int(choice) < len(results):
-                    item = results[int(choice)]
-                else:
-                    # their choice was invalid, start from the top
-                    continue
-
-                # show more information if they chose option m
-                if re.match('^(m|M)$', option):
-                    # give user a preview of the poster
-                    try:
-                        tmp = '.scrapertemp'
-                        if os.path.isfile(tmp + '.metathumb'):
-                            os.remove(tmp + '.metathumb')
-                        item.download_poster('w342', tmp)
-                        pil = __import__('PIL', fromlist=['Image'])
-                        img = pil.Image.open(tmp + '.metathumb')
-                        img.show()
-                    except ImportError:
-                        print 'Could not preview poster. PIL is required.'
-                    except OSError:
-                        pass
-                    except:
-                        print 'Could not preview poster'
-                    finally:
-                        if os.path.isfile(tmp + '.metathumb'):
-                            os.remove(tmp + '.metathumb')
-
-                    # print some summary information
-                    print 'Title:', item.title, '\n' \
-                          'Genres:', item.get_genres(), '\n' \
-                          'Initial Release:', str(item.year()), '\n' \
-                          'Runtime:', str(item.runtime), '\n' \
-                          'IMDB id:', item.imdb, '\n' \
-                          'Overview:', item.overview
-
-                    # ask if this movie matches
-                    user_input = get_input('Does this movie match yours? '
-                                           '(yes/No) ',
-                                          '(^$)|(^(Y|y)$)|(^(N|n)$)|(^(Q|q)$)')
-                    # they chose yes, return this movie
-                    if re.match('^(y|Y)$', user_input):
-                        return item
-                    # they chose no, start from the top
-                    elif re.match('(^$)|(^(N|n)$)', user_input):
-                        continue
-                    # they chose to quit the program
-                    elif re.match('^(q|Q)$', user_input):
-                        exit()
-            # they choose a movie from the search results
-            elif re.match('^\d{1,2}$', user_input):
-                choice = int(user_input)
-            break
-
-        # return the movie of their choice if it's valid
-        if int(choice) < len(results):
-            return results[int(choice)]
-        return

@@ -6,7 +6,8 @@ import re
 from PIL import Image, ImageDraw, ImageFont
 from pytvdb import shortsearch, longsearch
 import common
-from common import remove_punc, get_input, notify
+from common import remove_punc, get_input, notify, print_possible_match_table,\
+                   get_chosen_match, ask_alternative
 import build_xml
 
 class LocalSeries(object):
@@ -20,6 +21,11 @@ class LocalSeries(object):
         if interactive:
             print 'Creating image selection palette(s)...'
             poster_qty = _get_all_posters(self.series_data.posterUrl)
+            if poster_qty <= 1:
+                print 'No palette created,', poster_qty, 'image(s) available'
+                _save_poster(self.series_data.posterUrl, destination,
+                             self.seriesname, 900)
+                return
             _draw_mosaic(poster_qty)
             choice = get_input('Choose an image to use for series poster: ',
                                '(^$)|(^(Q|q)$)|(^\d{1,2}$)',
@@ -54,7 +60,16 @@ class LocalSeries(object):
             if (self.__clean_series_name(series.name, False).lower() ==
                 self.__clean_series_name(name, False).lower()):
                 return series
-        raise common.NoSeriesException(self.seriesname)
+        # no series found, give user choice
+        series = get_chosen_match(name, base_results)
+        while not series:
+            users_title = ask_alternative()
+            if not users_title:
+                # user skipped entering a title, assuming user gave up
+                raise common.NoSeriesException(self.seriesname)
+            results = shortsearch.searchForShortSeries(users_title)
+            series = get_chosen_match(users_title, results)
+        return series
 
     def __get_series_info(self, tvdbId, language):
         '''
@@ -65,12 +80,11 @@ class LocalSeries(object):
             return longsearch.searchForLongSeries(tvdbId, language)
         except urllib2.HTTPError as e:
             if e.code == 404:
-                print 'HTTP Error 404:', language, 'is not a valid language.'
+                notify('http 404 error', language + ' probably is invalid')
             elif e.code == 504:
-                print 'HTTP Error 504: thetvdb.com is not responding.'
+                notify('http 504 error', 'thetvdb.com is not responding')
             elif e.code == 503:
-                print 'HTTP Error 503: thetvdb.com is overloaded.',\
-                      'Try again later.'
+                notify('http 503 error', 'thetvdb.com is busy, try later')
             exit()
 
     def __clean_series_name(self, name, preserve_encoding=True):
@@ -156,6 +170,9 @@ def _get_all_posters(location):
     return number of available posters
     '''
 
+    if not location:
+        return 0
+
     # delete all temporary wdposters so series arent accidentally mixed
     filelist = os.listdir('/tmp')
     for f in filelist:
@@ -207,7 +224,7 @@ def _draw_mosaic(poster_qty):
 
 def _save_poster(location, destination, basename, max_size):
     # If there is no art, carry on
-    if location == '':
+    if not location:
         notify(basename, 'no image available')
         return
     max_size = max_size*1024

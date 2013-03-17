@@ -101,7 +101,7 @@ def full_title(self):
     return self.title + ' (' + str(self.year()) + ')'
 
 
-def download_poster(self, size, name):
+def download_poster(self, size, destination):
     '''
     download associated movie poster
 
@@ -110,8 +110,9 @@ def download_poster(self, size, name):
     name: name to save it as
     '''
 
-    poster_url = self.poster.geturl(size)
-    urllib.urlretrieve(poster_url, name + '.metathumb')
+    if self.poster:
+        poster_url = self.poster.geturl(size)
+        urllib.urlretrieve(poster_url, destination)
 
 
 def get_genres(self):

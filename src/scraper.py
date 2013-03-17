@@ -10,32 +10,31 @@ from pytmdb3 import tmdb3
 import movie_extensions
 from local_video import LocalVideo
 from tv_series import LocalSeries, LocalEpisode
-from common import notify
+from common import notify, get_chosen_match, ask_alternative
 import common
 import build_xml
 
-__version__ = '1.2.4.2'
+__version__ = '1.2.5'
 
 
 def main():
     parser = argparse.ArgumentParser(prog='wdtvscraper', add_help=False,
-                       usage='%(prog)s [options] -m movie-path\n'
-                      '       %(prog)s [options] -t tv-path',
-                                     description='Scrape themoviedb.org and'
-                                     ' thetvdb.com for metadata of movies and'
-                                     ' tv series stored on a WDTV device.')
+               usage='%(prog)s [options] -m movie-paths... -t tv-paths...',
+               description='Scrape themoviedb.org and thetvdb.com for '
+                            'of movies and tv series stored on a WDTV device.')
     required_args = parser.add_argument_group('requirements',
                                               'at least one is required')
-    required_args.add_argument('-m', '--movie-path', default='', metavar='',
-                         help='The path to the directory containing your '
-                              'movie files.')
-    required_args.add_argument('-t', '--tv-path', default='', metavar='',
-                        help='The path to the directory containing your tv '
-                             'series directories.')
+    required_args.add_argument('-m', '--movie-paths', default='', metavar='',
+                               nargs='+', help='The paths to the directories '
+                              'containing your movie files.')
+    required_args.add_argument('-t', '--tv-paths', default='', metavar='',
+                               nargs='+', help='The paths to the directories '
+                              'containing your tv series files.')
     global_opts = parser.add_argument_group('global options')
     global_opts.add_argument('-l', '--language', default='', metavar='LN',
                         help='Where LN is a language code from ISO 639-1. '
-                             'Common codes include en/de/nl/es/it/fr/pl')
+                             'Common codes include en/de/nl/es/it/fr/pl. '
+                             'TVDB languages are more restrictive.')
     global_opts.add_argument('-q', '--quiet', action='store_true',
                         help='Suppress unimportant messages.')
     global_opts.add_argument('-f', '--force-overwrite', action='store_true',
@@ -52,6 +51,9 @@ def main():
     movie_opts.add_argument('-T', '--thumbnails', action='store_true',
                         help='Set to include remote thumbnail urls in xml. '
                              'This may slow thumbnail loading.')
+    tv_opts = parser.add_argument_group('tv scraping options')
+    tv_opts.add_argument('-g', '--choose-cover', action='store_true',
+                         help='Choose which cover to use.')
     info_opts = parser.add_argument_group('informational arguments')
     info_opts.add_argument('-V', '--version', action='version',
                         version=__version__)
@@ -59,21 +61,25 @@ def main():
     args = parser.parse_args()
 
     # if user didn't specify a tv path or movie path, tell them
-    if not args.movie_path and not args.tv_path:
+    if not args.movie_paths and not args.tv_paths:
         print 'Must use -m and/or -t option. See help menu'
 
     # if user specified a movie path, process movies
-    if args.movie_path:
-        args.movie_path = os.path.join(os.getcwd(), args.movie_path)
-        process_movies(args.movie_path, args.thumbnails, args.assume,
-                       args.interactive, args.quiet, args.force_overwrite,
-                       args.language, args.country)
+    for path in args.movie_paths:
+        path = os.path.join(os.getcwd(), path)
+        process_movies(path, args.thumbnails, args.assume, args.interactive,
+                       args.quiet, args.force_overwrite, args.language,
+                       args.country)
 
     # if user specified a tv path, process tv shows
-    if args.tv_path:
-        args.tv_path = os.path.join(os.getcwd(), args.tv_path)
-        process_tv(args.tv_path, args.interactive, args.quiet,
-                   args.force_overwrite, args.language)
+    if not args.language in 'en sv no da fi nl de it es fr pl hu el ' \
+                            'tr ru he ja pt zh cs sl hr ko':
+        notify('error', 'invalid language')
+        exit()
+    for path in args.tv_paths:
+        path = os.path.join(os.getcwd(), path)
+        process_tv(path, args.quiet, args.force_overwrite, args.language,
+                   args.choose_cover)
 
 
 def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite,
@@ -88,10 +94,14 @@ def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite
         if country:
             tmdb3.set_locale(country=country, fallthrough=True)
     if not quiet:
-        print 'Using locale: ' + str(tmdb3.get_locale())
+        notify('processing', path)
+        notify('locale', str(tmdb3.get_locale()))
 
     # change to the movie path and process each movie file
     orig_path = os.getcwd()
+    if not os.path.isdir(path):
+        notify('error', '\'' + path + '\' is not a directory', sys.stderr)
+        return
     os.chdir(path)
     for f in os.listdir('./'):
         if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|\.m4v|\.mov|\.dat|\.tp|'
@@ -121,26 +131,18 @@ def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite
             if not interactive:
                 continue
             # ask user for some help finding their movie if in interactive mode
-            videofile.tmdb_data = videofile.get_chosen_match()
+            results = tmdb3.searchMovie(videofile.uni_title)
+            videofile.tmdb_data = get_chosen_match(videofile.basename, results)
             while not videofile.tmdb_data:
-                try:
-                    # keep asking until user gives up or gets their title
-                    user_typed_title = raw_input('Enter a possible alternative'
-                                                 ' title (S=skip): ')
-                    if user_typed_title in 'Ss' or not user_typed_title:
-                        # user decides to give up
-                        break
-                    elif user_typed_title in 'Qq':
-                        exit()
-                    videofile.tmdb_data = videofile.get_chosen_match(
-                                                              user_typed_title)
-                except (SystemExit, KeyboardInterrupt):
-                    exit()
-                except (ValueError, EOFError):
-                    print 'Error: invalid choice'
-                    continue
+                users_title = ask_alternative()
+                if not users_title:
+                    break
+                results = tmdb3.searchMovie(users_title)
+                videofile.tmdb_data = get_chosen_match(users_title, results)
 
-        if videofile.tmdb_data:
+        if not videofile.tmdb_data:
+            notify(videofile.basename, 'not found', sys.stderr)
+        else:
             if not quiet:
                 notify(videofile.basename,
                        'matches ' + videofile.tmdb_data.full_title())
@@ -155,11 +157,11 @@ def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite
                 if videofile.tmdb_data.poster:
                     if 'w342' in videofile.tmdb_data.poster.sizes():
                         videofile.tmdb_data.download_poster('w342',
-                                                            videofile.basename)
+                                             videofile.basename + '.metathumb')
                     else:
                         videofile.tmdb_data.download_poster(
                                          videofile.tmdb_data.poster.sizes()[0],
-                                         videofile.basename)
+                                         videofile.basename + '.metathumb')
                 else:
                     notify(videofile.basename,
                            'skipped poster, none available', sys.stderr)
@@ -171,18 +173,21 @@ def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite
             else:
                 videofile.tmdb_data.write_metadata(videofile.basename,
                                                    thumbnails)
-        else:
-            notify(videofile.basename, 'not found', sys.stderr)
     # go back to original path we started with
     os.chdir(orig_path)
 
 
-def process_tv(path, interactive, quiet, force_overwrite, language):
+def process_tv(path, quiet, force_overwrite, language, choose_cover):
     series_cover = path + '/00aa-series-cover.metathumb'
     if not language:
         language = 'en'
+    if not quiet:
+        notify('processing', path)
     # process each directory in path
     orig_path = os.getcwd()
+    if not os.path.isdir(path):
+        notify('error', '\'' + path + '\' is not a directory', sys.stderr)
+        return
     os.chdir(path)
     dirname = os.path.basename(os.getcwd())
     # for d in os.listdir('./'):
@@ -193,6 +198,7 @@ def process_tv(path, interactive, quiet, force_overwrite, language):
             series = LocalSeries(dirname, language)
         except common.NoSeriesException as e:
             print >> sys.stderr, e
+            os.chdir(orig_path)
             return
             # continue
 
@@ -203,7 +209,7 @@ def process_tv(path, interactive, quiet, force_overwrite, language):
             if os.path.isfile(series_cover) and not force_overwrite:
                 notify(dirname, 'skipped cover', sys.stderr)
             else:
-                series.save_poster(series_cover, interactive)
+                series.save_poster(series_cover, choose_cover)
         except IOError as e:
             print >> sys.stderr, e
 
