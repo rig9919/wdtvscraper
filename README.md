@@ -21,48 +21,60 @@ If everything is correct, run in interactive-mode so when a title couldn't be
 found it gives you some options. 
 ```wdtvscraper --interactive --movie-path /path/to/movies```
 
+Multiple movie-paths are acceptable.
+```wdtvscraper -m /path/to/movies1 /path/to/movies2 /media/wdtvlivehub```
+
 Fetching tv series information:
 -------------------------------
-Interactive mode for tv series fetching does not give a selection of partial 
-matches of a series, instead if gives a choice of which cover to use for the 
-series it finds. (this could change in the future) 
-
 You must supply the directory of the tv series itself, not a parent directory 
 of all your tv series directories. 
 ```wdtvscraper --tv-path /path/to/tvshows/<seriesname>```
 
-To get the same functionality as if specifying the tvshows directory directly 
-use a loop for now. Below is an example for bash users. 
-```for d in /path/to/tvshows/*; do wdtvscraper --tv-path "$d"; done;```
+If you want to fetch several tv series' information, use wildcards.
+```wdtvscraper --tv-path /path/to/tvshows/*```
+
+Interactive mode:
+-----------------
+In interactive mode you are given a chance to select a match for anything that 
+could not be found by looking at your file/directory names.
 
 Assume option: 
 --------------
-The assume option is useful in cases where your filename has a typo or wrong 
-year attached to it thus ensuring no match will ever be found. Always make 
-sure to review what was assumed, though, because it can lead to mismatches. 
+The assume option is useful in cases where your filename matches something so 
+closely that there is only one result returned but it doesn't match exactly. 
+Always make sure to review what was assumed, though, because it can lead to 
+mismatches. 
 
 Language/country options: 
-------------------------- 
+-------------------------
 The language and country options are for controlling what language the 
 overview will be in and for deciding which title and poster to use. 
 
-<pre>
-usage: wdtvscraper [options] -m movie-path
-       wdtvscraper [options] -t tv-path
+Choose cover option:
+--------------------
+When using the choose-cover option a mosaic of all the available covers for 
+that series will be shown so you can select which one you want to be used.
 
-Scrape themoviedb.org and thetvdb.com for metadata of movies and tv series stored on a WDTV
-device.
+<pre>
+usage: wdtvscraper [options] -m movie-paths... -t tv-paths...
+
+Scrape themoviedb.org and thetvdb.com for of movies and tv series stored on a
+WDTV device.
 
 requirements:
   at least one is required
 
-  -m , --movie-path     The path to the directory containing your movie files.
-  -t , --tv-path        The path to the directory containing your tv series
-                        directories.
+  -m  [ ...], --movie-paths  [ ...]
+                        The paths to the directories containing your movie
+                        files.
+  -t  [ ...], --tv-paths  [ ...]
+                        The paths to the directories containing your tv series
+                        files.
 
 global options:
   -l LN, --language LN  Where LN is a language code from ISO 639-1. Common
-                        codes include en/de/nl/es/it/fr/pl
+                        codes include en/de/nl/es/it/fr/pl. TVDB languages are
+                        more restrictive.
   -q, --quiet           Suppress unimportant messages.
   -f, --force-overwrite
                         Force overwrite of metadata and poster files.
@@ -75,6 +87,9 @@ movie scraping options:
                         lead to mismatches.
   -T, --thumbnails      Set to include remote thumbnail urls in xml. This may
                         slow thumbnail loading.
+
+tv scraping options:
+  -g, --choose-cover    Choose which cover to use.
 
 informational arguments:
   -V, --version         show program's version number and exit
