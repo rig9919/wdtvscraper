@@ -12,9 +12,9 @@ import build_xml
 
 class LocalSeries(object):
 
-    def __init__(self, name, language):
+    def __init__(self, name, language, interactive):
         self.seriesname = name
-        match = self.__get_series_match(self.seriesname, language)
+        match = self.__get_series_match(self.seriesname, language, interactive)
         self.series_data = self.__get_series_info(match.tvdbId, language)
 
     def save_poster(self, destination, interactive):
@@ -40,7 +40,7 @@ class LocalSeries(object):
             _save_poster(self.series_data.posterUrl, destination,
                          self.seriesname, 900)
 
-    def __get_series_match(self, name, language):
+    def __get_series_match(self, name, language, interactive):
         '''
         searches tvdb for a series with the title <name>
         returns any series that matches
@@ -57,7 +57,9 @@ class LocalSeries(object):
             if (self.__clean_series_name(series.name, False).lower() ==
                 self.__clean_series_name(name, False).lower()):
                 return series
-        # no series found, give user choice
+        # no series found, give user choice if they want
+        if not interactive:
+            raise common.NoSeriesException(name)
         series = get_chosen_match(name, base_results)
         while not series:
             users_title = ask_alternative()

@@ -14,10 +14,33 @@ from common import notify, get_chosen_match, ask_alternative
 import common
 import build_xml
 
-__version__ = '1.2.7'
+__version__ = '1.2.8'
 
 
 def main():
+    args = init_parser()
+    # if user didn't specify a tv path or movie path, tell them
+    if not args.movie_paths and not args.tv_paths:
+        print 'Must use -m and/or -t option. See help menu'
+
+    # process all the movie paths
+    for path in args.movie_paths:
+        path = os.path.join(os.getcwd(), path)
+        process_movies(path, args.thumbnails, args.assume, args.interactive,
+                       args.quiet, args.force_overwrite, args.language,
+                       args.country)
+
+    # process all the tv series paths
+    if not args.language in 'en sv no da fi nl de it es fr pl hu el ' \
+                            'tr ru he ja pt zh cs sl hr ko':
+        notify('error', 'invalid language')
+        exit()
+    for path in args.tv_paths:
+        path = os.path.join(os.getcwd(), path)
+        process_tv(path, args.interactive, args.quiet, args.force_overwrite,
+                   args.language, args.choose_cover)
+
+def init_parser():
     parser = argparse.ArgumentParser(prog='wdtvscraper', add_help=False,
                usage='%(prog)s [options] -m movie-paths... -t tv-paths...',
                description='Scrape themoviedb.org and thetvdb.com for '
@@ -59,33 +82,14 @@ def main():
                         version=__version__)
     info_opts.add_argument('-h', '--help', action='help')
     args = parser.parse_args()
+    return args
 
-    # if user didn't specify a tv path or movie path, tell them
-    if not args.movie_paths and not args.tv_paths:
-        print 'Must use -m and/or -t option. See help menu'
-
-    # if user specified a movie path, process movies
-    for path in args.movie_paths:
-        path = os.path.join(os.getcwd(), path)
-        process_movies(path, args.thumbnails, args.assume, args.interactive,
-                       args.quiet, args.force_overwrite, args.language,
-                       args.country)
-
-    # if user specified a tv path, process tv shows
-    if not args.language in 'en sv no da fi nl de it es fr pl hu el ' \
-                            'tr ru he ja pt zh cs sl hr ko':
-        notify('error', 'invalid language')
-        exit()
-    for path in args.tv_paths:
-        path = os.path.join(os.getcwd(), path)
-        process_tv(path, args.quiet, args.force_overwrite, args.language,
-                   args.choose_cover)
-
-
-def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite,
-                   language, country):
+def process_movies(path, thumbnails, assume, interactive, quiet,
+                   force_overwrite, language, country):
     # configurations for tmdb api
     tmdb3.set_key('ae90cf3b0ab5da570880728198701ce0')
+
+    # set language and country
     if (not language) and (not country):
         tmdb3.set_locale(fallthrough=True)
     else:
@@ -93,28 +97,32 @@ def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite
             tmdb3.set_locale(language=language, fallthrough=True)
         if country:
             tmdb3.set_locale(country=country, fallthrough=True)
+
     if not quiet:
         notify('processing', path)
         notify('locale', str(tmdb3.get_locale()))
 
-    # change to the movie path and process each movie file
-    orig_path = os.getcwd()
     if not os.path.isdir(path):
         notify('error', '\'' + path + '\' is not a directory', sys.stderr)
         return
-    os.chdir(path)
-    for f in os.listdir('./'):
-        if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|\.m4v|\.mov|\.dat|\.tp|'
-                         '\.ts|\.m2t|\.m2ts|\.flv|.mp4)$', f):
-            # not a format wdtv supports
+
+    # process each file in path
+    for f in os.listdir(path):
+        # check if file is in a format that wdtv supports
+        if not re.search('(\.avi|\.vob|\.iso|\.wmv|\.mkv|\.m4v|\.mov|\.dat|'
+                          '\.tp|\.ts|\.m2t|\.m2ts|\.flv|.mp4)$', f):
             continue
+
         # create a new LocalVideo object using the movie file
         videofile = LocalVideo(f)
-        if (os.path.isfile(videofile.basename + '.metathumb') and
-            os.path.isfile(videofile.basename + '.xml') and (not force_overwrite)):
+
+        if (os.path.isfile(path + '/' + videofile.basename + '.metathumb') and
+            os.path.isfile(path + '/' + videofile.basename + '.xml') and 
+            (not force_overwrite)):
             # metathumb and xml already exists for this movie
             notify(videofile.basename, 'skipped poster/metadata', sys.stderr)
             continue
+
         # find a matching title from tmdb
         try:
             videofile.get_match(assume)
@@ -148,7 +156,7 @@ def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite
                        'matches ' + videofile.tmdb_data.full_title())
 
             # deal with poster
-            if (os.path.isfile(videofile.basename + '.metathumb')
+            if (os.path.isfile(path + '/' + videofile.basename + '.metathumb')
                and not force_overwrite):
                 notify(videofile.basename, 'skipped poster', sys.stderr)
             else:
@@ -157,56 +165,52 @@ def process_movies(path, thumbnails, assume, interactive, quiet, force_overwrite
                 if videofile.tmdb_data.poster:
                     if 'w342' in videofile.tmdb_data.poster.sizes():
                         videofile.tmdb_data.download_poster('w342',
-                                             videofile.basename + '.metathumb')
+                                 path + '/' + videofile.basename + '.metathumb')
                     else:
                         videofile.tmdb_data.download_poster(
-                                         videofile.tmdb_data.poster.sizes()[0],
-                                         videofile.basename + '.metathumb')
+                                 videofile.tmdb_data.poster.sizes()[0],
+                                 path + '/' + videofile.basename + '.metathumb')
                 else:
                     notify(videofile.basename,
                            'skipped poster, none available', sys.stderr)
 
             # deal with metadata
-            if (os.path.isfile(videofile.basename + '.xml')
+            if (os.path.isfile(path + '/' + videofile.basename + '.xml')
                and not force_overwrite):
                 notify(videofile.basename, 'skipped metadata', sys.stderr)
             else:
-                videofile.tmdb_data.write_metadata(videofile.basename,
-                                                   thumbnails)
-    # go back to original path we started with
-    os.chdir(orig_path)
+                videofile.tmdb_data.write_metadata(
+                                       path + '/' + videofile.basename + '.xml',
+                                       thumbnails)
 
-
-def process_tv(path, quiet, force_overwrite, language, choose_cover):
+def process_tv(path, interactive, quiet, force_overwrite, language,
+               choose_cover):
     series_cover = path + '/00aa-series-cover.metathumb'
     if not language:
         language = 'en'
     if not quiet:
         notify('processing', path)
-    # process each directory in path
-    orig_path = os.getcwd()
+
     if not os.path.isdir(path):
         notify('error', '\'' + path + '\' is not a directory', sys.stderr)
         return
-    os.chdir(path)
-    dirname = os.path.basename(os.getcwd())
-    # for d in os.listdir('./'):
+    dirname = os.path.basename(path)
+    basename = dirname
+
     if os.path.isdir(path):
         # assume the directory name is a tv show name and create a
         # LocalSeries object using it
         try:
-            series = LocalSeries(dirname, language)
+            series = LocalSeries(basename, language, interactive)
         except common.NoSeriesException as e:
             print >> sys.stderr, e
-            os.chdir(orig_path)
             return
-            # continue
 
         if not quiet:
             notify(dirname, 'matches ' + series.series_data.name)
 
         try:
-            if os.path.isfile(series_cover) and not force_overwrite:
+            if os.path.isfile(series_cover) and (not force_overwrite):
                 notify(dirname, 'skipped cover', sys.stderr)
             else:
                 series.save_poster(series_cover, choose_cover)
@@ -253,8 +257,6 @@ def process_tv(path, quiet, force_overwrite, language, choose_cover):
                                       '.xml')
             except IOError as e:
                 print >> sys.stderr, e
-    # go back to original path we started with
-    os.chdir(orig_path)
 
 if __name__ == '__main__':
     try:

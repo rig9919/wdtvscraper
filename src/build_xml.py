@@ -130,7 +130,7 @@ def write_movie(mov, destination, thumbnails):
         xml.append('  <backdrop>' + backdrop.geturl('w780') + '</backdrop>')
     xml.append('</details>')
 
-    f = codecs.open(destination + '.xml', encoding='utf-8', mode='w')
+    f = codecs.open(destination, encoding='utf-8', mode='w')
     for line in xml:
         line = re.sub(u'[&]', u'&amp;', line)
         f.write(unicode(line) + u'\n')

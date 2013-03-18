@@ -138,7 +138,6 @@ def print_possible_match_table(mlist, max_results=20):
     '''
 
     if not mlist:
-        print 'no possible matches'
         return
 
     for i, item in enumerate(mlist[0:max_results]):
@@ -161,6 +160,7 @@ def get_chosen_match(basename, results, max_results=20):
     '''
 
     if not results:
+        print 'no search results'
         return
 
     while True:
