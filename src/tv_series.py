@@ -14,7 +14,7 @@ class LocalSeries(object):
 
     def __init__(self, name, language):
         self.seriesname = name
-        match = self.__get_series_match(self.seriesname)
+        match = self.__get_series_match(self.seriesname, language)
         self.series_data = self.__get_series_info(match.tvdbId, language)
 
     def save_poster(self, destination, interactive):
@@ -40,16 +40,13 @@ class LocalSeries(object):
             _save_poster(self.series_data.posterUrl, destination,
                          self.seriesname, 900)
 
-    def __get_series_match(self, name):
+    def __get_series_match(self, name, language):
         '''
         searches tvdb for a series with the title <name>
         returns any series that matches
         '''
 
-        base_results = shortsearch.searchForShortSeries(name)
-        #TODO: if more than one result, let user choose
-        #for s in base_results:
-        #    print s.name
+        base_results = shortsearch.searchForShortSeries(name, language)
 		
         for series in base_results:
             # check if unicode titles match
@@ -67,7 +64,7 @@ class LocalSeries(object):
             if not users_title:
                 # user skipped entering a title, assuming user gave up
                 raise common.NoSeriesException(self.seriesname)
-            results = shortsearch.searchForShortSeries(users_title)
+            results = shortsearch.searchForShortSeries(users_title, language)
             series = get_chosen_match(users_title, results)
         return series
 

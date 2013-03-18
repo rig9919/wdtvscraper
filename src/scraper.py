@@ -14,7 +14,7 @@ from common import notify, get_chosen_match, ask_alternative
 import common
 import build_xml
 
-__version__ = '1.2.6'
+__version__ = '1.2.7'
 
 
 def main():

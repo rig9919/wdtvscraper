@@ -55,8 +55,8 @@ def xmlToShortSeries(xmlSeries):
         
     return seriesResult
 
-def searchForShortSeries(seriesName):
-    params = {'seriesname':seriesName}
+def searchForShortSeries(seriesName, language):
+    params = {'seriesname':seriesName, 'language':language}
     response = httphelper.doGetRequest(mirrorUrl, mirrorPort, searchForShortSeriesPath, params)
     seriesXmlList = ElementTree.parse(response).findall(r'.//Series')
     
