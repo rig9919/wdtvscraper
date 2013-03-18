@@ -10,11 +10,11 @@ from pytmdb3 import tmdb3
 import movie_extensions
 from local_video import LocalVideo
 from tv_series import LocalSeries, LocalEpisode
-from common import notify, get_chosen_match, ask_alternative
+from common import notify, get_chosen_match, ask_alternative, uni
 import common
 import build_xml
 
-__version__ = '1.2.8'
+__version__ = '1.2.9'
 
 
 def main():
@@ -25,7 +25,7 @@ def main():
 
     # process all the movie paths
     for path in args.movie_paths:
-        path = os.path.join(os.getcwd(), path)
+        path = uni(os.path.join(os.getcwd(), path))
         process_movies(path, args.thumbnails, args.assume, args.interactive,
                        args.quiet, args.force_overwrite, args.language,
                        args.country)
@@ -36,7 +36,7 @@ def main():
         notify('error', 'invalid language')
         exit()
     for path in args.tv_paths:
-        path = os.path.join(os.getcwd(), path)
+        path = uni(os.path.join(os.getcwd(), path))
         process_tv(path, args.interactive, args.quiet, args.force_overwrite,
                    args.language, args.choose_cover)
 

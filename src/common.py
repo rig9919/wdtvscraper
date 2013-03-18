@@ -8,13 +8,22 @@ from pytmdb3 import tmdb3
 from pytvdb import shortsearch
 
 
+def uni(obj, encoding='utf-8'):
+    if isinstance(obj, basestring):
+        if not isinstance(obj, unicode):
+            obj = unicode(obj, encoding)
+    return obj
+
 class NoSeriesException(Exception):
 
     def __init__(self, name):
         self.name = name
 
-    def __str__(self):
+    def __unicode__(self):
         return '%s: matches no series' % (self.name)
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
 
 
 class NoEpisodeException(Exception):
@@ -22,19 +31,29 @@ class NoEpisodeException(Exception):
     def __init__(self, name):
         self.name = name
 
-    def __str__(self):
+    def __unicode__(self):
         return '%s: matches no episodes' % (self.name)
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
 
 
 class NonzeroMatchlistNoMatches(Exception):
 
     def __init__(self, name, results):
         self.name = name
-        self.results = str(results)
+        self.results = uni(results)
 
-    def __str__(self):
+    def __unicode__(self):
         return ('%s: %s results found but none matched'
                 % (self.name, self.results))
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+
+    #def __str__(self):
+    #    return ('%s: %s results found but none matched'
+    #            % (self.name, self.results))
 
 
 class ZeroMatchlist(Exception):
@@ -42,11 +61,14 @@ class ZeroMatchlist(Exception):
     def __init__(self, name):
         self.name = name
 
-    def __str__(self):
+    def __unicode__(self):
         return '%s: no results' % (self.name)
 
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+
 def notify(identity, message, stream=sys.stdout):
-    print >> stream, identity + ':', message
+    print >> stream, identity.encode('utf-8') + ':', message.encode('utf-8')
 
 def remove_punc(name, preserve_encoding=True):
     '''
@@ -110,6 +132,8 @@ def get_input(prompt, valid_choice_pattern, choice_list_length=-1):
     choice_list_length: number used validate movie choice because regex
                         can't match number ranges
     '''
+
+    prompt = prompt.encode('utf-8')
 
     while True:
         try:

@@ -61,3 +61,4 @@
 1.2.6   updated readme
 1.2.7   tv search results are in the language specified
 1.2.8   cleanup
+1.2.9   fixed errors printing unicode when redirecting output to files

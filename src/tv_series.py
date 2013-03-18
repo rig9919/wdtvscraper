@@ -2,18 +2,19 @@ import os
 import sys
 import urllib
 import urllib2
+import unicodedata
 import re
 from PIL import Image, ImageDraw, ImageFont
 from pytvdb import shortsearch, longsearch
 import common
 from common import remove_punc, get_input, notify, print_possible_match_table,\
-                   get_chosen_match, ask_alternative
+                   get_chosen_match, ask_alternative, uni
 import build_xml
 
 class LocalSeries(object):
 
     def __init__(self, name, language, interactive):
-        self.seriesname = name
+        self.seriesname = uni(name)
         match = self.__get_series_match(self.seriesname, language, interactive)
         self.series_data = self.__get_series_info(match.tvdbId, language)
 
@@ -46,7 +47,9 @@ class LocalSeries(object):
         returns any series that matches
         '''
 
-        base_results = shortsearch.searchForShortSeries(name, language)
+        clean_name = unicodedata.normalize('NFKD',
+                                           unicode(name)).encode('ascii', 'ignore')
+        base_results = shortsearch.searchForShortSeries(clean_name, language)
 		
         for series in base_results:
             # check if unicode titles match

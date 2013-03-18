@@ -2,7 +2,7 @@ import os
 import re
 from PIL import Image
 from pytmdb3 import tmdb3
-from common import split_full_title, get_input, print_possible_match_table
+from common import split_full_title, get_input, print_possible_match_table, uni
 import common
 
 
@@ -20,11 +20,11 @@ class LocalVideo:
         '''
 
         # split pathname into useful things upon creation
-        self.__abspath = os.path.abspath(path)
-        self.__dirpath = os.path.split(self.__abspath)[0]
+        self.__abspath = uni(os.path.abspath(path))
+        self.__dirpath = uni(os.path.split(self.__abspath)[0])
         self.__filename = os.path.splitext(os.path.split(self.__abspath)[1])
-        self.basename = self.__filename[0]
-        self.ext = self.__filename[1]
+        self.basename = uni(self.__filename[0])
+        self.ext = uni(self.__filename[1])
         # extract the title and year from the basename
         self.title = split_full_title(self.basename, False)['title']
         self.year = split_full_title(self.basename)['year']
