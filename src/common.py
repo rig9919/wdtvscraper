@@ -154,12 +154,18 @@ def get_input(prompt, valid_choice_pattern, choice_list_length=-1):
         except (ValueError, EOFError):
             notify('error', 'invalid choice')
 
-def print_possible_match_table(mlist, max_results=20):
+def print_possible_match_table(mlist, max_results):
     '''
     print summarized information of everything contained in <mlist>
 
     list: a list of possible matches gotten from the search results
     '''
+
+    try:
+        # cols gets the amount of columns the terminal has
+        cols = int(os.popen('stty size', 'r').read().split()[1])
+    except:
+        cols = 80
 
     if not mlist:
         return
@@ -175,13 +181,22 @@ def print_possible_match_table(mlist, max_results=20):
             title = item.full_title()
             overview = item.overview
         s = unicode(i) + ') ' + title + ' # ' + overview
-        print s[0:80]
+        print s[0:cols]
 
-def get_chosen_match(basename, results, max_results=20):
+def get_chosen_match(basename, results, max_results):
     '''
     allow user to choose from a list of results that were retrieved with
        by searching for the object's title
     '''
+
+    if not max_results:
+        try:
+            # max_results gets the amount of rows the terminal has
+            max_results = int(os.popen('stty size', 'r').read().split()[0])
+            # give 2 lines away for readability
+            max_results = max_results - 2
+        except:
+            max_results = 10
 
     if not results:
         print 'no search results'
@@ -189,7 +204,7 @@ def get_chosen_match(basename, results, max_results=20):
 
     while True:
         # display the search results
-        print_possible_match_table(results)
+        print_possible_match_table(results, max_results)
         if len(results) < max_results:
             valid_movies = len(results) - 1
         else:

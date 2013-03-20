@@ -14,7 +14,7 @@ from common import notify, get_chosen_match, ask_alternative, uni
 import common
 import build_xml
 
-__version__ = '1.2.11'
+__version__ = '1.2.12'
 
 
 def main():
@@ -28,7 +28,7 @@ def main():
         path = uni(os.path.join(os.getcwd(), path))
         process_movies(path, args.thumbnails, args.assume, args.interactive,
                        args.quiet, args.force_overwrite, args.language,
-                       args.country)
+                       args.country, int(args.max_results))
 
     # process all the tv series paths
     if not args.language in 'en sv no da fi nl de it es fr pl hu el ' \
@@ -38,7 +38,7 @@ def main():
     for path in args.tv_paths:
         path = uni(os.path.join(os.getcwd(), path))
         process_tv(path, args.interactive, args.quiet, args.force_overwrite,
-                   args.language, args.choose_cover)
+                   args.language, args.choose_cover, int(args.max_results))
 
 def init_parser():
     parser = argparse.ArgumentParser(prog='wdtvscraper', add_help=False,
@@ -54,6 +54,12 @@ def init_parser():
                                nargs='+', help='The paths to the directories '
                               'containing your tv series files.')
     global_opts = parser.add_argument_group('global options')
+    global_opts.add_argument('-r', '--max-results', default=0, metavar='RS',
+                        help='Where RS is the number of results to be '
+                             'displayed in interactive mode.')
+    global_opts.add_argument('-i', '--interactive', action='store_true',
+                        help='Display search results for movies that '
+                             'could not be matched automatically.')
     global_opts.add_argument('-l', '--language', default='', metavar='LN',
                         help='Where LN is a language code from ISO 639-1. '
                              'Common codes include en/de/nl/es/it/fr/pl. '
@@ -67,7 +73,6 @@ def init_parser():
                         help='Where CN is a country code from '
                              'ISO 3166-1 alpha-2. '
                              'Common codes include us/gb/de/nl/it/fr/pl')
-    movie_opts.add_argument('-i', '--interactive', action='store_true')
     movie_opts.add_argument('-a', '--assume', action='store_true',
                         help='Assume match on 1 result. Not recommended. '
                              'This can lead to mismatches.')
@@ -85,7 +90,7 @@ def init_parser():
     return args
 
 def process_movies(path, thumbnails, assume, interactive, quiet,
-                   force_overwrite, language, country):
+                   force_overwrite, language, country, max_results):
     # configurations for tmdb api
     tmdb3.set_key('ae90cf3b0ab5da570880728198701ce0')
 
@@ -135,7 +140,8 @@ def process_movies(path, thumbnails, assume, interactive, quiet,
             if not interactive:
                 continue
             videofile.tmdb_data = manually_search_movie(videofile.basename,
-                                                        videofile.uni_title)
+                                                        videofile.uni_title,
+                                                        max_results)
 
         if not videofile.tmdb_data:
             notify(videofile.basename, 'not found', sys.stderr)
@@ -179,21 +185,21 @@ def process_movies(path, thumbnails, assume, interactive, quiet,
 
 
 
-def manually_search_movie(basename, title):
+def manually_search_movie(basename, title, max_results):
     # ask user for some help finding their movie if in interactive mode
     results = tmdb3.searchMovie(title)
-    tmdb_data = get_chosen_match(basename, results)
+    tmdb_data = get_chosen_match(basename, results, max_results)
     while not tmdb_data:
         users_title = ask_alternative()
         if not users_title:
             return
         results = tmdb3.searchMovie(users_title)
-        tmdb_data = get_chosen_match(users_title, results)
+        tmdb_data = get_chosen_match(users_title, results, max_results)
     return tmdb_data
 
 
 def process_tv(path, interactive, quiet, force_overwrite, language,
-               choose_cover):
+               choose_cover, max_results):
     # chop off trailing backslash if found
     if path[-1:] == '/':
         path = path[0:-1]
@@ -214,7 +220,7 @@ def process_tv(path, interactive, quiet, force_overwrite, language,
         # assume the directory name is a tv show name and create a
         # LocalSeries object using it
         try:
-            series = LocalSeries(basename, language, interactive)
+            series = LocalSeries(basename, language, interactive, max_results)
         except common.NoSeriesException as e:
             print >> sys.stderr, e
             return
