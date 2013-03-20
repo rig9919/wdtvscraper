@@ -33,9 +33,12 @@ class LocalSeries(object):
                                poster_qty)
             if re.match('^(Q|q)$', choice):
                 exit()
-            posterUrl = re.sub('(http://.*)-(\d{1,2})\.(.{3,4})',
-                               '\\1-' + choice + '.\\3',
-                               self.series_data.posterUrl)
+            if not choice:
+                posterUrl = self.series_data.posterUrl
+            else:
+                posterUrl = re.sub('(http://.*)-(\d{1,2})\.(.{3,4})',
+                                   '\\1-' + choice + '.\\3',
+                                   self.series_data.posterUrl)
             _save_poster(posterUrl, destination, self.seriesname, 900)
         else:
             _save_poster(self.series_data.posterUrl, destination,
@@ -50,6 +53,8 @@ class LocalSeries(object):
         clean_name = unicodedata.normalize('NFKD',
                                            unicode(name)).encode('ascii', 'ignore')
         base_results = shortsearch.searchForShortSeries(clean_name, language)
+        if not base_results and not interactive:
+            raise common.ZeroMatchlist(name)
 		
         for series in base_results:
             # check if unicode titles match
@@ -197,12 +202,12 @@ def _get_all_posters(location):
 def _draw_mosaic(poster_qty):
     palette = Image.new('RGB', (1000,650))
     draw = ImageDraw.Draw(palette)
-    pildir = os.path.dirname(Image.__file__)
     srcdir = os.path.dirname(os.path.realpath(__file__))
     try:
-        font = ImageFont.load(pildir + '/ter28-16.pil')
-    except:
         font = ImageFont.load(srcdir + '/ter28-16.pil')
+    except:
+        font = None
+        notify('error', 'no font found, using tiny default font')
     i = 1
     x = 0
     y = 0

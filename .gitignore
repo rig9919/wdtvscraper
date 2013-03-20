@@ -9,3 +9,4 @@ printdocs.sh
 description-pak
 doc-pak
 *.patch
+manpage

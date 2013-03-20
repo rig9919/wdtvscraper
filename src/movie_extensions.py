@@ -17,33 +17,37 @@ This is a set of helper methods for the tmdb3.Movie class.
 def is_title_match(self, possible_matching_title):
     '''
     compare title with <possible_matching_title>
+    returns method that matched:
+        *
+        orig = original title it was released with
+        local = localized title
+        *
+        exact = titles match exactly
+        words = some extra punctuation in one of the titles but all words match
+        *
+        ascii = all accents and non-ascii characters have been replaced
+        uni = accents and special characters included
     '''
 
-    # <original title with punc> == <possible matching title> ?
     if self.originaltitle.lower() == possible_matching_title.lower():
-        return True
+        return 'orig_exact_uni'
 
-    # <title with punc> == <possible matching title> ?
     if self.title.lower() == possible_matching_title.lower():
-        return True
+        return 'local_exact_uni'
 
-    # <original title, no punc> == <possible matching title> ?
     if (split_full_title(self.originaltitle)['title'].lower() ==
         possible_matching_title.lower()):
-        return True
-    # ... without unicode
+        return 'orig_words_uni'
     if (split_full_title(self.originaltitle, False)['title'].lower() ==
         possible_matching_title.lower()):
-        return True
+        return 'orig_words_ascii'
 
-    # <title, no punc> == <possible matching title> ?
     if (split_full_title(self.title)['title'].lower() ==
         possible_matching_title.lower()):
-        return True
-    # ... without unicode
+        return 'local_words_uni'
     if (split_full_title(self.title, False)['title'].lower() ==
         possible_matching_title.lower()):
-        return True
+        return 'local_words_ascii'
 
     # nothing matches
     return False

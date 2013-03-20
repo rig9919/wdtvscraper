@@ -14,7 +14,7 @@ from common import notify, get_chosen_match, ask_alternative, uni
 import common
 import build_xml
 
-__version__ = '1.2.9'
+__version__ = '1.2.11'
 
 
 def main():
@@ -126,65 +126,78 @@ def process_movies(path, thumbnails, assume, interactive, quiet,
         # find a matching title from tmdb
         try:
             videofile.get_match(assume)
-            if videofile.is_assumed:
-                notify(videofile.basename, 'assumed only result matched')
         except common.NonzeroMatchlistNoMatches as e:
             print >> sys.stderr, e
         except common.ZeroMatchlist as e:
             print >> sys.stderr, e
 
-        # if no matches are found, either ask user for help or continue
         if not videofile.tmdb_data:
-            # no matches were found in non-interactive mode, continue to next
             if not interactive:
                 continue
-            # ask user for some help finding their movie if in interactive mode
-            results = tmdb3.searchMovie(videofile.uni_title)
-            videofile.tmdb_data = get_chosen_match(videofile.basename, results)
-            while not videofile.tmdb_data:
-                users_title = ask_alternative()
-                if not users_title:
-                    break
-                results = tmdb3.searchMovie(users_title)
-                videofile.tmdb_data = get_chosen_match(users_title, results)
+            videofile.tmdb_data = manually_search_movie(videofile.basename,
+                                                        videofile.uni_title)
 
         if not videofile.tmdb_data:
             notify(videofile.basename, 'not found', sys.stderr)
-        else:
-            if not quiet:
+            continue
+    
+        if not quiet:
+            if videofile.matched_method == 'assumed':
+                notify(videofile.basename,
+                       'assuming matches ' + videofile.tmdb_data.full_title())
+            else:
                 notify(videofile.basename,
                        'matches ' + videofile.tmdb_data.full_title())
-
-            # deal with poster
-            if (os.path.isfile(path + '/' + videofile.basename + '.metathumb')
-               and not force_overwrite):
-                notify(videofile.basename, 'skipped poster', sys.stderr)
-            else:
-            # if there's any posters available, download w342 size
-            # preferably. otherwise, get the smallest available.
-                if videofile.tmdb_data.poster:
-                    if 'w342' in videofile.tmdb_data.poster.sizes():
-                        videofile.tmdb_data.download_poster('w342',
-                                 path + '/' + videofile.basename + '.metathumb')
-                    else:
-                        videofile.tmdb_data.download_poster(
-                                 videofile.tmdb_data.poster.sizes()[0],
-                                 path + '/' + videofile.basename + '.metathumb')
+    
+        # deal with poster
+        if (os.path.isfile(path + '/' + videofile.basename + '.metathumb')
+           and not force_overwrite):
+            notify(videofile.basename, 'skipped poster', sys.stderr)
+        else:
+        # if there's any posters available, download w342 size
+        # preferably. otherwise, get the smallest available.
+            if videofile.tmdb_data.poster:
+                if 'w342' in videofile.tmdb_data.poster.sizes():
+                    videofile.tmdb_data.download_poster('w342',
+                             path + '/' + videofile.basename + '.metathumb')
                 else:
-                    notify(videofile.basename,
-                           'skipped poster, none available', sys.stderr)
-
-            # deal with metadata
-            if (os.path.isfile(path + '/' + videofile.basename + '.xml')
-               and not force_overwrite):
-                notify(videofile.basename, 'skipped metadata', sys.stderr)
+                    videofile.tmdb_data.download_poster(
+                             videofile.tmdb_data.poster.sizes()[0],
+                             path + '/' + videofile.basename + '.metathumb')
             else:
-                videofile.tmdb_data.write_metadata(
-                                       path + '/' + videofile.basename + '.xml',
-                                       thumbnails)
+                notify(videofile.basename,
+                       'skipped poster, none available', sys.stderr)
+    
+        # deal with metadata
+        if (os.path.isfile(path + '/' + videofile.basename + '.xml')
+           and not force_overwrite):
+            notify(videofile.basename, 'skipped metadata', sys.stderr)
+        else:
+            videofile.tmdb_data.write_metadata(
+                                   path + '/' + videofile.basename + '.xml',
+                                   thumbnails)
+
+
+
+def manually_search_movie(basename, title):
+    # ask user for some help finding their movie if in interactive mode
+    results = tmdb3.searchMovie(title)
+    tmdb_data = get_chosen_match(basename, results)
+    while not tmdb_data:
+        users_title = ask_alternative()
+        if not users_title:
+            return
+        results = tmdb3.searchMovie(users_title)
+        tmdb_data = get_chosen_match(users_title, results)
+    return tmdb_data
+
 
 def process_tv(path, interactive, quiet, force_overwrite, language,
                choose_cover):
+    # chop off trailing backslash if found
+    if path[-1:] == '/':
+        path = path[0:-1]
+
     series_cover = path + '/00aa-series-cover.metathumb'
     if not language:
         language = 'en'
@@ -203,6 +216,9 @@ def process_tv(path, interactive, quiet, force_overwrite, language,
         try:
             series = LocalSeries(basename, language, interactive)
         except common.NoSeriesException as e:
+            print >> sys.stderr, e
+            return
+        except common.ZeroMatchlist as e:
             print >> sys.stderr, e
             return
 

@@ -62,3 +62,5 @@
 1.2.7   tv search results are in the language specified
 1.2.8   cleanup
 1.2.9   fixed errors printing unicode when redirecting output to files
+1.2.10  cleanup, made man page, if no cover is chose with -g choose best rated
+1.2.11  fixed problem when including trailing backslash in path, moved font

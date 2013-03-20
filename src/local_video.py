@@ -33,12 +33,12 @@ class LocalVideo:
         self.uni_title = split_full_title(self.basename)['title']
         self.uni_full_title = self.uni_title + ' (' + self.year + ')'
         self.tmdb_data = None
-        self.is_assumed = True
+        self.matched_method = None
 
     def get_match(self, assume_match):
         # get match from tmdb
         self.tmdb_data = self.__get_match(assume_match)
-        self.is_assumed = self.tmdb_data['is_assumed']
+        self.matched_method = self.tmdb_data['method']
         self.tmdb_data = self.tmdb_data['data']
 
     def __get_possible_match_list(self):
@@ -68,22 +68,27 @@ class LocalVideo:
         possible_matches = self.__get_possible_match_list()
         if not possible_matches:
             raise common.ZeroMatchlist(self.basename)
+
         if assume_match:
             if len(possible_matches) == 1:
-                if (possible_matches[0].is_title_match(self.title) and
-                    possible_matches[0].is_year_match(self.year)):
-                    return {'data': possible_matches[0], 'is_assumed': False}
-                return {'data': possible_matches[0], 'is_assumed': True}
+                title_matched = possible_matches[0].is_title_match(self.uni_title)
+                year_matched = possible_matches[0].is_year_match(self.year)
+                if (title_matched and year_matched):
+                    return {'data': possible_matches[0], \
+                            'method': title_matched}
+                return {'data': possible_matches[0], \
+                        'method': 'assumed'}
         for item in possible_matches:
             # if the year and title are the same, it is most likely a match
             # first, check if unicode title matches
-            if (item.is_title_match(self.uni_title) and
-                item.is_year_match(self.year)):
-                return {'data': item, 'is_assumed': False}
+            title_matched = item.is_title_match(self.uni_title)
+            year_matched = item.is_year_match(self.year)
+            if (title_matched and year_matched):
+                return {'data': item, 'method': title_matched}
             # now check if ascii title matches
-            if (item.is_title_match(self.title) and
-                item.is_year_match(self.year)):
-                return {'data': item, 'is_assumed': False}
+            title_matched = item.is_title_match(self.title)
+            if (title_matched and year_matched):
+                return {'data': item, 'method': title_matched}
         raise common.NonzeroMatchlistNoMatches(self.basename,
                                                len(possible_matches))
 
