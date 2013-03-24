@@ -92,7 +92,7 @@ class Request( urllib2.Request ):
                 print 'loading '+self.get_full_url()
                 if self.has_data():
                     print '  '+self.get_data()
-            return urllib2.urlopen(self)
+            return urllib2.urlopen(self, timeout=10)
         except urllib2.HTTPError, e:
             raise TMDBHTTPError(e)
 

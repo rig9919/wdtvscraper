@@ -37,7 +37,14 @@ class LocalVideo:
 
     def get_match(self, assume_match):
         # get match from tmdb
-        self.tmdb_data = self.__get_match(assume_match)
+        for i in range(1,5):
+            try:
+                self.tmdb_data = self.__get_match(assume_match)
+                break
+            except tmdb3.tmdb_exceptions.TMDBHTTPError as e:
+                if e.httperrno == 503:
+                    print 'server was busy, trying again'
+                    continue
         self.matched_method = self.tmdb_data['method']
         self.tmdb_data = self.tmdb_data['data']
 

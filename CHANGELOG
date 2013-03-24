@@ -65,3 +65,4 @@
 1.2.10  cleanup, made man page, if no cover is chose with -g choose best rated
 1.2.11  fixed problem when including trailing backslash in path, moved font
 1.2.12  improved display of interactive lists, added --max-results option
+1.2.13  can now choose image for movies as well

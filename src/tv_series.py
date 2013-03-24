@@ -4,11 +4,11 @@ import urllib
 import urllib2
 import unicodedata
 import re
-from PIL import Image, ImageDraw, ImageFont
 from pytvdb import shortsearch, longsearch
 import common
 from common import remove_punc, get_input, notify, print_possible_match_table,\
-                   get_chosen_match, ask_alternative, uni
+                   get_chosen_match, ask_alternative, uni, draw_mosaic,\
+                   download_file, show_images_retrieved
 import build_xml
 
 class LocalSeries(object):
@@ -19,8 +19,8 @@ class LocalSeries(object):
                                          max_results)
         self.series_data = self.__get_series_info(match.tvdbId, language)
 
-    def save_poster(self, destination, interactive):
-        if interactive:
+    def save_poster(self, destination, choose):
+        if choose:
             print 'Creating image selection palette(s)...'
             poster_qty = _get_all_posters(self.series_data.posterUrl)
             if poster_qty <= 1:
@@ -28,7 +28,7 @@ class LocalSeries(object):
                 _save_poster(self.series_data.posterUrl, destination,
                              self.seriesname, 900)
                 return
-            _draw_mosaic(poster_qty)
+            draw_mosaic(poster_qty)
             choice = get_input('Choose an image to use for series poster: ',
                                '(^$)|(^(Q|q)$)|(^\d{1,2}$)',
                                poster_qty)
@@ -195,40 +195,11 @@ def _get_all_posters(location):
     try:
         while True:
             location = baseurl + '/' + seriesno + '-' + str(i) + '.' + ext
-            _download_file(location, '/tmp/wdposter' + str(i) + '.' + ext)
+            download_file(location, '/tmp/wdposter' + str(i) + '.' + ext)
+            show_images_retrieved(i)
             i = i + 1
     except urllib2.HTTPError as e:
         return i-1
-
-def _draw_mosaic(poster_qty):
-    palette = Image.new('RGB', (1000,650))
-    draw = ImageDraw.Draw(palette)
-    srcdir = os.path.dirname(os.path.realpath(__file__))
-    try:
-        font = ImageFont.load(srcdir + '/ter28-16.pil')
-    except:
-        font = None
-        notify('error', 'no font found, using tiny default font')
-    i = 1
-    x = 0
-    y = 0
-    while i <= poster_qty:
-        poster = Image.open('/tmp/wdposter' + str(i) + '.jpg')
-        poster = poster.resize((200,290), Image.ANTIALIAS)
-        palette.paste(poster, (x,y))   
-        draw.text((x+90, y+290), str(i), fill=(255,255,255), font=font)
-        i = i + 1
-        x = x + 200
-        if x > 800:
-            x = 0
-            y = y + 325
-        if y > 325 and i < poster_qty:
-            palette.show()
-            x = 0
-            y = 0
-            palette = Image.new('RGB', (1000,650))
-            draw = ImageDraw.Draw(palette)
-    palette.show()
 
 def _save_poster(location, destination, basename, max_size):
     # If there is no art, carry on
@@ -249,8 +220,4 @@ def _save_poster(location, destination, basename, max_size):
         notify(basename, 'image quality reduced and useless data removed',
                sys.stderr)
 
-def _download_file(location, destination):
-    remote = urllib2.urlopen(location)
-    local = open(destination, 'wb')
-    local.write(remote.read())
 

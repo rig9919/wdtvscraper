@@ -1,9 +1,9 @@
 import re
 import os
 import sys
-import urllib
+import urllib2
 import unicodedata
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 from pytmdb3 import tmdb3
 from pytvdb import shortsearch
 
@@ -69,6 +69,12 @@ class ZeroMatchlist(Exception):
 
 def notify(identity, message, stream=sys.stdout):
     print >> stream, identity.encode('utf-8') + ':', message.encode('utf-8')
+
+def show_images_retrieved(current, total=0):
+    if not total:
+        total = '??'
+    sys.stdout.write('%d of %s images retrieved\r' % (current, total))
+    sys.stdout.flush()
 
 def remove_punc(name, preserve_encoding=True):
     '''
@@ -142,7 +148,7 @@ def get_input(prompt, valid_choice_pattern, choice_list_length=-1):
                 if re.match('\d{1,2}', user_input):
                     valid_movies = int(re.match('\d{1,2}',
                                                 user_input).group(0))
-                    if valid_movies <= choice_list_length:
+                    if valid_movies <= choice_list_length and valid_movies > 0:
                         return user_input
                     else:
                         raise ValueError
@@ -307,4 +313,40 @@ def ask_alternative():
     except (ValueError, EOFError):
         notify('error', 'invalid choice')
         return
+
+def draw_mosaic(poster_qty):
+    palette = Image.new('RGB', (1000,650))
+    draw = ImageDraw.Draw(palette)
+    srcdir = os.path.dirname(os.path.realpath(__file__))
+    try:
+        font = ImageFont.load(srcdir + '/ter28-16.pil')
+    except:
+        font = None
+        notify('error', 'no font found, using tiny default font')
+    i = 1
+    x = 0
+    y = 0
+    while i <= poster_qty:
+        poster = Image.open('/tmp/wdposter' + str(i) + '.jpg')
+        poster = poster.resize((200,290), Image.ANTIALIAS)
+        palette.paste(poster, (x,y))   
+        draw.text((x+90, y+290), str(i), fill=(255,255,255), font=font)
+        i = i + 1
+        x = x + 200
+        if x > 800:
+            x = 0
+            y = y + 325
+        if y > 325 and i < poster_qty:
+            palette.show()
+            x = 0
+            y = 0
+            palette = Image.new('RGB', (1000,650))
+            draw = ImageDraw.Draw(palette)
+    palette.show()
+
+def download_file(location, destination):
+    remote = urllib2.urlopen(location, timeout=10)
+    local = open(destination, 'wb')
+    local.write(remote.read())
+
 

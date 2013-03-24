@@ -1,9 +1,12 @@
+import os
+import sys
 import re
 import urllib
 from datetime import date
 from pytmdb3 import tmdb3
 import build_xml
-from common import split_full_title
+from common import split_full_title, draw_mosaic, download_file, get_input, \
+                   show_images_retrieved
 
 '''
 This is a set of helper methods for the tmdb3.Movie class.
@@ -105,7 +108,7 @@ def full_title(self):
     return self.title + ' (' + str(self.year()) + ')'
 
 
-def download_poster(self, size, destination):
+def download_poster(self, size, destination, choose):
     '''
     download associated movie poster
 
@@ -114,9 +117,40 @@ def download_poster(self, size, destination):
     name: name to save it as
     '''
 
-    if self.poster:
+    if choose:
+        print 'Creating image selection palette(s)...'
+        poster_qty = _get_all_posters(self.posters, size)
+        if poster_qty <= 1:
+            print 'No palette created,', poster_qty, 'image(s) available'
+            download_file(self.poster.geturl(size), destination)
+            return
+        draw_mosaic(poster_qty)
+        choice = get_input('Choose an image to use for series poster: ',
+                           '(^$)|(^(Q|q)$)|(^\d{1,2}$)',
+                           poster_qty)
+        if re.match('^(Q|q)$', choice):
+            exit()
+        if not choice:
+            poster_url = self.poster.geturl(size)
+        else:
+            poster_url = self.posters[int(choice)-1].geturl(size)
+    else:
         poster_url = self.poster.geturl(size)
-        urllib.urlretrieve(poster_url, destination)
+    download_file(poster_url, destination)
+
+
+def _get_all_posters(poster_list, size):
+    filelist = os.listdir('/tmp')
+    for f in filelist:
+        if f.startswith('wdposter'):
+            os.remove('/tmp/' + f)
+    i = 1
+    for poster in poster_list:
+        show_images_retrieved(i, len(poster_list))
+        poster_url = poster.geturl(size)
+        download_file(poster_url, '/tmp/wdposter' + str(i) + '.jpg')
+        i = i + 1
+    return i - 1
 
 
 def get_genres(self):

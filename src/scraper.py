@@ -14,7 +14,7 @@ from common import notify, get_chosen_match, ask_alternative, uni
 import common
 import build_xml
 
-__version__ = '1.2.12'
+__version__ = '1.2.13'
 
 
 def main():
@@ -28,7 +28,7 @@ def main():
         path = uni(os.path.join(os.getcwd(), path))
         process_movies(path, args.thumbnails, args.assume, args.interactive,
                        args.quiet, args.force_overwrite, args.language,
-                       args.country, int(args.max_results))
+                       args.country, int(args.max_results), args.choose_cover)
 
     # process all the tv series paths
     if not args.language in 'en sv no da fi nl de it es fr pl hu el ' \
@@ -60,6 +60,8 @@ def init_parser():
     global_opts.add_argument('-i', '--interactive', action='store_true',
                         help='Display search results for movies that '
                              'could not be matched automatically.')
+    global_opts.add_argument('-g', '--choose-cover', action='store_true',
+                         help='Choose which cover to use.')
     global_opts.add_argument('-l', '--language', default='', metavar='LN',
                         help='Where LN is a language code from ISO 639-1. '
                              'Common codes include en/de/nl/es/it/fr/pl. '
@@ -79,9 +81,6 @@ def init_parser():
     movie_opts.add_argument('-T', '--thumbnails', action='store_true',
                         help='Set to include remote thumbnail urls in xml. '
                              'This may slow thumbnail loading.')
-    tv_opts = parser.add_argument_group('tv scraping options')
-    tv_opts.add_argument('-g', '--choose-cover', action='store_true',
-                         help='Choose which cover to use.')
     info_opts = parser.add_argument_group('informational arguments')
     info_opts.add_argument('-V', '--version', action='version',
                         version=__version__)
@@ -90,7 +89,8 @@ def init_parser():
     return args
 
 def process_movies(path, thumbnails, assume, interactive, quiet,
-                   force_overwrite, language, country, max_results):
+                   force_overwrite, language, country, max_results,
+                   choose_cover):
     # configurations for tmdb api
     tmdb3.set_key('ae90cf3b0ab5da570880728198701ce0')
 
@@ -165,11 +165,13 @@ def process_movies(path, thumbnails, assume, interactive, quiet,
             if videofile.tmdb_data.poster:
                 if 'w342' in videofile.tmdb_data.poster.sizes():
                     videofile.tmdb_data.download_poster('w342',
-                             path + '/' + videofile.basename + '.metathumb')
+                             path + '/' + videofile.basename + '.metathumb',
+                             choose_cover)
                 else:
                     videofile.tmdb_data.download_poster(
                              videofile.tmdb_data.poster.sizes()[0],
-                             path + '/' + videofile.basename + '.metathumb')
+                             path + '/' + videofile.basename + '.metathumb',
+                             choose_cover)
             else:
                 notify(videofile.basename,
                        'skipped poster, none available', sys.stderr)
