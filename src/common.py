@@ -143,7 +143,9 @@ def get_input(prompt, valid_choice_pattern, choice_list_length=-1):
 
     while True:
         try:
-            user_input = raw_input(prompt)
+            sys.stdout.write(prompt)
+            sys.stdout.flush()
+            user_input = raw_input()
             if re.match(valid_choice_pattern, user_input):
                 if re.match('\d{1,2}', user_input):
                     valid_movies = int(re.match('\d{1,2}',
@@ -336,7 +338,7 @@ def draw_mosaic(poster_qty):
         if x > 800:
             x = 0
             y = y + 325
-        if y > 325 and i < poster_qty:
+        if y > 325 and i <= poster_qty:
             palette.show()
             x = 0
             y = 0

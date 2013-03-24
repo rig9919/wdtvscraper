@@ -14,7 +14,7 @@ from common import notify, get_chosen_match, ask_alternative, uni
 import common
 import build_xml
 
-__version__ = '1.2.13'
+__version__ = '1.2.14'
 
 
 def main():
@@ -28,7 +28,7 @@ def main():
         path = uni(os.path.join(os.getcwd(), path))
         process_movies(path, args.thumbnails, args.assume, args.interactive,
                        args.quiet, args.force_overwrite, args.language,
-                       args.country, int(args.max_results), args.choose_cover)
+                       args.country, int(args.max_results), args.choose_image)
 
     # process all the tv series paths
     if not args.language in 'en sv no da fi nl de it es fr pl hu el ' \
@@ -38,7 +38,7 @@ def main():
     for path in args.tv_paths:
         path = uni(os.path.join(os.getcwd(), path))
         process_tv(path, args.interactive, args.quiet, args.force_overwrite,
-                   args.language, args.choose_cover, int(args.max_results))
+                   args.language, args.choose_image, int(args.max_results))
 
 def init_parser():
     parser = argparse.ArgumentParser(prog='wdtvscraper', add_help=False,
@@ -60,8 +60,8 @@ def init_parser():
     global_opts.add_argument('-i', '--interactive', action='store_true',
                         help='Display search results for movies that '
                              'could not be matched automatically.')
-    global_opts.add_argument('-g', '--choose-cover', action='store_true',
-                         help='Choose which cover to use.')
+    global_opts.add_argument('-g', '--choose-image', action='store_true',
+                         help='Choose which image to use.')
     global_opts.add_argument('-l', '--language', default='', metavar='LN',
                         help='Where LN is a language code from ISO 639-1. '
                              'Common codes include en/de/nl/es/it/fr/pl. '
@@ -90,7 +90,7 @@ def init_parser():
 
 def process_movies(path, thumbnails, assume, interactive, quiet,
                    force_overwrite, language, country, max_results,
-                   choose_cover):
+                   choose_image):
     # configurations for tmdb api
     tmdb3.set_key('ae90cf3b0ab5da570880728198701ce0')
 
@@ -166,12 +166,12 @@ def process_movies(path, thumbnails, assume, interactive, quiet,
                 if 'w342' in videofile.tmdb_data.poster.sizes():
                     videofile.tmdb_data.download_poster('w342',
                              path + '/' + videofile.basename + '.metathumb',
-                             choose_cover)
+                             choose_image)
                 else:
                     videofile.tmdb_data.download_poster(
                              videofile.tmdb_data.poster.sizes()[0],
                              path + '/' + videofile.basename + '.metathumb',
-                             choose_cover)
+                             choose_image)
             else:
                 notify(videofile.basename,
                        'skipped poster, none available', sys.stderr)
@@ -201,12 +201,12 @@ def manually_search_movie(basename, title, max_results):
 
 
 def process_tv(path, interactive, quiet, force_overwrite, language,
-               choose_cover, max_results):
+               choose_image, max_results):
     # chop off trailing backslash if found
     if path[-1:] == '/':
         path = path[0:-1]
 
-    series_cover = path + '/00aa-series-cover.metathumb'
+    series_image = path + '/00aa-series-cover.metathumb'
     if not language:
         language = 'en'
     if not quiet:
@@ -234,10 +234,10 @@ def process_tv(path, interactive, quiet, force_overwrite, language,
             notify(dirname, 'matches ' + series.series_data.name)
 
         try:
-            if os.path.isfile(series_cover) and (not force_overwrite):
-                notify(dirname, 'skipped cover', sys.stderr)
+            if os.path.isfile(series_image) and (not force_overwrite):
+                notify(dirname, 'skipped image', sys.stderr)
             else:
-                series.save_poster(series_cover, choose_cover)
+                series.save_poster(series_image, choose_image)
         except IOError as e:
             print >> sys.stderr, e
 
