@@ -129,7 +129,7 @@ def split_full_title(title, preserve_encoding=True):
         return {'title': ' '.join(words),
                 'year': ''}
 
-def get_input(prompt, valid_choice_pattern, choice_list_length=-1):
+def get_input(prompt, valid_choice_pattern, lower_bounds=0, upper_bounds=-1):
     '''
     use <prompt> to ask for input from a user
     validate their input with <valid_choice_pattern> and <choice_list_length>
@@ -151,7 +151,7 @@ def get_input(prompt, valid_choice_pattern, choice_list_length=-1):
                 if re.match('\d{1,2}', user_input):
                     valid_movies = int(re.match('\d{1,2}',
                                                 user_input).group(0))
-                    if valid_movies <= choice_list_length and valid_movies >= 0:
+                    if lower_bounds <= valid_movies and valid_movies <= upper_bounds:
                         return user_input
                     else:
                         raise ValueError
@@ -223,7 +223,7 @@ def get_chosen_match(basename, results, max_results):
         user_input = get_input('Which title matches ' + basename +
                               '? (N=none/#m=more detail) ',
                               '(^$)|(^(N|n)$)|(^(Q|q)$)|(^\d{1,2}(M||m)$)',
-                              valid_movies)
+                              upper_bounds=valid_movies)
         # they chose none so return None
         if re.match('(^$)|(^(N|n)$)', user_input):
             return
@@ -249,7 +249,7 @@ def get_chosen_match(basename, results, max_results):
                 if os.path.isfile(tmp):
                     os.remove(tmp)
                 if isinstance(item, tmdb3.Movie):
-                    item.download_poster('w342', tmp)
+                    item.download_poster('w342', tmp, False)
                 elif isinstance(item, shortsearch.ShortSeriesData):
                     if item.bannerUrl:
                         urllib.urlretrieve(item.bannerUrl, tmp)

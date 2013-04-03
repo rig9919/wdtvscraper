@@ -127,7 +127,7 @@ def download_poster(self, size, destination, choose):
         draw_mosaic(poster_qty)
         choice = get_input('Choose an image to use for movie poster: ',
                            '(^$)|(^(Q|q)$)|(^\d{1,2}$)',
-                           poster_qty)
+                           1, poster_qty)
         if re.match('^(Q|q)$', choice):
             exit()
         if not choice:
