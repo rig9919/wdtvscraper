@@ -68,3 +68,4 @@
 1.2.13  can now choose image for movies as well
 1.2.14  fixed problem displaying 11th poster, fixed prompt to output to stdout
 1.2.15  updated documentation
+1.2.16  fixed bugs with choosing item 0 in interactive and display preview image

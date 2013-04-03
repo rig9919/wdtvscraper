@@ -1,6 +1,7 @@
 import re
 import os
 import sys
+import urllib
 import urllib2
 import unicodedata
 from PIL import Image, ImageDraw, ImageFont
@@ -150,7 +151,7 @@ def get_input(prompt, valid_choice_pattern, choice_list_length=-1):
                 if re.match('\d{1,2}', user_input):
                     valid_movies = int(re.match('\d{1,2}',
                                                 user_input).group(0))
-                    if valid_movies <= choice_list_length and valid_movies > 0:
+                    if valid_movies <= choice_list_length and valid_movies >= 0:
                         return user_input
                     else:
                         raise ValueError

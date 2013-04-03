@@ -14,7 +14,7 @@ from common import notify, get_chosen_match, ask_alternative, uni
 import common
 import build_xml
 
-__version__ = '1.2.15'
+__version__ = '1.2.16'
 
 
 def main():
@@ -58,7 +58,7 @@ def init_parser():
                         help='Where RS is the number of results to be '
                              'displayed in interactive mode.')
     global_opts.add_argument('-i', '--interactive', action='store_true',
-                        help='Display search results for movies that '
+                        help='Display search results for movies/series that '
                              'could not be matched automatically.')
     global_opts.add_argument('-g', '--choose-image', action='store_true',
                          help='Choose which image to use.')
