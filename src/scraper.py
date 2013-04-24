@@ -14,7 +14,7 @@ from common import notify, get_chosen_match, ask_alternative, uni
 import common
 import build_xml
 
-__version__ = '1.2.17'
+__version__ = '1.2.18'
 
 
 def main():
@@ -25,7 +25,7 @@ def main():
 
     # process all the movie paths
     for path in args.movie_paths:
-        path = uni(os.path.join(os.getcwd(), path))
+        path = parse_path(path)
         process_movies(path, args.thumbnails, args.assume, args.interactive,
                        args.quiet, args.force_overwrite, args.language,
                        args.country, int(args.max_results), args.choose_image)
@@ -36,9 +36,14 @@ def main():
         notify('error', 'invalid language')
         exit()
     for path in args.tv_paths:
-        path = uni(os.path.join(os.getcwd(), path))
+        path = parse_path(path)
         process_tv(path, args.interactive, args.quiet, args.force_overwrite,
                    args.language, args.choose_image, int(args.max_results))
+
+def parse_path(path):
+    if path == '.' or path == './':
+        return uni(os.getcwd())
+    return uni(os.path.join(os.getcwd(), path))
 
 def init_parser():
     parser = argparse.ArgumentParser(prog='wdtvscraper', add_help=False,

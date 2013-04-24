@@ -10,6 +10,10 @@ from pytvdb import shortsearch
 
 
 def uni(obj, encoding='utf-8'):
+    '''
+    convert a string of bytes to unicode string
+    '''
+
     if isinstance(obj, basestring):
         if not isinstance(obj, unicode):
             obj = unicode(obj, encoding)
@@ -52,10 +56,6 @@ class NonzeroMatchlistNoMatches(Exception):
     def __str__(self):
         return unicode(self).encode('utf-8')
 
-    #def __str__(self):
-    #    return ('%s: %s results found but none matched'
-    #            % (self.name, self.results))
-
 
 class ZeroMatchlist(Exception):
 
@@ -68,7 +68,12 @@ class ZeroMatchlist(Exception):
     def __str__(self):
         return unicode(self).encode('utf-8')
 
+
 def notify(identity, message, stream=sys.stdout):
+    '''
+    display a message to the user
+    '''
+
     print >> stream, identity.encode('utf-8') + ':', message.encode('utf-8')
 
 def show_images_retrieved(current, total=0):
@@ -85,6 +90,7 @@ def remove_punc(name, preserve_encoding=True):
     preserve_encoding: determines if the accents and other unicode characters
                        should be preserved or instead replaced with similar
                        looking ascii characters
+
     '''
 
     # get rid of any accents and other unicode characters if told
@@ -96,7 +102,7 @@ def remove_punc(name, preserve_encoding=True):
     name = re.sub('&', 'and', name)
     name = re.sub('\'', '', name)
     # get the list of words
-    words = re.findall('\w+', name)
+    words = re.findall('\w+', name, re.UNICODE)
     return words
 
 
@@ -132,12 +138,10 @@ def split_full_title(title, preserve_encoding=True):
 def get_input(prompt, valid_choice_pattern, lower_bounds=0, upper_bounds=-1):
     '''
     use <prompt> to ask for input from a user
-    validate their input with <valid_choice_pattern> and <choice_list_length>
+    validate their input with <valid_choice_pattern>
 
     prompt: message used to ask user for input
     valid_choice_pattern: regex used to match user input against
-    choice_list_length: number used validate movie choice because regex
-                        can't match number ranges
     '''
 
     prompt = prompt.encode('utf-8')
@@ -148,8 +152,8 @@ def get_input(prompt, valid_choice_pattern, lower_bounds=0, upper_bounds=-1):
             sys.stdout.flush()
             user_input = raw_input()
             if re.match(valid_choice_pattern, user_input):
-                if re.match('\d{1,2}', user_input):
-                    valid_movies = int(re.match('\d{1,2}',
+                if re.search('\d+', user_input):
+                    valid_movies = int(re.search('\d+',
                                                 user_input).group(0))
                     if lower_bounds <= valid_movies and valid_movies <= upper_bounds:
                         return user_input
@@ -280,7 +284,7 @@ def get_chosen_match(basename, results, max_results):
                           'Preview available:', preview_available
 
                 # ask if this movie matches
-                user_input = get_input('Does this movie match yours? '
+                user_input = get_input('Is this the title you want? '
                                        '(yes/No) ',
                                       '(^$)|(^(Y|y)$)|(^(N|n)$)|(^(Q|q)$)')
                 # they chose yes, return this movie
@@ -330,6 +334,10 @@ def draw_mosaic(poster_qty):
     x = 0
     y = 0
     while i <= poster_qty:
+        poster_file = '/tmp/wdposter' + str(i) + '.jpg'
+        if os.path.getsize(poster_file) == 0:
+            i = i + 1
+            continue
         poster = Image.open('/tmp/wdposter' + str(i) + '.jpg')
         poster = poster.resize((200,290), Image.ANTIALIAS)
         palette.paste(poster, (x,y))   
@@ -351,5 +359,4 @@ def download_file(location, destination):
     remote = urllib2.urlopen(location, timeout=10)
     local = open(destination, 'wb')
     local.write(remote.read())
-
 
