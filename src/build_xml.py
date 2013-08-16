@@ -39,7 +39,8 @@ def write_tvshow(series, episode, destination):
     xml.append('  <episode_number>' + episode.episodeNumber + '</episode_number>')
     xml.append('  <firstaired>' + unicode(episode.firstAired) + '</firstaired>')
     # tv view does not give each genre its own item
-    xml.append('  <genre>' + '/'.join(series.genres) + '</genre>')
+    # use series name as genre to make genre filter less muddy
+    xml.append('  <genre>' + unicode(series.name) + '</genre>')
     xml.append('  <runtime>' + 'N/A' + '</runtime>')
     xml.append('  <director>' + '/'.join(episode.director) + '</director>')
     # tv view does not give each actor their own item
