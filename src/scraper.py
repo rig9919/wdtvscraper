@@ -14,7 +14,7 @@ from common import notify, get_chosen_match, ask_alternative, uni
 import common
 import build_xml
 
-__version__ = '1.2.19'
+__version__ = '1.2.20'
 
 
 def main():
@@ -165,11 +165,11 @@ def process_movies(path, thumbnails, assume, interactive, quiet,
            and not force_overwrite):
             notify(videofile.basename, 'skipped poster', sys.stderr)
         else:
-        # if there's any posters available, download w342 size
+        # if there's any posters available, download w185 size
         # preferably. otherwise, get the smallest available.
             if videofile.tmdb_data.poster:
                 if 'w342' in videofile.tmdb_data.poster.sizes():
-                    videofile.tmdb_data.download_poster('w342',
+                    videofile.tmdb_data.download_poster('w185',
                              path + '/' + videofile.basename + '.metathumb',
                              choose_image)
                 else:
