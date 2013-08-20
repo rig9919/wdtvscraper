@@ -14,7 +14,7 @@ from common import notify, get_chosen_match, ask_alternative, uni
 import common
 import build_xml
 
-__version__ = '1.2.20'
+__version__ = '1.2.21'
 
 
 def main():
@@ -27,7 +27,7 @@ def main():
     for path in args.movie_paths:
         path = parse_path(path)
         process_movies(path, args.thumbnails, args.assume, args.interactive,
-                       args.quiet, args.force_overwrite, args.language,
+                       args.verbose, args.force_overwrite, args.language,
                        args.country, int(args.max_results), args.choose_image)
 
     # process all the tv series paths
@@ -37,7 +37,7 @@ def main():
         exit()
     for path in args.tv_paths:
         path = parse_path(path)
-        process_tv(path, args.interactive, args.quiet, args.force_overwrite,
+        process_tv(path, args.interactive, args.verbose, args.force_overwrite,
                    args.language, args.choose_image, int(args.max_results))
 
 def parse_path(path):
@@ -71,8 +71,9 @@ def init_parser():
                         help='Where LN is a language code from ISO 639-1. '
                              'Common codes include en/de/nl/es/it/fr/pl. '
                              'TVDB languages are more restrictive.')
-    global_opts.add_argument('-q', '--quiet', action='store_true',
-                        help='Suppress unimportant messages.')
+    global_opts.add_argument('-v', '--verbose', default=False,
+                             action='store_true',
+                        help='Show more output.')
     global_opts.add_argument('-f', '--force-overwrite', action='store_true',
                         help='Force overwrite of metadata and poster files.')
     movie_opts = parser.add_argument_group('movie scraping options')
@@ -93,7 +94,7 @@ def init_parser():
     args = parser.parse_args()
     return args
 
-def process_movies(path, thumbnails, assume, interactive, quiet,
+def process_movies(path, thumbnails, assume, interactive, verbose,
                    force_overwrite, language, country, max_results,
                    choose_image):
     # configurations for tmdb api
@@ -108,7 +109,7 @@ def process_movies(path, thumbnails, assume, interactive, quiet,
         if country:
             tmdb3.set_locale(country=country, fallthrough=True)
 
-    if not quiet:
+    if verbose:
         notify('processing', path)
         notify('locale', str(tmdb3.get_locale()))
 
@@ -152,7 +153,7 @@ def process_movies(path, thumbnails, assume, interactive, quiet,
             notify(videofile.basename, 'not found', sys.stderr)
             continue
     
-        if not quiet:
+        if verbose:
             if videofile.matched_method == 'assumed':
                 notify(videofile.basename,
                        'assuming matches ' + videofile.tmdb_data.full_title())
@@ -205,7 +206,7 @@ def manually_search_movie(basename, title, max_results):
     return tmdb_data
 
 
-def process_tv(path, interactive, quiet, force_overwrite, language,
+def process_tv(path, interactive, verbose, force_overwrite, language,
                choose_image, max_results):
     # chop off trailing backslash if found
     if path[-1:] == '/':
@@ -214,7 +215,7 @@ def process_tv(path, interactive, quiet, force_overwrite, language,
     series_image = path + '/00aa-series-cover.metathumb'
     if not language:
         language = 'en'
-    if not quiet:
+    if verbose:
         notify('processing', path)
 
     if not os.path.isdir(path):
@@ -235,7 +236,7 @@ def process_tv(path, interactive, quiet, force_overwrite, language,
             print >> sys.stderr, e
             return
 
-        if not quiet:
+        if verbose:
             notify(dirname, 'matches ' + series.series_data.name)
 
         try:
@@ -269,7 +270,7 @@ def process_tv(path, interactive, quiet, force_overwrite, language,
                        sys.stderr)
                 continue
 
-            if not quiet:
+            if verbose:
                 if not episode.episode_data:
                     raise common.NoEpisodeException(episode.basename)
                 notify(episode.basename, 'matches ' + episode.episode_data.name)

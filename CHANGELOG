@@ -73,3 +73,4 @@
 1.2.18  fixed bug creating mosaic when a poster is missing, . and ./ work now
 1.2.19  made genre filter less muddy by using tv series names as genres
 1.2.20  movie thumbnails are smaller to decrease load times
+1.2.21  changed quiet option to verbose making silence default
