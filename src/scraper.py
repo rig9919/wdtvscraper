@@ -14,7 +14,7 @@ from common import notify, get_chosen_match, ask_alternative, uni
 import common
 import build_xml
 
-__version__ = '1.2.21'
+__version__ = '1.2.22'
 
 
 def main():
@@ -71,9 +71,8 @@ def init_parser():
                         help='Where LN is a language code from ISO 639-1. '
                              'Common codes include en/de/nl/es/it/fr/pl. '
                              'TVDB languages are more restrictive.')
-    global_opts.add_argument('-v', '--verbose', default=False,
-                             action='store_true',
-                        help='Show more output.')
+    global_opts.add_argument('-v', '--verbose', default=0, action='count',
+                        help='Increase level of information up to 3 levels.')
     global_opts.add_argument('-f', '--force-overwrite', action='store_true',
                         help='Force overwrite of metadata and poster files.')
     movie_opts = parser.add_argument_group('movie scraping options')
@@ -109,12 +108,12 @@ def process_movies(path, thumbnails, assume, interactive, verbose,
         if country:
             tmdb3.set_locale(country=country, fallthrough=True)
 
-    if verbose:
+    if verbose >= 3:
         notify('processing', path)
         notify('locale', str(tmdb3.get_locale()))
 
     if not os.path.isdir(path):
-        notify('error', '\'' + path + '\' is not a directory', sys.stderr)
+        notify('warning', '\'' + path + '\' is not a directory', sys.stderr)
         return
 
     # process each file in path
@@ -131,7 +130,8 @@ def process_movies(path, thumbnails, assume, interactive, verbose,
             os.path.isfile(path + '/' + videofile.basename + '.xml') and 
             (not force_overwrite)):
             # metathumb and xml already exists for this movie
-            notify(videofile.basename, 'skipped poster/metadata', sys.stderr)
+            if verbose >= 2:
+                notify(videofile.basename, 'poster and metadata already exist', sys.stderr)
             continue
 
         # find a matching title from tmdb
@@ -153,7 +153,7 @@ def process_movies(path, thumbnails, assume, interactive, verbose,
             notify(videofile.basename, 'not found', sys.stderr)
             continue
     
-        if verbose:
+        if verbose >= 1:
             if videofile.matched_method == 'assumed':
                 notify(videofile.basename,
                        'assuming matches ' + videofile.tmdb_data.full_title())
@@ -164,7 +164,8 @@ def process_movies(path, thumbnails, assume, interactive, verbose,
         # deal with poster
         if (os.path.isfile(path + '/' + videofile.basename + '.metathumb')
            and not force_overwrite):
-            notify(videofile.basename, 'skipped poster', sys.stderr)
+            if verbose >= 2:
+                notify(videofile.basename, 'poster already exists', sys.stderr)
         else:
         # if there's any posters available, download w185 size
         # preferably. otherwise, get the smallest available.
@@ -180,12 +181,13 @@ def process_movies(path, thumbnails, assume, interactive, verbose,
                              choose_image)
             else:
                 notify(videofile.basename,
-                       'skipped poster, none available', sys.stderr)
+                       'no poster available', sys.stderr)
     
         # deal with metadata
         if (os.path.isfile(path + '/' + videofile.basename + '.xml')
            and not force_overwrite):
-            notify(videofile.basename, 'skipped metadata', sys.stderr)
+            if verbose >= 2:
+                notify(videofile.basename, 'metadata already exists', sys.stderr)
         else:
             videofile.tmdb_data.write_metadata(
                                    path + '/' + videofile.basename + '.xml',
@@ -215,11 +217,11 @@ def process_tv(path, interactive, verbose, force_overwrite, language,
     series_image = path + '/00aa-series-cover.metathumb'
     if not language:
         language = 'en'
-    if verbose:
+    if verbose >= 3:
         notify('processing', path)
 
     if not os.path.isdir(path):
-        notify('error', '\'' + path + '\' is not a directory', sys.stderr)
+        notify('warning', '\'' + path + '\' is not a directory', sys.stderr)
         return
     dirname = os.path.basename(path)
     basename = dirname
@@ -236,12 +238,13 @@ def process_tv(path, interactive, verbose, force_overwrite, language,
             print >> sys.stderr, e
             return
 
-        if verbose:
+        if verbose >= 1:
             notify(dirname, 'matches ' + series.series_data.name)
 
         try:
             if os.path.isfile(series_image) and (not force_overwrite):
-                notify(dirname, 'skipped image', sys.stderr)
+                if verbose >= 2:
+                    notify(dirname, 'series poster already exists', sys.stderr)
             else:
                 series.save_poster(series_image, choose_image)
         except IOError as e:
@@ -266,11 +269,12 @@ def process_tv(path, interactive, verbose, force_overwrite, language,
                 '.metathumb') and
                 os.path.isfile(path + '/' + episode.basename + '.xml') and
                 (not force_overwrite)):
-                notify(episode.basename, 'skipped screenshot/metadata',
-                       sys.stderr)
+                if verbose >= 2:
+                    notify(episode.basename, 'screenshot and metadata already exist',
+                           sys.stderr)
                 continue
 
-            if verbose:
+            if verbose >= 1:
                 if not episode.episode_data:
                     raise common.NoEpisodeException(episode.basename)
                 notify(episode.basename, 'matches ' + episode.episode_data.name)
