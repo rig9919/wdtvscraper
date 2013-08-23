@@ -75,3 +75,4 @@
 1.2.20  movie thumbnails are smaller to decrease load times
 1.2.21  changed quiet option to verbose making silence default
 1.2.22  verbose option has 3 levels
+1.2.23  updated documentation
