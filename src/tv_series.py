@@ -204,7 +204,7 @@ def _get_all_posters(location):
 def _save_poster(location, destination, basename, max_size):
     # If there is no art, carry on
     if not location:
-        notify(basename, 'no image available')
+        notify('warning:', 'no image available for ' + basename)
         return
     max_size = max_size*1024
     urllib.urlretrieve(location, destination)
@@ -217,7 +217,7 @@ def _save_poster(location, destination, basename, max_size):
             is_reduced = True
             break
     if is_reduced:
-        notify(basename, 'image quality reduced and useless data removed',
-               sys.stderr)
+        notify('warning:', 'image quality reduced and useless data removed for '
+               + basename, sys.stderr)
 
 
