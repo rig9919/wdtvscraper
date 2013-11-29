@@ -3,7 +3,21 @@ import re
 import codecs
 
 
-def write_tvshow(series, episode, destination):
+def write_tvshow(series, episode, destination, use_dvdorder):
+    if use_dvdorder:
+        season_num = episode.dvd_seasonNumber
+        # dvd_episodeNumber is a decimal number so it can deal with episodes 
+        # aired as multiple episodes but combined on the dvd as one episode
+        if float(episode.dvd_episodeNumber).is_integer():
+            episode_num = int(float(episode.dvd_episodeNumber))
+        else:
+            episode_num = episode.dvd_episodeNumber
+    else:
+        season_num = episode.seasonNumber
+        episode_num = episode.episodeNumber
+    season_num = str(season_num)
+    episode_num = str(episode_num)
+
     xml = list()
 
     xml.append('<?xml version="1.0"?>'
@@ -30,13 +44,13 @@ def write_tvshow(series, episode, destination):
     xml.append('  <id>' + unicode(episode.tvdbId) + '</id>')
     #title = '%s: S%sE%s %s' % (series.name, episode.seasonNumber.zfill(2),
     #                           episode.episodeNumber.zfill(2), episode.name)
-    title = '%s%s: %s' % (episode.seasonNumber, episode.episodeNumber.zfill(2),
+    title = '%s%s: %s' % (season_num, episode_num.zfill(2),
                          episode.name)
     xml.append('  <title>' + unicode(title) + '</title>') 
     xml.append('  <series_name>' + unicode(series.name) + '</series_name>')
     xml.append('  <episode_name>' + unicode(episode.name) + '</episode_name>')
-    xml.append('  <season_number>' + episode.seasonNumber + '</season_number>')
-    xml.append('  <episode_number>' + episode.episodeNumber + '</episode_number>')
+    xml.append('  <season_number>' + season_num + '</season_number>')
+    xml.append('  <episode_number>' + episode_num + '</episode_number>')
     xml.append('  <firstaired>' + unicode(episode.firstAired) + '</firstaired>')
     # tv view does not give each genre its own item
     # use series name as genre to make genre filter less muddy
@@ -45,9 +59,15 @@ def write_tvshow(series, episode, destination):
     xml.append('  <director>' + '/'.join(episode.director) + '</director>')
     # tv view does not give each actor their own item
     xml.append('  <actor>' + '/'.join(actor.name for actor in series.actors) + '</actor>')
+    if use_dvdorder:
+        overview = '  <overview>Aired as ' + episode.seasonNumber + episode.episodeNumber.zfill(2) + '. '
+    else:
+        overview = '  <overview>On DVD as ' + episode.dvd_seasonNumber + episode.dvd_episodeNumber.zfill(2) + '. '
     # overview is a list for some reason
     if len(episode.overview) > 0:
-        xml.append('  <overview>' + episode.overview[0] + '</overview>')
+        overview = overview + episode.overview[0]
+    if overview:
+        xml.append(overview + '</overview>')
     xml.append('</details>')
 
     f = codecs.open(destination, encoding='utf-8', mode='w')

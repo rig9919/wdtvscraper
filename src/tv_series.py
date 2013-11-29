@@ -110,7 +110,7 @@ class LocalSeries(object):
 
 class LocalEpisode(object):
 
-    def __init__(self, path, series_data):
+    def __init__(self, path, series_data, use_dvdorder):
         '''
         use episode identification information in <path>'s name to init
 
@@ -128,26 +128,33 @@ class LocalEpisode(object):
         self.season_num = int(self.__get_episode_id()['season'])
         self.episode_num = int(self.__get_episode_id()['episode'])
         # retrieve episode data
-        self.episode_data = self.__get_match(self.series_data.episodes)
+        self.episode_data = self.__get_match(self.series_data.episodes, use_dvdorder)
 
     def save_poster(self, destination):
         _save_poster(self.episode_data.bannerUrl, destination,
                      self.basename, 40)
 
-    def save_metadata(self, destination):
+    def save_metadata(self, destination, use_dvdorder):
         build_xml.write_tvshow(self.series_data, self.episode_data,
-                               destination)
+                               destination, use_dvdorder)
 
-    def __get_match(self, episode_list):
+    def __get_match(self, episode_list, use_dvdorder):
         '''
         search <episode_list> for an episode match
         return any episode that matches
         a match is defined as anything that has same season and episode numbers
         '''
-        for episode in episode_list:
-            if (int(episode.seasonNumber) == self.season_num
-                and int(episode.episodeNumber) == self.episode_num):
-                return episode
+        if use_dvdorder:
+            for episode in episode_list:
+                if episode.dvd_seasonNumber and episode.dvd_episodeNumber:
+                    if (float(episode.dvd_seasonNumber) == float(self.season_num)
+                        and float(episode.dvd_episodeNumber) == float(self.episode_num)):
+                        return episode
+        else:
+            for episode in episode_list:
+                if (int(episode.seasonNumber) == self.season_num
+                    and int(episode.episodeNumber) == self.episode_num):
+                    return episode
         raise common.NoEpisodeException(self.basename)
 
     def __get_episode_id(self):

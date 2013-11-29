@@ -14,7 +14,7 @@ from common import notify, get_chosen_match, ask_alternative, uni
 import common
 import build_xml
 
-__version__ = '1.2.24'
+__version__ = '1.2.25'
 
 
 def main():
@@ -38,7 +38,7 @@ def main():
     for path in args.tv_paths:
         path = parse_path(path)
         process_tv(path, args.interactive, args.verbose, args.force_overwrite,
-                   args.language, args.choose_image, int(args.max_results))
+                   args.language, args.choose_image, int(args.max_results), args.dvd_ordering)
 
 def parse_path(path):
     if path == '.' or path == './':
@@ -86,6 +86,10 @@ def init_parser():
     movie_opts.add_argument('-T', '--thumbnails', action='store_true',
                         help='Set to include remote thumbnail urls in xml. '
                              'This may slow thumbnail loading.')
+    tv_opts = parser.add_argument_group('tv scraping options')
+    tv_opts.add_argument('-d', '--dvd-ordering', action='store_true',
+                        help='Series episodes are named in the same order as '
+                             'they are on the DVD.')
     info_opts = parser.add_argument_group('informational arguments')
     info_opts.add_argument('-V', '--version', action='version',
                         version=__version__)
@@ -209,7 +213,7 @@ def manually_search_movie(basename, title, max_results):
 
 
 def process_tv(path, interactive, verbose, force_overwrite, language,
-               choose_image, max_results):
+               choose_image, max_results, dvd_ordering):
     # chop off trailing backslash if found
     if path[-1:] == '/':
         path = path[0:-1]
@@ -259,7 +263,7 @@ def process_tv(path, interactive, verbose, force_overwrite, language,
 
             # make a LocalEpisode object using the video's information
             try:
-                episode = LocalEpisode(f, series.series_data)
+                episode = LocalEpisode(f, series.series_data, dvd_ordering)
             except common.NoEpisodeException as e:
                 print >> sys.stderr, e
                 continue
@@ -288,7 +292,7 @@ def process_tv(path, interactive, verbose, force_overwrite, language,
                 print >> sys.stderr, e
             try:
                 episode.save_metadata(path + '/' + episode.basename +
-                                      '.xml')
+                                      '.xml', dvd_ordering)
             except IOError as e:
                 print >> sys.stderr, e
 

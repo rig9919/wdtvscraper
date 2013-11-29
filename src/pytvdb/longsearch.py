@@ -41,6 +41,8 @@ class EpisodeData():
     overview = ''
     episodeNumber = ''
     seasonNumber = ''   
+    dvd_episodeNumber = ''
+    dvd_seasonNumber = ''
     language = ''
     firstAired = ''   
     director = []
@@ -77,7 +79,7 @@ def XMLToEpisodes(episodeList):
     for episodeElement in episodeList:
         episode = EpisodeData()
         for element in episodeElement.getiterator():
-            
+
             if element.tag == 'id':
                 episode.tvdbId = element.text
                 continue
@@ -99,7 +101,15 @@ def XMLToEpisodes(episodeList):
             if element.tag == 'SeasonNumber':
                 episode.seasonNumber = element.text
                 continue
-            
+
+            if element.tag == 'DVD_episodenumber':
+                episode.dvd_episodeNumber = element.text
+                continue
+
+            if element.tag == 'DVD_season':
+                episode.dvd_seasonNumber = element.text
+                continue
+
             if element.tag == 'Language':
                 episode.language = element.text
                 continue
