@@ -78,3 +78,4 @@
 1.2.23  updated documentation
 1.2.24  image resizing notification is a warning
 1.2.25  added --dvd-ordering option
+1.2.26  fixed ugly formatting of episode ids in beginning of overviews
