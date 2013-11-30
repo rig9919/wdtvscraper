@@ -59,19 +59,21 @@ def write_tvshow(series, episode, destination, use_dvdorder):
     xml.append('  <director>' + '/'.join(episode.director) + '</director>')
     # tv view does not give each actor their own item
     xml.append('  <actor>' + '/'.join(actor.name for actor in series.actors) + '</actor>')
+
+    overview = '  <overview>'
     if use_dvdorder:
-        overview = '  <overview>Aired as ' + episode.seasonNumber + episode.episodeNumber.zfill(2) + '. '
-    else:
+        overview = overview + 'Aired as ' + episode.seasonNumber + episode.episodeNumber.zfill(2) + '. '
+    elif episode.dvd_episodeNumber and episode.dvd_seasonNumber:
         if float(episode.dvd_episodeNumber).is_integer():
             ep_on_dvd = str(int(float(episode.dvd_episodeNumber))).zfill(2)
         else:
             ep_on_dvd = episode.dvd_episodeNumber.zfill(4)
-        overview = '  <overview>On DVD as ' + episode.dvd_seasonNumber + ep_on_dvd + '. '
+        overview = overview + 'On DVD as ' + episode.dvd_seasonNumber + ep_on_dvd + '. '
     # overview is a list for some reason
     if len(episode.overview) > 0:
         overview = overview + episode.overview[0]
-    if overview:
-        xml.append(overview + '</overview>')
+    xml.append(overview + '</overview>')
+
     xml.append('</details>')
 
     f = codecs.open(destination, encoding='utf-8', mode='w')
