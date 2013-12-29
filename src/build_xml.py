@@ -72,6 +72,7 @@ def write_tvshow(series, episode, destination, use_dvdorder):
     # overview is a list for some reason
     if len(episode.overview) > 0:
         overview = overview + episode.overview[0]
+    overview = overview.replace('&', '&amp;')
     xml.append(overview + '</overview>')
 
     xml.append('</details>')
@@ -139,6 +140,7 @@ def write_movie(mov, destination, thumbnails):
         xml.append('  <genre>' + genre.name + '</genre>')
     for studio in mov.studios:
         xml.append('  <studio>' + studio.name + '</studio>')
+    mov.overview = mov.overview.replace('&', '&amp;')
     xml.append('  <plot>' + mov.overview + '</plot>')
     xml.append('  <overview>' + mov.overview + '</overview>')
     for member in mov.crew:
