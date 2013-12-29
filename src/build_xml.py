@@ -44,6 +44,7 @@ def write_tvshow(series, episode, destination, use_dvdorder):
     xml.append('  <id>' + unicode(episode.tvdbId) + '</id>')
     #title = '%s: S%sE%s %s' % (series.name, episode.seasonNumber.zfill(2),
     #                           episode.episodeNumber.zfill(2), episode.name)
+    episode.name = episode.name.replace('&', '&amp;')
     title = '%s%s: %s' % (season_num, episode_num.zfill(2),
                          episode.name)
     xml.append('  <title>' + unicode(title) + '</title>') 
@@ -123,6 +124,7 @@ def write_movie(mov, destination, thumbnails):
     xml.append('<details>')
     xml.append('  <id>' + unicode(mov.id) + '</id>')
     xml.append('  <imdb_id>' + unicode(mov.imdb) + '</imdb_id>')
+    mov.title = mov.title.replace('&', '&amp;')
     xml.append('  <title>' + mov.title + '</title>')
     if 'US' in mov.releases:
         xml.append('  <mpaa>' + mov.releases['US'].certification + '</mpaa>')
