@@ -6,6 +6,9 @@ import re
 import argparse
 import PIL
 import urllib
+import sqlite3
+import time
+import xml.etree.ElementTree as ET
 from pytmdb3 import tmdb3
 import movie_extensions
 from local_video import LocalVideo
@@ -14,21 +17,31 @@ from common import notify, get_chosen_match, ask_alternative, uni
 import common
 import build_xml
 
-__version__ = '1.2.27'
+__version__ = '1.3.0'
 
 
 def main():
     args = init_parser()
     # if user didn't specify a tv path or movie path, tell them
-    if not args.movie_paths and not args.tv_paths:
-        print 'Must use -m and/or -t option. See help menu'
+    if not args.movie_paths and not args.tv_paths \
+                            and not args.media_library:
+        print '-m/-t/-L option is necessary.'
+
+    # repair library if requested
+    if args.media_library and not args.movie_paths and not args.tv_paths:
+        if not os.path.isfile(args.media_library):
+            notify('error', 'media library file does not exist')
+            exit()
+        modify_db(args.media_library, args.verbose, None, True)
 
     # process all the movie paths
     for path in args.movie_paths:
         path = parse_path(path)
-        process_movies(path, args.thumbnails, args.assume, args.interactive,
+        v=process_movies(path, args.thumbnails, args.assume, args.interactive,
                        args.verbose, args.force_overwrite, args.language,
                        args.country, int(args.max_results), args.choose_image)
+        if args.media_library:
+            modify_db(args.media_library, args.verbose, v)
 
     # process all the tv series paths
     if not args.language in 'en sv no da fi nl de it es fr pl hu el ' \
@@ -37,8 +50,11 @@ def main():
         exit()
     for path in args.tv_paths:
         path = parse_path(path)
-        process_tv(path, args.interactive, args.verbose, args.force_overwrite,
-                   args.language, args.choose_image, int(args.max_results), args.dvd_ordering)
+        v=process_tv(path, args.interactive, args.verbose, args.force_overwrite,
+                   args.language, args.choose_image, int(args.max_results),
+                   args.dvd_ordering)
+        if args.media_library:
+            modify_db(args.media_library, args.verbose, v)
 
 def parse_path(path):
     if path == '.' or path == './':
@@ -47,9 +63,9 @@ def parse_path(path):
 
 def init_parser():
     parser = argparse.ArgumentParser(prog='wdtvscraper', add_help=False,
-               usage='%(prog)s [options] -m movie-paths... -t tv-paths...',
-               description='Scrape themoviedb.org and thetvdb.com for '
-                            'of movies and tv series stored on a WDTV device.')
+             usage='%(prog)s [options] -L db -m movie-paths... -t tv-paths...',
+             description='Scrape themoviedb.org and thetvdb.com for '
+                          'of movies and tv series stored on a WDTV device.')
     required_args = parser.add_argument_group('requirements',
                                               'at least one is required')
     required_args.add_argument('-m', '--movie-paths', default='', metavar='',
@@ -58,6 +74,13 @@ def init_parser():
     required_args.add_argument('-t', '--tv-paths', default='', metavar='',
                                nargs='+', help='The paths to the directories '
                               'containing your tv series files.')
+    required_args.add_argument('-L', '--media-library', default='',
+                               metavar='', help='The path to the sqlite3 '
+                               'database file. When used in conjuction with '
+                               'the -m or -t option, all new metadata found '
+                               'is added to the database. With neither option '
+                               'used, incomplete database records are updated '
+                               'with any new metadata found on the device')
     global_opts = parser.add_argument_group('global options')
     global_opts.add_argument('-r', '--max-results', default=0, metavar='RS',
                         help='Where RS is the number of results to be '
@@ -97,9 +120,101 @@ def init_parser():
     args = parser.parse_args()
     return args
 
+def modify_db(db_file, verbose, videos, repair=False):
+    wdtv_dir = os.path.dirname(os.path.dirname(db_file))
+    conn = sqlite3.connect(db_file)
+    c = conn.cursor()
+    mlib_name = c.execute("SELECT name FROM folder WHERE filepath = './'").fetchone()[0]
+    if verbose >= 3:
+        notify('modifying media library', mlib_name)
+    if not repair:
+        broken = [ os.path.split(video) + ('new',) for video in videos ]
+    else:
+        broken = c.execute('''SELECT filepath, name, id FROM video 
+                              WHERE title = name''').fetchall()
+    for b in broken:
+        b_filepath = b[0]
+        b_name = b[1]
+        b_id = b[2]
+        b_fullpath = b_filepath + '/' + b_name
+        b_fullpath_real = b_fullpath.replace('./' + mlib_name, wdtv_dir)
+        b_dirname, b_filename = os.path.split(b_fullpath_real)
+        b_basename, b_ext = os.path.splitext(b_filename)
+        b_xml = (b_dirname + '/' + b_basename + '.xml')
+        if not os.path.isfile(b_xml):
+            if verbose >= 2:
+                notify(os.path.basename(b_fullpath_real) + ' (' + str(b_id) + ')', 
+                   'could not repair record in media library, no matching xml',
+                   sys.stderr)
+            continue
+        tree = ET.parse(b_xml)
+        director = tree.find('director')
+        actors = tree.findall('actor/name')
+        if director is not None:
+            director = director.text
+        else:
+            director = ''
+        if actors is not None:
+            actors = [actor.text for actor in actors]
+            actor = ' / '.join(actors)
+        else:
+            actor = ''
+        if b_id == 'new':
+            c.execute('SELECT * FROM video WHERE filepath = ? AND name = ?',
+                       (b_filepath.replace(wdtv_dir, './' + mlib_name), b_name))
+            record_exists = c.fetchall()
+            if record_exists:
+                notify(b_basename, 'record exists, not adding to db')
+                continue
+            c.execute('SELECT id FROM video ORDER BY id DESC LIMIT 1')
+            rec_id = c.fetchone()[0] + 1
+            _, ino, _, _, _, _, size, _, mtime, ctime = os.stat(b_fullpath_real)
+            mtime_date = time.strftime('%Y/%m/%d', time.gmtime(mtime))
+            season_name = episode_num = None
+            series_name = tree.find('series_name')
+            if series_name is not None:
+                series_name = series_name.text
+                season_num = tree.find('season_number').text
+                season_name = 'Season %d' % (int(season_num))
+                episode_num = tree.find('episode_number').text
+            c.execute('INSERT INTO video VALUES (' + ','.join(35*'?') + ')',
+                       (rec_id, 0, b_filename, b_filepath.replace(wdtv_dir, mlib_name),
+                       tree.find('title').text, tree.find('genre').text,
+                       mtime_date, season_name, series_name, episode_num,
+                       0, size, ino, 0, 0, 0, mtime, ctime, 0, 0, 0, '', 0,
+                       0, 0, 0, 0, -1, -1, 'Unknown', director, actor,
+                       '', '', ''))
+        else:
+            c.execute('''UPDATE video
+                         SET title = ?,
+                             genre = ?,
+                             director = ?,
+                             actor = ?
+                         WHERE name = ?
+                         AND filepath = ?''',
+                      (tree.find('title').text, tree.find('genre').text,
+                       director, actor, b[1], b[0] ))
+            if tree.find('series_name') is not None:
+                c.execute('''UPDATE video
+                             SET series_name = ?,
+                                 season_name = ?,
+                                 episode_num = ?
+                             WHERE name = ?
+                             AND filepath = ?''',
+                          (tree.find('series_name').text,
+                           'Season %d' % (int(tree.find('season_number').text)),
+                           tree.find('episode_number').text, b[1], b[0]))
+        conn.commit()
+        if verbose >= 1:
+            notify(b_basename + ' (' + str(b_id) + ')', 
+                   'successfully repaired record')
+        #print tree.find('id').text
+    conn.close() 
+
 def process_movies(path, thumbnails, assume, interactive, verbose,
                    force_overwrite, language, country, max_results,
                    choose_image):
+    successful = []
     # configurations for tmdb api
     tmdb3.set_key('ae90cf3b0ab5da570880728198701ce0')
 
@@ -196,6 +311,8 @@ def process_movies(path, thumbnails, assume, interactive, verbose,
             videofile.tmdb_data.write_metadata(
                                    path + '/' + videofile.basename + '.xml',
                                    thumbnails)
+            successful.append(path + '/' + videofile.basename + videofile.ext)
+    return successful
 
 
 
@@ -214,6 +331,7 @@ def manually_search_movie(basename, title, max_results):
 
 def process_tv(path, interactive, verbose, force_overwrite, language,
                choose_image, max_results, dvd_ordering):
+    successful = []
     # chop off trailing backslash if found
     if path[-1:] == '/':
         path = path[0:-1]
@@ -293,8 +411,10 @@ def process_tv(path, interactive, verbose, force_overwrite, language,
             try:
                 episode.save_metadata(path + '/' + episode.basename +
                                       '.xml', dvd_ordering)
+                successful.append(path + '/' + episode.basename + episode.ext)
             except IOError as e:
                 print >> sys.stderr, e
+    return successful
 
 if __name__ == '__main__':
     try:
