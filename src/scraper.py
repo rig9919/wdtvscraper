@@ -17,7 +17,7 @@ from common import notify, get_chosen_match, ask_alternative, uni
 import common
 import build_xml
 
-__version__ = '1.3.1'
+__version__ = '1.3.2'
 
 
 def main():
@@ -40,7 +40,7 @@ def main():
         v=process_movies(path, args.thumbnails, args.assume, args.interactive,
                        args.verbose, args.force_overwrite, args.language,
                        args.country, int(args.max_results), args.choose_image)
-        if args.media_library:
+        if args.media_library and v:
             modify_db(args.media_library, args.verbose, v)
 
     # process all the tv series paths
@@ -207,7 +207,7 @@ def modify_db(db_file, verbose, videos, repair=False):
         conn.commit()
         if verbose >= 1:
             notify(b_basename + ' (' + str(b_id) + ')', 
-                   'successfully repaired record')
+                   'successfully repaired/added record')
         #print tree.find('id').text
     conn.close() 
 
