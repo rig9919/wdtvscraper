@@ -1,5 +1,7 @@
 *.pyc
 *.deb
+*.metathumb
+*.xml
 test2
 lastchange.sh
 updateversion.sh
