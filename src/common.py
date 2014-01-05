@@ -4,12 +4,11 @@ import sys
 import urllib2
 import unicodedata
 import tempfile
-import Tkinter
-import ImageTk
 import math
 from PIL import Image, ImageDraw, ImageFont
 from pytmdb3 import tmdb3
 from pytvdb import shortsearch
+from preview_window import PreviewWindow
 
 
 def uni(obj, encoding='utf-8'):
@@ -264,7 +263,7 @@ def get_chosen_match(basename, results, max_results):
                         img = Image.open(temp.name)
                     elif isinstance(temp, str):
                         img = Image.open(temp)
-                    preview_poster(img)
+                    PreviewWindow(img, img.size)
                     if isinstance(temp, file):
                         temp.close()
 
@@ -352,41 +351,7 @@ def draw_mosaic(posters):
         if x > 800:
             x = 0
             y = y + 325
-        #if y > 325 and i <= len(posters):
-        #    preview_image(palette)
-        #    x = 0
-        #    y = 0
-        #    palette = Image.new('RGB', (1000,650))
-        #    draw = ImageDraw.Draw(palette)
-    preview_palette(palette)
-
-def _preview_image(img, size):
-    root = Tkinter.Tk()
-    root.geometry('%dx%d' % (size[0]+20,size[1]))
-    root.bind('q', exit_preview_image)
-    root.focus_force()
-    scrollbar = Tkinter.Scrollbar(root)
-    scrollbar.pack(side=Tkinter.RIGHT, fill=Tkinter.Y)
-    tkpi = ImageTk.PhotoImage(img)
-    canvas_image = Tkinter.Canvas(root, width=1000, height=650)
-    canvas_image.create_image(0,0, anchor=Tkinter.NW, image=tkpi)
-    canvas_image.pack()
-    canvas_image.config(yscrollcommand=scrollbar.set,
-                        scrollregion=canvas_image.bbox(Tkinter.ALL))
-    scrollbar.config(command=canvas_image.yview)
-    root.title('poster preview')
-    root.mainloop()
-
-def preview_poster(img):
-    _preview_image(img, img.size)
-
-def preview_palette(img):
-    _preview_image(img, (1000,650))
-
-def exit_preview_image(event):
-    parent_name = event.widget.winfo_parent()
-    parent = event.widget._nametowidget(parent_name)
-    parent.destroy()
+    PreviewWindow(palette, (1000,650))
 
 def download_file(location, destination):
     remote = urllib2.urlopen(location, timeout=10)
