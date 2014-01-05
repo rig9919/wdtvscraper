@@ -1,6 +1,5 @@
 import os
 import sys
-import urllib
 import urllib2
 import unicodedata
 import re
@@ -22,13 +21,14 @@ class LocalSeries(object):
     def save_poster(self, destination, choose):
         if choose:
             print 'Creating image selection palette(s)...'
-            poster_qty = _get_all_posters(self.series_data.posterUrl)
+            posters = _get_all_posters(self.series_data.posterUrl)
+            poster_qty = len(posters)
             if poster_qty <= 1:
                 print 'No palette created,', poster_qty, 'image(s) available'
                 _save_poster(self.series_data.posterUrl, destination,
                              self.seriesname, 900)
                 return
-            draw_mosaic(poster_qty)
+            draw_mosaic(posters)
             choice = get_input('Choose an image to use for series poster: ',
                                '(^$)|(^(Q|q)$)|(^\d{1,2}$)',
                                1, poster_qty)
@@ -188,25 +188,21 @@ def _get_all_posters(location):
     if not location:
         return 0
 
-    # delete all temporary wdposters so series arent accidentally mixed
-    filelist = os.listdir('/tmp')
-    for f in filelist:
-        if f.startswith('wdposter'):
-            os.remove('/tmp/' + f)
-
     baseurl = '/'.join(location.split('/')[:-1])
     filename = location.split('/')[-1]
     basename, ext = filename.split('.')
     seriesno, posterno = basename.split('-')
+    poster_files = []
     i = 1
     try:
         while True:
             location = baseurl + '/' + seriesno + '-' + str(i) + '.' + ext
-            download_file(location, '/tmp/wdposter' + str(i) + '.' + ext)
+            poster_files.append(download_file(location, 'temp'))
             show_images_retrieved(i)
             i = i + 1
     except urllib2.HTTPError as e:
-        return i-1
+        pass
+    return poster_files
 
 def _save_poster(location, destination, basename, max_size):
     # If there is no art, carry on
@@ -214,7 +210,7 @@ def _save_poster(location, destination, basename, max_size):
         notify('warning:', 'no image available for ' + basename)
         return
     max_size = max_size*1024
-    urllib.urlretrieve(location, destination)
+    download_file(location, destination)
     is_reduced = False
     while os.path.getsize(destination) > max_size:
         size = os.path.getsize(destination)

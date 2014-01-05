@@ -1,7 +1,6 @@
 import os
 import sys
 import re
-import urllib
 from datetime import date
 from pytmdb3 import tmdb3
 import build_xml
@@ -119,12 +118,12 @@ def download_poster(self, size, destination, choose):
 
     if choose:
         print 'Creating image selection palette(s)...'
-        poster_qty = _get_all_posters(self.posters, size)
+        posters = _get_all_posters(self.posters, size)
+        poster_qty = len(posters)
         if poster_qty <= 1:
             print 'No palette created,', poster_qty, 'image(s) available'
-            download_file(self.poster.geturl(size), destination)
-            return
-        draw_mosaic(poster_qty)
+            return download_file(self.poster.geturl(size), destination)
+        draw_mosaic(posters)
         choice = get_input('Choose an image to use for movie poster: ',
                            '(^$)|(^(Q|q)$)|(^\d{1,2}$)',
                            1, poster_qty)
@@ -136,21 +135,16 @@ def download_poster(self, size, destination, choose):
             poster_url = self.posters[int(choice)-1].geturl(size)
     else:
         poster_url = self.poster.geturl(size)
-    download_file(poster_url, destination)
+    return download_file(poster_url, destination)
 
 
 def _get_all_posters(poster_list, size):
-    filelist = os.listdir('/tmp')
-    for f in filelist:
-        if f.startswith('wdposter'):
-            os.remove('/tmp/' + f)
-    i = 1
-    for poster in poster_list:
+    poster_files = []
+    for i,poster in enumerate(poster_list):
         show_images_retrieved(i, len(poster_list))
         poster_url = poster.geturl(size)
-        download_file(poster_url, '/tmp/wdposter' + str(i) + '.jpg')
-        i = i + 1
-    return i - 1
+        poster_files.append(download_file(poster_url, 'temp'))
+    return poster_files
 
 
 def get_genres(self):

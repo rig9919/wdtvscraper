@@ -83,3 +83,4 @@
 1.3.0   added -L option
 1.3.1   fixed error in manpage
 1.3.2   fixed bug causing crash during insert of db record of failed movie
+1.3.3   use more portable temporary files, cleaned up poster downloading

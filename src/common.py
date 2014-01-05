@@ -1,9 +1,9 @@
 import re
 import os
 import sys
-import urllib
 import urllib2
 import unicodedata
+import tempfile
 from PIL import Image, ImageDraw, ImageFont
 from pytmdb3 import tmdb3
 from pytvdb import shortsearch
@@ -249,19 +249,17 @@ def get_chosen_match(basename, results, max_results):
             if re.match('^(m|M)$', option):
                 # give user a preview of the poster
                 preview_available = False
-                tmp = '/tmp/wdpreview'
-                if os.path.isfile(tmp):
-                    os.remove(tmp)
+                temp = None
                 if isinstance(item, tmdb3.Movie):
-                    item.download_poster('w342', tmp, False)
+                    temp = item.download_poster('w342', 'temp', False)
                 elif isinstance(item, shortsearch.ShortSeriesData):
                     if item.bannerUrl:
-                        urllib.urlretrieve(item.bannerUrl, tmp)
-                if os.path.isfile(tmp):
+                        temp = download_file(item.bannerUrl, 'temp')
+                if temp:
                     preview_available = True
-                    img = Image.open(tmp)
-                    img.show(tmp)
-                    os.remove(tmp)
+                    img = Image.open(temp)
+                    img.show(temp)
+                    temp.close()
 
                 # print some summary information
                 if isinstance(item, tmdb3.Movie):
@@ -321,7 +319,7 @@ def ask_alternative():
         notify('error', 'invalid choice')
         return
 
-def draw_mosaic(poster_qty):
+def draw_mosaic(posters):
     palette = Image.new('RGB', (1000,650))
     draw = ImageDraw.Draw(palette)
     srcdir = os.path.dirname(os.path.realpath(__file__))
@@ -330,24 +328,18 @@ def draw_mosaic(poster_qty):
     except:
         font = None
         notify('error', 'no font found, using tiny default font')
-    i = 1
     x = 0
     y = 0
-    while i <= poster_qty:
-        poster_file = '/tmp/wdposter' + str(i) + '.jpg'
-        if os.path.getsize(poster_file) == 0:
-            i = i + 1
-            continue
-        poster = Image.open('/tmp/wdposter' + str(i) + '.jpg')
-        poster = poster.resize((200,290), Image.ANTIALIAS)
-        palette.paste(poster, (x,y))   
+    for i,poster in enumerate(posters,1):
+        poster_img = Image.open(poster.name)
+        poster_img = poster_img.resize((200,290), Image.ANTIALIAS)
+        palette.paste(poster_img, (x,y))   
         draw.text((x+90, y+290), str(i), fill=(255,255,255), font=font)
-        i = i + 1
         x = x + 200
         if x > 800:
             x = 0
             y = y + 325
-        if y > 325 and i <= poster_qty:
+        if y > 325 and i <= len(posters):
             palette.show()
             x = 0
             y = 0
@@ -357,6 +349,11 @@ def draw_mosaic(poster_qty):
 
 def download_file(location, destination):
     remote = urllib2.urlopen(location, timeout=10)
-    local = open(destination, 'wb')
+    if destination == 'temp':
+        local = tempfile.NamedTemporaryFile()
+    else:
+        local = open(destination, 'rb+')
     local.write(remote.read())
+    local.seek(0)
+    return local
 
