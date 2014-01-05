@@ -4,6 +4,9 @@ import sys
 import urllib2
 import unicodedata
 import tempfile
+import Tkinter
+import ImageTk
+import math
 from PIL import Image, ImageDraw, ImageFont
 from pytmdb3 import tmdb3
 from pytvdb import shortsearch
@@ -257,9 +260,13 @@ def get_chosen_match(basename, results, max_results):
                         temp = download_file(item.bannerUrl, 'temp')
                 if temp:
                     preview_available = True
-                    img = Image.open(temp)
-                    img.show(temp)
-                    temp.close()
+                    if isinstance(temp, file):
+                        img = Image.open(temp.name)
+                    elif isinstance(temp, str):
+                        img = Image.open(temp)
+                    preview_image(img)
+                    if isinstance(temp, file):
+                        temp.close()
 
                 # print some summary information
                 if isinstance(item, tmdb3.Movie):
@@ -320,7 +327,7 @@ def ask_alternative():
         return
 
 def draw_mosaic(posters):
-    palette = Image.new('RGB', (1000,650))
+    palette = Image.new('RGB', (1000,int(math.ceil(len(posters)/5.0)*325)))
     draw = ImageDraw.Draw(palette)
     srcdir = os.path.dirname(os.path.realpath(__file__))
     try:
@@ -331,7 +338,10 @@ def draw_mosaic(posters):
     x = 0
     y = 0
     for i,poster in enumerate(posters,1):
-        poster_img = Image.open(poster.name)
+        if isinstance(poster, file):
+            poster_img = Image.open(poster.name)
+        elif isinstance(poster, str):
+            poster_img = Image.open(poster)
         poster_img = poster_img.resize((200,290), Image.ANTIALIAS)
         palette.paste(poster_img, (x,y))   
         draw.text((x+90, y+290), str(i), fill=(255,255,255), font=font)
@@ -339,21 +349,51 @@ def draw_mosaic(posters):
         if x > 800:
             x = 0
             y = y + 325
-        if y > 325 and i <= len(posters):
-            palette.show()
-            x = 0
-            y = 0
-            palette = Image.new('RGB', (1000,650))
-            draw = ImageDraw.Draw(palette)
-    palette.show()
+        #if y > 325 and i <= len(posters):
+        #    preview_image(palette)
+        #    x = 0
+        #    y = 0
+        #    palette = Image.new('RGB', (1000,650))
+        #    draw = ImageDraw.Draw(palette)
+    preview_image(palette)
+
+def preview_image(img):
+    root = Tkinter.Tk()
+    root.geometry('%dx%d' % (1020,650))
+    root.bind('q', exit_preview_image)
+    root.focus_force()
+    scrollbar = Tkinter.Scrollbar(root)
+    scrollbar.pack(side=Tkinter.RIGHT, fill=Tkinter.Y)
+    tkpi = ImageTk.PhotoImage(img)
+    canvas_image = Tkinter.Canvas(root, width=1000, height=650)
+    canvas_image.create_image(0,0, anchor=Tkinter.NW, image=tkpi)
+    canvas_image.pack()
+    canvas_image.config(yscrollcommand=scrollbar.set,
+                        scrollregion=canvas_image.bbox(Tkinter.ALL))
+    scrollbar.config(command=canvas_image.yview)
+    root.title('poster preview')
+    root.mainloop()
+
+def exit_preview_image(event):
+    parent_name = event.widget.winfo_parent()
+    parent = event.widget._nametowidget(parent_name)
+    parent.destroy()
 
 def download_file(location, destination):
     remote = urllib2.urlopen(location, timeout=10)
     if destination == 'temp':
-        local = tempfile.NamedTemporaryFile()
+        if os.name == 'nt':
+            local = tempfile.NamedTemporaryFile(suffix='.jpg',delete=False)
+        else:
+            local = tempfile.NamedTemporaryFile()
     else:
-        local = open(destination, 'rb+')
+        local = open(destination, 'w+b')
     local.write(remote.read())
-    local.seek(0)
-    return local
+    if os.name == 'nt' and destination == 'temp':
+        localname = local.name
+        local.close()
+        return localname
+    elif os.name == 'posix' and destination == 'temp':
+        local.seek(0)
+        return local
 

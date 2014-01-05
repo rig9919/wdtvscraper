@@ -217,6 +217,7 @@ def process_movies(path, thumbnails, assume, interactive, verbose,
     successful = []
     # configurations for tmdb api
     tmdb3.set_key('ae90cf3b0ab5da570880728198701ce0')
+    tmdb3.set_cache('null')
 
     # set language and country
     if (not language) and (not country):
