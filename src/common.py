@@ -196,7 +196,7 @@ def print_possible_match_table(mlist, max_results):
             title = item.full_title()
             overview = item.overview
         s = unicode(i) + ') ' + title + ' # ' + overview
-        print s[0:cols]
+        print s[0:cols-1]
 
 def get_chosen_match(basename, results, max_results):
     '''
