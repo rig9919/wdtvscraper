@@ -260,11 +260,11 @@ def get_chosen_match(basename, results, max_results):
                         temp = download_file(item.bannerUrl, 'temp')
                 if temp:
                     preview_available = True
-                    if isinstance(temp, file):
+                    if hasattr(temp, 'read'):
                         img = Image.open(temp.name)
                     elif isinstance(temp, str):
                         img = Image.open(temp)
-                    preview_image(img)
+                    preview_poster(img)
                     if isinstance(temp, file):
                         temp.close()
 
@@ -338,10 +338,13 @@ def draw_mosaic(posters):
     x = 0
     y = 0
     for i,poster in enumerate(posters,1):
-        if isinstance(poster, file):
+        if hasattr(poster, 'read'):
             poster_img = Image.open(poster.name)
         elif isinstance(poster, str):
             poster_img = Image.open(poster)
+        else:
+            print poster
+            exit()
         poster_img = poster_img.resize((200,290), Image.ANTIALIAS)
         palette.paste(poster_img, (x,y))   
         draw.text((x+90, y+290), str(i), fill=(255,255,255), font=font)
@@ -355,11 +358,11 @@ def draw_mosaic(posters):
         #    y = 0
         #    palette = Image.new('RGB', (1000,650))
         #    draw = ImageDraw.Draw(palette)
-    preview_image(palette)
+    preview_palette(palette)
 
-def preview_image(img):
+def _preview_image(img, size):
     root = Tkinter.Tk()
-    root.geometry('%dx%d' % (1020,650))
+    root.geometry('%dx%d' % (size[0]+20,size[1]))
     root.bind('q', exit_preview_image)
     root.focus_force()
     scrollbar = Tkinter.Scrollbar(root)
@@ -373,6 +376,12 @@ def preview_image(img):
     scrollbar.config(command=canvas_image.yview)
     root.title('poster preview')
     root.mainloop()
+
+def preview_poster(img):
+    _preview_image(img, img.size)
+
+def preview_palette(img):
+    _preview_image(img, (1000,650))
 
 def exit_preview_image(event):
     parent_name = event.widget.winfo_parent()
