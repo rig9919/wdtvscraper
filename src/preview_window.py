@@ -1,6 +1,5 @@
 import Tkinter
-import ImageTk
-from PIL import Image
+from PIL import Image, ImageTk
 
 class PreviewWindow():
 
