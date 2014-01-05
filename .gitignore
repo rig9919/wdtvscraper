@@ -1,7 +1,6 @@
 *.pyc
-*.mov
-*.xml
-*.metathumb
+*.deb
+test2
 lastchange.sh
 updateversion.sh
 commit.sh

@@ -1,0 +1,15 @@
+<?xml version="1.0"?><!DOCTYPE note [<!ELEMENT details (id, title, series_name, episode_name, season_number, episode_number, firstaired, genre, runtime, director, actor, overview)><!ELEMENT id (#PCDATA)><!ELEMENT title (#PCDATA)><!ELEMENT series_name (#PCDATA)><!ELEMENT episode_name (#PCDATA)><!ELEMENT season_number (#PCDATA)><!ELEMENT episode_number (#PCDATA)><!ELEMENT firstaired (#PCDATA)><!ELEMENT genre (#PCDATA)><!ELEMENT runtime (#PCDATA)><!ELEMENT director (#PCDATA)><!ELEMENT actor (#PCDATA)><!ELEMENT overview (#PCDATA)>]>
+<details>
+  <id>295294</id>
+  <title>101: Rose</title>
+  <series_name>Doctor Who (2005)</series_name>
+  <episode_name>Rose</episode_name>
+  <season_number>1</season_number>
+  <episode_number>1</episode_number>
+  <firstaired>2005-03-26</firstaired>
+  <genre>Doctor Who (2005)</genre>
+  <runtime>N/A</runtime>
+  <director>Keith Boak</director>
+  <actor>Christopher Eccleston/Matt Smith/David Tennant/John Simm/Catherine Tate/John Barrowman/Freema Agyeman/Billie Piper/Bernard Cribbins/Jenna-Louise Coleman/Alex Kingston/Arthur Darvill/Karen Gillan</actor>
+  <overview>On DVD as 101. Location: London, England</overview>
+</details>

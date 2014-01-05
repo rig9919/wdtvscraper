@@ -1,0 +1,15 @@
+<?xml version="1.0"?><!DOCTYPE note [<!ELEMENT details (id, title, series_name, episode_name, season_number, episode_number, firstaired, genre, runtime, director, actor, overview)><!ELEMENT id (#PCDATA)><!ELEMENT title (#PCDATA)><!ELEMENT series_name (#PCDATA)><!ELEMENT episode_name (#PCDATA)><!ELEMENT season_number (#PCDATA)><!ELEMENT episode_number (#PCDATA)><!ELEMENT firstaired (#PCDATA)><!ELEMENT genre (#PCDATA)><!ELEMENT runtime (#PCDATA)><!ELEMENT director (#PCDATA)><!ELEMENT actor (#PCDATA)><!ELEMENT overview (#PCDATA)>]>
+<details>
+  <id>25462</id>
+  <title>101: Milfay</title>
+  <series_name>Carnivàle</series_name>
+  <episode_name>Milfay</episode_name>
+  <season_number>1</season_number>
+  <episode_number>1</episode_number>
+  <firstaired>2003-09-14</firstaired>
+  <genre>Carnivàle</genre>
+  <runtime>N/A</runtime>
+  <director>Rodrigo García</director>
+  <actor>Nick Stahl/Clea Duvall/Clancy Brown/Michael J. Anderson/Patrick Bauchau/Robert Knepper/John Carroll Lynch/Cynthia Ettinger/Debra Christoffers/Brian Turk/Toby Huss/John Fleck/John Savage/Diane Sallinger/Amy Madigan/Ralph Waite/Tim DeKay/Adrienne Barbeau/Carla Gallo/Amanda Aday/Blake Shields/Karyne Steben/Sarah Steben</actor>
+  <overview>On DVD as 101. Oklahoma Dust Bowl, 1934. 18-year-old Ben Hawkins is a young man whom lives with his physically sick, God-fearing mother. After his mother dies from a long illness, Ben unceremoniously buries her in the back yard of his home which is then repossessed for outstanding late payments. Ben is taken in by a traveling carnival troupe (titled Carnivale) and becomes acquainted with the residents whom include the kind-hearted dwarf owner Samson; his right-hand man and head rigger Clayton Jones; Gypsy tarot reader Sofie; the bearded lady Lila; girlie tent owner Felix "Stumpy" Dreifuss, his wife Rita Sue whom Felix solicits to some of the patrons, and their two teenage daughters Libby and Dora Mae; Gekco the Reptile Man; snake charmer Ruthie; Ruthie's son Gabriel, the low-IQ strongman; and conjured twins Alexandria (Alex) and Caladonia (Cat). Ben is revealed to have strange mystical powers of clairvoyance and healing which worry Professor Lodz, the blind mystic of the traveling troupe. Meanwhile in the small town of Mintern, California, an evangelical preacher, named Brother Justin Crowe, receives a sign when a woman vomits up silver coins that disappear before his eyes, that leaves him awakened to the possibility of mysterious powers that he has and it somehow gives him a psychic connection to Ben, both of whom have never met.</overview>
+</details>

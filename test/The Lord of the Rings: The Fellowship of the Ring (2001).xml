@@ -1,0 +1,117 @@
+<?xml version="1.0"?><!DOCTYPE note [<!ELEMENT details (id, imdb_id, title, mpaa, year, runtime, rating, trailer, genre, studio, plot, overview, director, actor, thumbnail, backdrop)><!ELEMENT id (#PCDATA)><!ELEMENT imdb_id (#PCDATA)><!ELEMENT title (#PCDATA)><!ELEMENT mpaa (#PCDATA)><!ELEMENT year (#PCDATA)><!ELEMENT runtime (#PCDATA)><!ELEMENT rating (#PCDATA)><!ELEMENT trailer (#PCDATA)><!ELEMENT genre (#PCDATA)><!ELEMENT studio (#PCDATA)><!ELEMENT plot (#PCDATA)><!ELEMENT overview (#PCDATA)><!ELEMENT director (#PCDATA)><!ELEMENT actor (#PCDATA)><!ELEMENT thumbnail (#PCDATA)><!ELEMENT backdrop (#PCDATA)>]>
+<details>
+  <id>120</id>
+  <imdb_id>tt0120737</imdb_id>
+  <title>The Lord of the Rings: The Fellowship of the Ring</title>
+  <mpaa>PG-13</mpaa>
+  <year>2001-12-19</year>
+  <runtime>178</runtime>
+  <rating>8.8</rating>
+  <trailer>http://www.youtube.com/watch?v=GgF5QTsonn8</trailer>
+  <genre>Action</genre>
+  <genre>Adventure</genre>
+  <genre>Fantasy</genre>
+  <genre>Science Fiction</genre>
+  <studio>New Line Cinema</studio>
+  <plot>Young hobbit Frodo Baggins, after inheriting a mysterious ring from his uncle Bilbo, must leave his home in order to keep it from falling into the hands of its evil creator. Along the way, a fellowship is formed to protect the ringbearer and make sure that the ring arrives at its final destination: Mt. Doom, the only place where it can be destroyed.</plot>
+  <overview>Young hobbit Frodo Baggins, after inheriting a mysterious ring from his uncle Bilbo, must leave his home in order to keep it from falling into the hands of its evil creator. Along the way, a fellowship is formed to protect the ringbearer and make sure that the ring arrives at its final destination: Mt. Doom, the only place where it can be destroyed.</overview>
+  <director>Peter Jackson</director>
+  <actor>
+    <name>Elijah Wood</name>
+    <role>Frodo Baggins</role>
+  </actor>
+  <actor>
+    <name>Ian McKellen</name>
+    <role>Gandalf the Grey</role>
+  </actor>
+  <actor>
+    <name>Viggo Mortensen</name>
+    <role>Aragorn</role>
+  </actor>
+  <actor>
+    <name>Liv Tyler</name>
+    <role>Arwen Evenstar</role>
+  </actor>
+  <actor>
+    <name>Orlando Bloom</name>
+    <role>Legolas</role>
+  </actor>
+  <actor>
+    <name>John Rhys-Davies</name>
+    <role>Gimli</role>
+  </actor>
+  <actor>
+    <name>Sean Bean</name>
+    <role>Boromir</role>
+  </actor>
+  <actor>
+    <name>Christopher Lee</name>
+    <role>Saruman</role>
+  </actor>
+  <actor>
+    <name>Sean Astin</name>
+    <role>Samwise 'Sam' Gamgee</role>
+  </actor>
+  <actor>
+    <name>Billy Boyd</name>
+    <role>Peregrin 'Pippin' Took</role>
+  </actor>
+  <actor>
+    <name>Dominic Monaghan</name>
+    <role>Meriadoc 'Merry' Brandybuck</role>
+  </actor>
+  <actor>
+    <name>Hugo Weaving</name>
+    <role>Elrond</role>
+  </actor>
+  <actor>
+    <name>Cate Blanchett</name>
+    <role>Galadriel</role>
+  </actor>
+  <actor>
+    <name>Ian Holm</name>
+    <role>Bilbo Baggins</role>
+  </actor>
+  <actor>
+    <name>Craig Parker</name>
+    <role>Haldir</role>
+  </actor>
+  <actor>
+    <name>Lawrence Makoare</name>
+    <role>Lurtz</role>
+  </actor>
+  <actor>
+    <name>Sala Baker</name>
+    <role>Sauron</role>
+  </actor>
+  <actor>
+    <name>Alan Howard</name>
+    <role>The Ring (voice)</role>
+  </actor>
+  <actor>
+    <name>Andy Serkis</name>
+    <role>Gollum</role>
+  </actor>
+  <actor>
+    <name>Sarah McLeod</name>
+    <role>Rose 'Rosie' Cotton</role>
+  </actor>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/pIUvQ9Ed35wlWhY2oU6OmwEsmzG.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/wV8IwJORFhBfZnjAiejaGcpGJFc.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/ictsoNmpfwFB3RaWQiooUS0uzFm.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/wX2OUi3fwE2w0LQFJke1GbDYKxt.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/uFnY5Yl7Shn8tO1cMIgxhyzX8mJ.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/7Ac9MMwZrBBmK08HKxwednrpqnY.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/5UmkGS21rplCKTTLBeRVCF747lO.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/13lVlHHxAscLQdInzwuq5xgiKlg.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/vnbnSnw2biJlggauMz2hoFUlm65.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/tqJvWGr5bWttgp6PY38Oeh4J03t.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/xMSTJnuRCWdd8pndZblv0Uw602A.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/xYuEsonIyAIC5QTwzdzFB4G0EAB.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/zjD7pr8sSZIir20pnYY8yeD360w.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/tUyHsotSUkk9t1UvgQwk1D6BCTW.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/9yGzEf7fWMEXCjz4fixFY9hvekf.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/jcbZDWExjQ2vo5ooeRNdWBH0Bft.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/lflghWmm4tC53dGVlVsMV1asJht.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/aViGhfHEhucFyWGVwCQhX5B9dJD.jpg</backdrop>
+</details>

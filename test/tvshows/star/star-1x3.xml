@@ -1,0 +1,15 @@
+<?xml version="1.0"?><!DOCTYPE note [<!ELEMENT details (id, title, series_name, episode_name, season_number, episode_number, firstaired, genre, runtime, director, actor, overview)><!ELEMENT id (#PCDATA)><!ELEMENT title (#PCDATA)><!ELEMENT series_name (#PCDATA)><!ELEMENT episode_name (#PCDATA)><!ELEMENT season_number (#PCDATA)><!ELEMENT episode_number (#PCDATA)><!ELEMENT firstaired (#PCDATA)><!ELEMENT genre (#PCDATA)><!ELEMENT runtime (#PCDATA)><!ELEMENT director (#PCDATA)><!ELEMENT actor (#PCDATA)><!ELEMENT overview (#PCDATA)>]>
+<details>
+  <id>338370</id>
+  <title>103: Chapter III</title>
+  <series_name>Grand Star</series_name>
+  <episode_name>Chapter III</episode_name>
+  <season_number>1</season_number>
+  <episode_number>3</episode_number>
+  <firstaired>2007-10-06</firstaired>
+  <genre>Action and Adventure</genre>
+  <runtime>N/A</runtime>
+  <director></director>
+  <actor>Tyler Johnston/Tammy Hui/Kyle Labine/James Gerard/Joe Sheridan/Patrick Albenque/Peter Hudson/Susan Gilmore</actor>
+  <overview>Cal and Liam search for geothermic sources. There is a major accident which forces Cal to remove his gloves despite the -80° C temperature, but he suffers no frost bite at all. Both are puzzled by this. </overview>
+</details>

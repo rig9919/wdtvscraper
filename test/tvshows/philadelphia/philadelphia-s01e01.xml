@@ -1,0 +1,15 @@
+<?xml version="1.0"?><!DOCTYPE note [<!ELEMENT details (id, title, series_name, episode_name, season_number, episode_number, firstaired, genre, runtime, director, actor, overview)><!ELEMENT id (#PCDATA)><!ELEMENT title (#PCDATA)><!ELEMENT series_name (#PCDATA)><!ELEMENT episode_name (#PCDATA)><!ELEMENT season_number (#PCDATA)><!ELEMENT episode_number (#PCDATA)><!ELEMENT firstaired (#PCDATA)><!ELEMENT genre (#PCDATA)><!ELEMENT runtime (#PCDATA)><!ELEMENT director (#PCDATA)><!ELEMENT actor (#PCDATA)><!ELEMENT overview (#PCDATA)>]>
+<details>
+  <id>296310</id>
+  <title>101: The Gang Gets Racist</title>
+  <series_name>It's Always Sunny in Philadelphia</series_name>
+  <episode_name>The Gang Gets Racist</episode_name>
+  <season_number>1</season_number>
+  <episode_number>1</episode_number>
+  <firstaired>2005-08-04</firstaired>
+  <genre>It's Always Sunny in Philadelphia</genre>
+  <runtime>N/A</runtime>
+  <director>John Fortenberry</director>
+  <actor>Kaitlin Olson/Danny DeVito/Charlie Day/Rob McElhenney/Glenn Howerton</actor>
+  <overview>On DVD as 101. The guys hire Dee's friend, Terrell to promote the bar.  Meanwhile, Charlie tries to prove that he is not a racist.</overview>
+</details>

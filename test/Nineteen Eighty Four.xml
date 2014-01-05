@@ -1,0 +1,92 @@
+<?xml version="1.0"?><!DOCTYPE note [<!ELEMENT details (id, imdb_id, title, mpaa, year, runtime, rating, trailer, genre, studio, plot, overview, director, actor, thumbnail, backdrop)><!ELEMENT id (#PCDATA)><!ELEMENT imdb_id (#PCDATA)><!ELEMENT title (#PCDATA)><!ELEMENT mpaa (#PCDATA)><!ELEMENT year (#PCDATA)><!ELEMENT runtime (#PCDATA)><!ELEMENT rating (#PCDATA)><!ELEMENT trailer (#PCDATA)><!ELEMENT genre (#PCDATA)><!ELEMENT studio (#PCDATA)><!ELEMENT plot (#PCDATA)><!ELEMENT overview (#PCDATA)><!ELEMENT director (#PCDATA)><!ELEMENT actor (#PCDATA)><!ELEMENT thumbnail (#PCDATA)><!ELEMENT backdrop (#PCDATA)>]>
+<details>
+  <id>48217</id>
+  <imdb_id>tt0191636</imdb_id>
+  <title>The Widow of Saint-Pierre</title>
+  <mpaa></mpaa>
+  <year>2000-01-01</year>
+  <runtime>112</runtime>
+  <rating>10.0</rating>
+  <genre>Drama</genre>
+  <studio>Cinémaginaire Inc.</studio>
+  <studio>Epithete films</studio>
+  <studio>France2 Cinéma</studio>
+  <plot>In 1850, on the isolated French island of Saint-Pierre, a murder shocks the natives. Two fishermen are arrested. One of them, Louis Ollivier, dies in custody. The other, Neel Auguste (Emir Kusturica), is sentenced to death by the guillotine. However the island is so small that it has neither a guillotine nor an executioner. While one is sent for, Auguste is placed under the supervision of army Captain (Daniel Auteuil).</plot>
+  <overview>In 1850, on the isolated French island of Saint-Pierre, a murder shocks the natives. Two fishermen are arrested. One of them, Louis Ollivier, dies in custody. The other, Neel Auguste (Emir Kusturica), is sentenced to death by the guillotine. However the island is so small that it has neither a guillotine nor an executioner. While one is sent for, Auguste is placed under the supervision of army Captain (Daniel Auteuil).</overview>
+  <director>Patrice Leconte</director>
+  <actor>
+    <name>Daniel Auteuil</name>
+    <role>Jean, le capitaine</role>
+  </actor>
+  <actor>
+    <name>Emir Kusturica</name>
+    <role>Joseph Auguste Néel</role>
+  </actor>
+  <actor>
+    <name>Juliette Binoche</name>
+    <role>Pauline, l'épouse du capitaine</role>
+  </actor>
+  <actor>
+    <name>Michel Duchaussoy</name>
+    <role>le gouverneur</role>
+  </actor>
+  <actor>
+    <name>Philippe Magnan</name>
+    <role>le président Venot</role>
+  </actor>
+  <actor>
+    <name>Christian Charmetant</name>
+    <role>le commissaire de la Marine</role>
+  </actor>
+  <actor>
+    <name>Philippe du Janerand</name>
+    <role>le chef douanier</role>
+  </actor>
+  <actor>
+    <name>Reynald Bouchard</name>
+    <role>Louis Ollivier</role>
+  </actor>
+  <actor>
+    <name>Ghyslain Tremblay</name>
+    <role>Monsieur Chevassus, le bourreau</role>
+  </actor>
+  <actor>
+    <name>Marc Béland</name>
+    <role>le soldat Loïc</role>
+  </actor>
+  <actor>
+    <name>Yves Jacques</name>
+    <role>le contre-amiral</role>
+  </actor>
+  <actor>
+    <name>Maurice Chevit</name>
+    <role>le père du gouverneur</role>
+  </actor>
+  <actor>
+    <name>Catherine Lascault</name>
+    <role>la Malvilain</role>
+  </actor>
+  <actor>
+    <name>Dominique Quesnel </name>
+    <role>le propriétaire</role>
+  </actor>
+  <actor>
+    <name>Anne-Marie Philipe</name>
+    <role>l'épouse du gouverneur</role>
+  </actor>
+  <actor>
+    <name>Sylvie Moreau</name>
+    <role>Adrienne</role>
+  </actor>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/aCzSxLOwNEChQ2spRlqCSa87uIE.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/zC3zOQCULu6VLtiLRR4KwUHkH9L.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/cpwHCBWx0eWd31mBpXz71pj2dfk.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/9GK5l4Ef7GjTg6SBnPf6L3eHMIV.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/s1nePLtPRygDB3qDo2eCaOMBTWW.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/7ZQYYqr5SSNEfyBrKRmVMnZAHPu.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/DCQcJPoqTUGL0VYYsWdc4N0ffh.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/tPBQk0e6KbmYaCZ7cMJTEYPQR1n.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/cIvpHNwmpSvsBvX79B4OmHeULtg.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/xJXxF2TnWEOgSQ09356cnYt8NEh.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/q6YHgKiPGN5IzyY4UN3d4sRUypU.jpg</backdrop>
+</details>

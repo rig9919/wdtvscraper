@@ -1,0 +1,35 @@
+<?xml version="1.0"?><!DOCTYPE note [<!ELEMENT details (id, imdb_id, title, mpaa, year, runtime, rating, trailer, genre, studio, plot, overview, director, actor, thumbnail, backdrop)><!ELEMENT id (#PCDATA)><!ELEMENT imdb_id (#PCDATA)><!ELEMENT title (#PCDATA)><!ELEMENT mpaa (#PCDATA)><!ELEMENT year (#PCDATA)><!ELEMENT runtime (#PCDATA)><!ELEMENT rating (#PCDATA)><!ELEMENT trailer (#PCDATA)><!ELEMENT genre (#PCDATA)><!ELEMENT studio (#PCDATA)><!ELEMENT plot (#PCDATA)><!ELEMENT overview (#PCDATA)><!ELEMENT director (#PCDATA)><!ELEMENT actor (#PCDATA)><!ELEMENT thumbnail (#PCDATA)><!ELEMENT backdrop (#PCDATA)>]>
+<details>
+  <id>102586</id>
+  <imdb_id>tt0929247</imdb_id>
+  <title>Pompeji - Der Untergang</title>
+  <year></year>
+  <runtime>0</runtime>
+  <rating>0.0</rating>
+  <plot></plot>
+  <overview></overview>
+  <actor>
+    <name>Lorenzo Crespi</name>
+    <role>Marco</role>
+  </actor>
+  <actor>
+    <name>Andrea Osvárt</name>
+    <role>Valeria</role>
+  </actor>
+  <actor>
+    <name>Maria Grazia Cucinotta</name>
+    <role>Lavinia</role>
+  </actor>
+  <actor>
+    <name>Massimo Venturiello</name>
+    <role>Chelidone</role>
+  </actor>
+  <actor>
+    <name>Maurizio Aiello</name>
+    <role>Tiberio</role>
+  </actor>
+  <actor>
+    <name>Fabrizio Bucci</name>
+    <role>Ennio</role>
+  </actor>
+</details>

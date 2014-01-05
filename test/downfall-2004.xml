@@ -1,0 +1,113 @@
+<?xml version="1.0"?><!DOCTYPE note [<!ELEMENT details (id, imdb_id, title, mpaa, year, runtime, rating, trailer, genre, studio, plot, overview, director, actor, thumbnail, backdrop)><!ELEMENT id (#PCDATA)><!ELEMENT imdb_id (#PCDATA)><!ELEMENT title (#PCDATA)><!ELEMENT mpaa (#PCDATA)><!ELEMENT year (#PCDATA)><!ELEMENT runtime (#PCDATA)><!ELEMENT rating (#PCDATA)><!ELEMENT trailer (#PCDATA)><!ELEMENT genre (#PCDATA)><!ELEMENT studio (#PCDATA)><!ELEMENT plot (#PCDATA)><!ELEMENT overview (#PCDATA)><!ELEMENT director (#PCDATA)><!ELEMENT actor (#PCDATA)><!ELEMENT thumbnail (#PCDATA)><!ELEMENT backdrop (#PCDATA)>]>
+<details>
+  <id>613</id>
+  <imdb_id>tt0363163</imdb_id>
+  <title>Downfall</title>
+  <mpaa>R</mpaa>
+  <year>2004-09-15</year>
+  <runtime>156</runtime>
+  <rating>8.7</rating>
+  <trailer>http://www.youtube.com/watch?v=uFG9a1NgfZA</trailer>
+  <genre>Drama</genre>
+  <genre>History</genre>
+  <genre>Foreign</genre>
+  <studio>Constantin Film Produktion</studio>
+  <studio>Norddeutscher Rundfunk (NDR)</studio>
+  <studio>Westdeutscher Rundfunk (WDR)</studio>
+  <plot>In April of 1945, Germany stands at the brink of defeat with the Russian Army closing in from the east and the Allied Expeditionary Force attacking from the west. In Berlin, capital of the Third Reich, Adolf Hitler proclaims that Germany will still achieve victory and orders his Generals and advisers to fight to the last man. "Downfall" explores these final days of the Reich, where senior German leaders (such as Himmler and Goring) began defecting from their beloved Fuhrer, in an effort to save their own lives, while still others (Joseph Goebbels) pledge to die with Hitler. Hitler, himself, degenerates into a paranoid shell of a man, full of optimism one moment and suicidal depression the next. When the end finally does comes, and Hitler lies dead by his own hand, what is left of his military must find a way to end the killing that is the Battle of Berlin, and lay down their arms in surrender.</plot>
+  <overview>In April of 1945, Germany stands at the brink of defeat with the Russian Army closing in from the east and the Allied Expeditionary Force attacking from the west. In Berlin, capital of the Third Reich, Adolf Hitler proclaims that Germany will still achieve victory and orders his Generals and advisers to fight to the last man. "Downfall" explores these final days of the Reich, where senior German leaders (such as Himmler and Goring) began defecting from their beloved Fuhrer, in an effort to save their own lives, while still others (Joseph Goebbels) pledge to die with Hitler. Hitler, himself, degenerates into a paranoid shell of a man, full of optimism one moment and suicidal depression the next. When the end finally does comes, and Hitler lies dead by his own hand, what is left of his military must find a way to end the killing that is the Battle of Berlin, and lay down their arms in surrender.</overview>
+  <director>Oliver Hirschbiegel</director>
+  <actor>
+    <name>Bruno Ganz</name>
+    <role>Adolf Hitler</role>
+  </actor>
+  <actor>
+    <name>Alexandra Maria Lara</name>
+    <role>Traudl Junge</role>
+  </actor>
+  <actor>
+    <name>Corinna Harfouch</name>
+    <role>Magda Goebbels</role>
+  </actor>
+  <actor>
+    <name>Ulrich Matthes</name>
+    <role>Joseph Goebbels</role>
+  </actor>
+  <actor>
+    <name>Juliane Köhler</name>
+    <role>Eva Braun</role>
+  </actor>
+  <actor>
+    <name>Heino Ferch</name>
+    <role>Albert Speer</role>
+  </actor>
+  <actor>
+    <name>Christian Berkel</name>
+    <role>Prof. Dr. Ernst-Günter Schenck</role>
+  </actor>
+  <actor>
+    <name>Thomas Kretschmann</name>
+    <role>SS-Gruppenführer Hermann Fegelein</role>
+  </actor>
+  <actor>
+    <name>Ulrich Noethen</name>
+    <role>Reichsführer SS Heinrich Himmler</role>
+  </actor>
+  <actor>
+    <name>Birgit Minichmayr</name>
+    <role>Gerda Christian</role>
+  </actor>
+  <actor>
+    <name>Rolf Kanies</name>
+    <role>General der Infanterie Hans Krebs</role>
+  </actor>
+  <actor>
+    <name>Justus von Dohnanyi</name>
+    <role>General der Infanterie Wilhelm Burgdorf</role>
+  </actor>
+  <actor>
+    <name>Michael Mendl</name>
+    <role>General der Artillerie Helmuth Weidling</role>
+  </actor>
+  <actor>
+    <name>André Hennicke</name>
+    <role>SS-Brigadeführer Wilhelm Mohnke</role>
+  </actor>
+  <actor>
+    <name>Christian Redl</name>
+    <role>Generaloberst Alfred Jodl</role>
+  </actor>
+  <actor>
+    <name>Götz Otto</name>
+    <role>SS-Hauptsturmführer Otto Günsche</role>
+  </actor>
+  <actor>
+    <name>Thomas Limpinsel</name>
+    <role>Kammerdiener Heinz Linge</role>
+  </actor>
+  <actor>
+    <name>Thomas Thieme</name>
+    <role>Martin Bormann</role>
+  </actor>
+  <actor>
+    <name>Donevan Gunia</name>
+    <role>Peter Kranz</role>
+  </actor>
+  <actor>
+    <name>Matthias Habich</name>
+    <role>Prof. Dr. Werner Haase</role>
+  </actor>
+  <actor>
+    <name>Gerald Alexander Held</name>
+    <role>Walter Hewel</role>
+  </actor>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/d3AmCJXvsP818di5KcCj4fNi36.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/tfHnCrPmxwhEqSMgenxOqLpVRS3.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/ueWbkwsQqedsimK6hqX3MvhELs3.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/rgy1xkIKLK9wjrTnZM7Gb2iS0e.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/oUNBegOQIllM79G8sOkuhRrJ12U.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/i66OYG0BawKMjd4iEaaIvouiwDL.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/f8lbPtwf5Oe2NrB9DzCN1IiHHDR.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/trfzyV5s5CmrKVRSAskpUfsvrcu.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/yeyXyGPkByKcCk1e3yAy9UeN9Vg.jpg</backdrop>
+</details>

@@ -1,0 +1,53 @@
+<?xml version="1.0"?><!DOCTYPE note [<!ELEMENT details (id, imdb_id, title, mpaa, year, runtime, rating, trailer, genre, studio, plot, overview, director, actor, thumbnail, backdrop)><!ELEMENT id (#PCDATA)><!ELEMENT imdb_id (#PCDATA)><!ELEMENT title (#PCDATA)><!ELEMENT mpaa (#PCDATA)><!ELEMENT year (#PCDATA)><!ELEMENT runtime (#PCDATA)><!ELEMENT rating (#PCDATA)><!ELEMENT trailer (#PCDATA)><!ELEMENT genre (#PCDATA)><!ELEMENT studio (#PCDATA)><!ELEMENT plot (#PCDATA)><!ELEMENT overview (#PCDATA)><!ELEMENT director (#PCDATA)><!ELEMENT actor (#PCDATA)><!ELEMENT thumbnail (#PCDATA)><!ELEMENT backdrop (#PCDATA)>]>
+<details>
+  <id>39013</id>
+  <imdb_id>tt1399683</imdb_id>
+  <title>Winter's Bone</title>
+  <mpaa>R</mpaa>
+  <year>2010-06-11</year>
+  <runtime>100</runtime>
+  <rating>7.6</rating>
+  <trailer>http://www.youtube.com/watch?v=bE_X2pDRXyY</trailer>
+  <genre>Drama</genre>
+  <studio>D.A. Films</studio>
+  <plot>17 year-old Ree Dolly sets out to track down her father, who put their house up for his bail bond and then disappeared. If she fails, Ree and her family will be turned out into the Ozark woods. Challenging her outlaw kin's code of silence and risking her life, Ree hacks through the lies, evasions and threats offered up by her relatives and begins to piece together the truth.</plot>
+  <overview>17 year-old Ree Dolly sets out to track down her father, who put their house up for his bail bond and then disappeared. If she fails, Ree and her family will be turned out into the Ozark woods. Challenging her outlaw kin's code of silence and risking her life, Ree hacks through the lies, evasions and threats offered up by her relatives and begins to piece together the truth.</overview>
+  <director>Debra Granik</director>
+  <actor>
+    <name>Jennifer Lawrence</name>
+    <role>Ree Dolly</role>
+  </actor>
+  <actor>
+    <name>John Hawkes</name>
+    <role>Teardrop</role>
+  </actor>
+  <actor>
+    <name>Kevin Breznahan</name>
+    <role>Little Arthur</role>
+  </actor>
+  <actor>
+    <name>Dale Dickey</name>
+    <role>Merab</role>
+  </actor>
+  <actor>
+    <name>Garret Dillahunt</name>
+    <role>Sheriff Baskin</role>
+  </actor>
+  <actor>
+    <name>Shelley Waggener</name>
+    <role>Sonya</role>
+  </actor>
+  <actor>
+    <name>Lauren Sweetser</name>
+    <role>Gail</role>
+  </actor>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/bXTzMUtLicNnfzXvAdKrk33hMM.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/A9qia4GnGJsUPvRpNmmaCFe6e5Z.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/paJ6HTE2sc2mgROSk5MWRnp9qAr.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/uY62hneexedKIixP77Su7Cav3hC.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/wKrDTBqlBrAK37FZ1lEY5T1ny7Z.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/i0eVbaBL6dMWkUEt8OjBGeiNbsu.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/mOK3z2NvsizzWi3mIKXS5kn3Nb6.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/xPcCSOeLZu1DbezVPXl1rAGOhEd.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/7P93aZcHgm9nAvXwk9APPQuq8XL.jpg</backdrop>
+</details>

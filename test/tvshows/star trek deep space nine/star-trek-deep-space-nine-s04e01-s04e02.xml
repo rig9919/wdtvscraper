@@ -1,0 +1,15 @@
+<?xml version="1.0"?><!DOCTYPE note [<!ELEMENT details (id, title, series_name, episode_name, season_number, episode_number, firstaired, genre, runtime, director, actor, overview)><!ELEMENT id (#PCDATA)><!ELEMENT title (#PCDATA)><!ELEMENT series_name (#PCDATA)><!ELEMENT episode_name (#PCDATA)><!ELEMENT season_number (#PCDATA)><!ELEMENT episode_number (#PCDATA)><!ELEMENT firstaired (#PCDATA)><!ELEMENT genre (#PCDATA)><!ELEMENT runtime (#PCDATA)><!ELEMENT director (#PCDATA)><!ELEMENT actor (#PCDATA)><!ELEMENT overview (#PCDATA)>]>
+<details>
+  <id>72019</id>
+  <title>401: The Way of the Warrior (1)</title>
+  <series_name>Star Trek: Deep Space Nine</series_name>
+  <episode_name>The Way of the Warrior (1)</episode_name>
+  <season_number>4</season_number>
+  <episode_number>1</episode_number>
+  <firstaired>1995-10-02</firstaired>
+  <genre>Star Trek: Deep Space Nine</genre>
+  <runtime>N/A</runtime>
+  <director>James L. Conway</director>
+  <actor>Avery Brooks/Armin Shimerman/Rene Auberjonois/Alexander Siddig/Terry Farrell/Colm Meaney/Nana Visitor/Aron Eisenberg/Andrew Robinson/Max Grodenchik/Michael Dorn/Cirroc Lofton/J. G. Hertzler/Jeffrey Combs/Marc Alaimo/Chase Masterson/Casey Biggs/Nicole deBoer</actor>
+  <overview>On DVD as 401. The Klingons attack Cardassia in an attempt to overthrow the planet's newly installed civilian government. When the crew of Deep Space Nine saves the members of the new government, they fall under attack from the Klingons as well. Worf is transferred to Deep Space Nine.</overview>
+</details>

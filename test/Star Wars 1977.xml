@@ -1,0 +1,36 @@
+<?xml version="1.0"?><!DOCTYPE note [<!ELEMENT details (id, imdb_id, title, mpaa, year, runtime, rating, trailer, genre, studio, plot, overview, director, actor, thumbnail, backdrop)><!ELEMENT id (#PCDATA)><!ELEMENT imdb_id (#PCDATA)><!ELEMENT title (#PCDATA)><!ELEMENT mpaa (#PCDATA)><!ELEMENT year (#PCDATA)><!ELEMENT runtime (#PCDATA)><!ELEMENT rating (#PCDATA)><!ELEMENT trailer (#PCDATA)><!ELEMENT genre (#PCDATA)><!ELEMENT studio (#PCDATA)><!ELEMENT plot (#PCDATA)><!ELEMENT overview (#PCDATA)><!ELEMENT director (#PCDATA)><!ELEMENT actor (#PCDATA)><!ELEMENT thumbnail (#PCDATA)><!ELEMENT backdrop (#PCDATA)>]>
+<details>
+  <id>72694</id>
+  <imdb_id>tt0295414</imdb_id>
+  <title>The Making of 'Star Wars'</title>
+  <mpaa>G</mpaa>
+  <year>1977-09-16</year>
+  <runtime>50</runtime>
+  <rating>9.5</rating>
+  <genre>Documentary</genre>
+  <plot>Ever wonder how they ever managed to make a movie like Star Wars? Well, bickering droid duo C-3PO and R2-D2 host this tour of the mind of creator George Lucas and what inspired him to make the movie. Even interviewed are the cast and crew, even features scenes of when C-3PO, R2-D2, and Darth Vader planted their footprints (or in R2's case, tread-prints) into cement. Also discussed is Star Wars mania, how fans loved the movie, collected the merchandise and danced the disco music. Also shown are behind-the-scenes looks at the movie, as well as how difficult each effect was in doing since they didn't have the convenience of computer animation back then.</plot>
+  <overview>Ever wonder how they ever managed to make a movie like Star Wars? Well, bickering droid duo C-3PO and R2-D2 host this tour of the mind of creator George Lucas and what inspired him to make the movie. Even interviewed are the cast and crew, even features scenes of when C-3PO, R2-D2, and Darth Vader planted their footprints (or in R2's case, tread-prints) into cement. Also discussed is Star Wars mania, how fans loved the movie, collected the merchandise and danced the disco music. Also shown are behind-the-scenes looks at the movie, as well as how difficult each effect was in doing since they didn't have the convenience of computer animation back then.</overview>
+  <director>Robert Guenette</director>
+  <actor>
+    <name>Carrie Fisher</name>
+    <role></role>
+  </actor>
+  <actor>
+    <name>Mark Hamill</name>
+    <role></role>
+  </actor>
+  <actor>
+    <name>Harrison Ford</name>
+    <role></role>
+  </actor>
+  <actor>
+    <name>Anthony Daniels</name>
+    <role></role>
+  </actor>
+  <actor>
+    <name>George Lucas</name>
+    <role>Himself</role>
+  </actor>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/zO26rEjusUhd2fAKh6pFqoMZHqH.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/eT9liR62vzdqrktB7wxiYyqeDHA.jpg</backdrop>
+</details>

@@ -1,0 +1,83 @@
+<?xml version="1.0"?><!DOCTYPE note [<!ELEMENT details (id, imdb_id, title, mpaa, year, runtime, rating, trailer, genre, studio, plot, overview, director, actor, thumbnail, backdrop)><!ELEMENT id (#PCDATA)><!ELEMENT imdb_id (#PCDATA)><!ELEMENT title (#PCDATA)><!ELEMENT mpaa (#PCDATA)><!ELEMENT year (#PCDATA)><!ELEMENT runtime (#PCDATA)><!ELEMENT rating (#PCDATA)><!ELEMENT trailer (#PCDATA)><!ELEMENT genre (#PCDATA)><!ELEMENT studio (#PCDATA)><!ELEMENT plot (#PCDATA)><!ELEMENT overview (#PCDATA)><!ELEMENT director (#PCDATA)><!ELEMENT actor (#PCDATA)><!ELEMENT thumbnail (#PCDATA)><!ELEMENT backdrop (#PCDATA)>]>
+<details>
+  <id>280</id>
+  <imdb_id>tt0103064</imdb_id>
+  <title>Terminator 2: Judgment Day</title>
+  <mpaa>R</mpaa>
+  <year>1991-07-01</year>
+  <runtime>137</runtime>
+  <rating>8.9</rating>
+  <trailer>http://www.youtube.com/watch?v=eajuMYNYtuY</trailer>
+  <trailer>http://www.youtube.com/watch?v=7QAtZpOhL3w</trailer>
+  <genre>Action</genre>
+  <genre>Science Fiction</genre>
+  <genre>Thriller</genre>
+  <studio>Carolco Entertainment</studio>
+  <studio>Pacific Western Production</studio>
+  <plot>Nearly 10 years have passed since Sarah Connor was targeted for termination by a cyborg from the future. Now her son, John, the future leader of the resistance, is the target for a newer, more deadly terminator. Once again, the resistance has managed to send a protector back to attempt to save John and his mother Sarah.</plot>
+  <overview>Nearly 10 years have passed since Sarah Connor was targeted for termination by a cyborg from the future. Now her son, John, the future leader of the resistance, is the target for a newer, more deadly terminator. Once again, the resistance has managed to send a protector back to attempt to save John and his mother Sarah.</overview>
+  <director>James Cameron</director>
+  <actor>
+    <name>Arnold Schwarzenegger</name>
+    <role>The Terminator "T800"</role>
+  </actor>
+  <actor>
+    <name>Linda Hamilton</name>
+    <role>Sarah Connor</role>
+  </actor>
+  <actor>
+    <name>Edward Furlong</name>
+    <role>John Connor</role>
+  </actor>
+  <actor>
+    <name>Robert Patrick</name>
+    <role>T-1000</role>
+  </actor>
+  <actor>
+    <name>Earl Boen</name>
+    <role>Dr. Peter Silberman</role>
+  </actor>
+  <actor>
+    <name>Joe Morton</name>
+    <role>Dr. Miles Bennett Dyson</role>
+  </actor>
+  <actor>
+    <name>S. Epatha Merkerson</name>
+    <role>Tarissa Dyson</role>
+  </actor>
+  <actor>
+    <name>Castulo Guerra</name>
+    <role>Enrique Salceda</role>
+  </actor>
+  <actor>
+    <name>Danny Cooksey</name>
+    <role>Tim</role>
+  </actor>
+  <actor>
+    <name>Jenette Goldstein</name>
+    <role>Janelle Voight</role>
+  </actor>
+  <actor>
+    <name>Xander Berkeley</name>
+    <role>Todd Voight</role>
+  </actor>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/d9AqtruwS8nljKjL5aYzM42hQJr.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/i5megxGRBadEZEUeej5ADFnYLlB.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/meVyiMCXZtqWC7kYNSgSbwwMDsF.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/9MkA1OXmmvE06vajhdCyQWO8T2L.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/jUV2lPxhcQe4g6EEKyJT0F1QbrC.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/jOvfOiz3FEqS88j5axx0pbGGPFH.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/oWQAgd16D4uMedxSD9TkLkMQm6p.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/6n36XqZxdCeDd7HolQVg38gKwwv.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/zydeqbsDcTkIQl27CywRy4aY9Ps.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/cDE6lNMPHTaIyW3Ji67D2iQf9b7.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/1ktldZ0R9A7DF81oMprSGJtJYrI.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/tGy8As0vvPAwyOCGHD1RkOHRLak.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/lXoalUI3jBgBHPODDiWfkWo6cUE.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/91WJLKNqCx9fSCP6IfVzuw8u5Mp.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/pC9vQ5miLgdHSPIsgfU5A9pcTpF.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/D5KqmLBdypCWIO0SJIuZw3v6DH.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/vWOZSEP1OWqiv24EGicNnZ5uqO3.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/naY04cHGEdMaIbIIZpFj6Eoxno8.jpg</backdrop>
+  <backdrop>http://d3gtl9l2a4fn1j.cloudfront.net/t/p/w780/sLXF6h8qekZ2NEXA0dyxVd2rZmd.jpg</backdrop>
+</details>

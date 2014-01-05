@@ -1,0 +1,15 @@
+<?xml version="1.0"?><!DOCTYPE note [<!ELEMENT details (id, title, series_name, episode_name, season_number, episode_number, firstaired, genre, runtime, director, actor, overview)><!ELEMENT id (#PCDATA)><!ELEMENT title (#PCDATA)><!ELEMENT series_name (#PCDATA)><!ELEMENT episode_name (#PCDATA)><!ELEMENT season_number (#PCDATA)><!ELEMENT episode_number (#PCDATA)><!ELEMENT firstaired (#PCDATA)><!ELEMENT genre (#PCDATA)><!ELEMENT runtime (#PCDATA)><!ELEMENT director (#PCDATA)><!ELEMENT actor (#PCDATA)><!ELEMENT overview (#PCDATA)>]>
+<details>
+  <id>4130006</id>
+  <title>105: Never Let Me Go</title>
+  <series_name>Alphas</series_name>
+  <episode_name>Never Let Me Go</episode_name>
+  <season_number>1</season_number>
+  <episode_number>5</episode_number>
+  <firstaired>2011-08-08</firstaired>
+  <genre>Alphas</genre>
+  <runtime>N/A</runtime>
+  <director>Jeffrey Hunt</director>
+  <actor>Warren Christie/Laura Mennell/Azita Ghanizada/David Strathairn/Ryan Cartwright/Malik Yoba/Erin Way/Mahershala Ali</actor>
+  <overview>Rachel goes on a date that ends with a powerful kiss; Rosen's team officially joins the Defense Criminal Investigation Service, and their first case is to probe a series of deaths linked to a high school in Pennsylvania.</overview>
+</details>

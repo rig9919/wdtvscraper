@@ -1,0 +1,15 @@
+<?xml version="1.0"?><!DOCTYPE note [<!ELEMENT details (id, title, series_name, episode_name, season_number, episode_number, firstaired, genre, runtime, director, actor, overview)><!ELEMENT id (#PCDATA)><!ELEMENT title (#PCDATA)><!ELEMENT series_name (#PCDATA)><!ELEMENT episode_name (#PCDATA)><!ELEMENT season_number (#PCDATA)><!ELEMENT episode_number (#PCDATA)><!ELEMENT firstaired (#PCDATA)><!ELEMENT genre (#PCDATA)><!ELEMENT runtime (#PCDATA)><!ELEMENT director (#PCDATA)><!ELEMENT actor (#PCDATA)><!ELEMENT overview (#PCDATA)>]>
+<details>
+  <id>349232</id>
+  <title>101: Pilot</title>
+  <series_name>Breaking Bad</series_name>
+  <episode_name>Pilot</episode_name>
+  <season_number>1</season_number>
+  <episode_number>1</episode_number>
+  <firstaired>2008-01-20</firstaired>
+  <genre>Breaking Bad</genre>
+  <runtime>N/A</runtime>
+  <director>Vince Gilligan</director>
+  <actor>Bryan Cranston/Aaron Paul/Dean Norris/RJ Mitte/Betsy Brandt/Anna Gunn/Laura Fraser/Jesse Plemons/Christopher Cousins/Steven Michael Quezada/Jonathan Banks/Giancarlo Esposito/Bob Odenkirk</actor>
+  <overview>On DVD as 101. When an unassuming high school chemistry teacher discovers he has a rare form of lung cancer, he decides to team up with a former student and create a top of the line crystal meth in a used RV, to provide for his family once he is gone.</overview>
+</details>

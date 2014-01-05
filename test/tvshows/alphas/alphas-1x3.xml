@@ -1,0 +1,15 @@
+<?xml version="1.0"?><!DOCTYPE note [<!ELEMENT details (id, title, series_name, episode_name, season_number, episode_number, firstaired, genre, runtime, director, actor, overview)><!ELEMENT id (#PCDATA)><!ELEMENT title (#PCDATA)><!ELEMENT series_name (#PCDATA)><!ELEMENT episode_name (#PCDATA)><!ELEMENT season_number (#PCDATA)><!ELEMENT episode_number (#PCDATA)><!ELEMENT firstaired (#PCDATA)><!ELEMENT genre (#PCDATA)><!ELEMENT runtime (#PCDATA)><!ELEMENT director (#PCDATA)><!ELEMENT actor (#PCDATA)><!ELEMENT overview (#PCDATA)>]>
+<details>
+  <id>4130000</id>
+  <title>103: Anger Management</title>
+  <series_name>Alphas</series_name>
+  <episode_name>Anger Management</episode_name>
+  <season_number>1</season_number>
+  <episode_number>3</episode_number>
+  <firstaired>2011-07-25</firstaired>
+  <genre>Alphas</genre>
+  <runtime>N/A</runtime>
+  <director>Nick Copus</director>
+  <actor>Warren Christie/Laura Mennell/Azita Ghanizada/David Strathairn/Ryan Cartwright/Malik Yoba/Erin Way/Mahershala Ali</actor>
+  <overview>The team moves to new offices following the attack on Rosen; violent riots break out on the east coast, which are linked to a runaway teen.</overview>
+</details>
