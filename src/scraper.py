@@ -147,9 +147,13 @@ def modify_db(db_file, verbose, videos, repair=False):
                    'could not repair record in media library, no matching xml',
                    sys.stderr)
             continue
+        # xml will be malformed because wdtv wants it that way
+        # now we make it compatible with ElementTree by replacing all the
+        # '&'s with '&amp;' tags
         with open(b_xml, 'r') as f:
             xml_contents = f.read()
         xml_contents = xml_contents.replace('&', '&amp;')
+
         tree = ET.fromstring(xml_contents)
         director = tree.find('director')
         actors = tree.findall('actor/name')

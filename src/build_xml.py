@@ -77,6 +77,8 @@ def write_tvshow(series, episode, destination, use_dvdorder):
 
     f = codecs.open(destination, encoding='utf-8', mode='w')
     for line in xml:
+        # wdtv wants malformed xml
+        # it does not change '&amp;' to '&', so we must create bad xml
         line = line.replace(u'&amp;', u'&')
         f.write(unicode(line) + u'\n')
     f.close()
@@ -159,6 +161,8 @@ def write_movie(mov, destination, thumbnails):
 
     f = codecs.open(destination, encoding='utf-8', mode='w')
     for line in xml:
+        # wdtv wants malformed xml
+        # it does not change '&amp;' to '&', so we must create bad xml
         line = line.replace(u'&amp;', u'&')
         f.write(unicode(line) + u'\n')
     f.close()
