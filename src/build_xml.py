@@ -44,7 +44,6 @@ def write_tvshow(series, episode, destination, use_dvdorder):
     xml.append('  <id>' + unicode(episode.tvdbId) + '</id>')
     #title = '%s: S%sE%s %s' % (series.name, episode.seasonNumber.zfill(2),
     #                           episode.episodeNumber.zfill(2), episode.name)
-    episode.name = episode.name.replace('&', '&amp;')
     title = '%s%s: %s' % (season_num, episode_num.zfill(2),
                          episode.name)
     xml.append('  <title>' + unicode(title) + '</title>') 
@@ -73,7 +72,6 @@ def write_tvshow(series, episode, destination, use_dvdorder):
     # overview is a list for some reason
     if len(episode.overview) > 0:
         overview = overview + episode.overview[0]
-    overview = overview.replace('&', '&amp;')
     xml.append(overview + '</overview>')
 
     xml.append('</details>')
@@ -124,7 +122,6 @@ def write_movie(mov, destination, thumbnails):
     xml.append('<details>')
     xml.append('  <id>' + unicode(mov.id) + '</id>')
     xml.append('  <imdb_id>' + unicode(mov.imdb) + '</imdb_id>')
-    mov.title = mov.title.replace('&', '&amp;')
     xml.append('  <title>' + mov.title + '</title>')
     if 'US' in mov.releases:
         xml.append('  <mpaa>' + mov.releases['US'].certification + '</mpaa>')
@@ -142,7 +139,6 @@ def write_movie(mov, destination, thumbnails):
         xml.append('  <genre>' + genre.name + '</genre>')
     for studio in mov.studios:
         xml.append('  <studio>' + studio.name + '</studio>')
-    mov.overview = mov.overview.replace('&', '&amp;')
     xml.append('  <plot>' + mov.overview + '</plot>')
     xml.append('  <overview>' + mov.overview + '</overview>')
     for member in mov.crew:
@@ -163,6 +159,6 @@ def write_movie(mov, destination, thumbnails):
 
     f = codecs.open(destination, encoding='utf-8', mode='w')
     for line in xml:
-        line = re.sub(u'[&]', u'&amp;', line)
+        line = re.sub(u'\&(?!amp;)', u'&amp;', line)
         f.write(unicode(line) + u'\n')
     f.close()

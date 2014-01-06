@@ -85,3 +85,4 @@
 1.3.2   fixed bug causing crash during insert of db record of failed movie
 1.3.3   use more portable temporary files, cleaned up poster downloading
 1.4.0   works on windows, imagemagick no longer necessary, version bump
+1.4.1   fixed xml having too many &amp tags
