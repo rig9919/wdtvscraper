@@ -17,7 +17,7 @@ from common import notify, get_chosen_match, ask_alternative, uni
 import common
 import build_xml
 
-__version__ = '1.4.1'
+__version__ = '1.4.2'
 
 
 def main():
@@ -147,7 +147,10 @@ def modify_db(db_file, verbose, videos, repair=False):
                    'could not repair record in media library, no matching xml',
                    sys.stderr)
             continue
-        tree = ET.parse(b_xml)
+        with open(b_xml, 'r') as f:
+            xml_contents = f.read()
+        xml_contents = xml_contents.replace('&', '&amp;')
+        tree = ET.fromstring(xml_contents)
         director = tree.find('director')
         actors = tree.findall('actor/name')
         if director is not None:

@@ -1,5 +1,4 @@
 import unicodedata
-import re
 import codecs
 
 
@@ -78,6 +77,7 @@ def write_tvshow(series, episode, destination, use_dvdorder):
 
     f = codecs.open(destination, encoding='utf-8', mode='w')
     for line in xml:
+        line = line.replace(u'&amp;', u'&')
         f.write(unicode(line) + u'\n')
     f.close()
 
@@ -159,6 +159,6 @@ def write_movie(mov, destination, thumbnails):
 
     f = codecs.open(destination, encoding='utf-8', mode='w')
     for line in xml:
-        line = re.sub(u'\&(?!amp;)', u'&amp;', line)
+        line = line.replace(u'&amp;', u'&')
         f.write(unicode(line) + u'\n')
     f.close()
