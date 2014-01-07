@@ -10,6 +10,7 @@ install:
 		cp -r ./src/pytmdb3 $(INSTALLDIR)
 		cp -r ./src/pytvdb $(INSTALLDIR)
 		$(INSTALL) ./src/ter28-16.* $(INSTALLDIR)
+		mkdir -p $(MANDIR)
 		$(INSTALL) ./doc/wdtvscraper.1.gz $(MANDIR)
 		ln -s $(INSTALLDIR)/scraper.py $(BINDIR)/wdtvscraper
 
