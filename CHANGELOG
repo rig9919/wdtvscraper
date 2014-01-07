@@ -87,3 +87,4 @@
 1.4.0   works on windows, imagemagick no longer necessary, version bump
 1.4.1   fixed xml having too many &amp tags
 1.4.2   apparently wdtv wants malformed xml, so replace all &amp with &
+1.4.3   switched from install.sh to makefile
