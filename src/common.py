@@ -371,3 +371,16 @@ def download_file(location, destination):
         local.seek(0)
         return local
 
+def reduce_size(image, max_size):
+    max_size = max_size*1024
+    is_reduced = False
+    while os.path.getsize(image) > max_size:
+        size = os.path.getsize(image)
+        r = os.system('convert -strip "' + image + '" -quality 90% ' +
+                       'JPEG:"' + image + '"')
+        if r or os.path.getsize(image) == size or os.path.getsize(image) < max_size:
+            is_reduced = True
+            break
+    return is_reduced
+
+

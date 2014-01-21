@@ -7,7 +7,7 @@ from pytvdb import shortsearch, longsearch
 import common
 from common import remove_punc, get_input, notify, print_possible_match_table,\
                    get_chosen_match, ask_alternative, uni, draw_mosaic,\
-                   download_file, show_images_retrieved
+                   download_file, show_images_retrieved, reduce_size
 import build_xml
 
 class LocalSeries(object):
@@ -207,20 +207,12 @@ def _get_all_posters(location):
 def _save_poster(location, destination, basename, max_size):
     # If there is no art, carry on
     if not location:
-        notify('warning:', 'no image available for ' + basename)
+        notify('warning', 'no image available for ' + basename)
         return
-    max_size = max_size*1024
     download_file(location, destination)
-    is_reduced = False
-    while os.path.getsize(destination) > max_size:
-        size = os.path.getsize(destination)
-        r = os.system('convert -strip "' + destination + '" -quality 90% ' +
-                       'JPEG:"' + destination + '"')
-        if r or os.path.getsize(destination) == size:
-            is_reduced = True
-            break
+    is_reduced = reduce_size(destination, max_size)
     if is_reduced:
-        notify('warning:', 'image quality reduced and useless data removed for '
-               + basename, sys.stderr)
+        notify('warning', 'image quality reduced and useless data removed for '
+                + basename, sys.stderr)
 
 

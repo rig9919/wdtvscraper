@@ -5,7 +5,7 @@ from datetime import date
 from pytmdb3 import tmdb3
 import build_xml
 from common import split_full_title, draw_mosaic, download_file, get_input, \
-                   show_images_retrieved
+                   show_images_retrieved, reduce_size, notify
 
 '''
 This is a set of helper methods for the tmdb3.Movie class.
@@ -135,7 +135,11 @@ def download_poster(self, size, destination, choose):
             poster_url = self.posters[int(choice)-1].geturl(size)
     else:
         poster_url = self.poster.geturl(size)
-    return download_file(poster_url, destination)
+    download_file(poster_url, destination)
+    is_reduced = reduce_size(destination, 90)
+    if is_reduced:
+        notify('warning', 'image quality reduced and useless data removed for '
+                + os.path.splitext(os.path.basename(destination))[0], sys.stderr)
 
 
 def _get_all_posters(poster_list, size):
