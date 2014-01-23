@@ -376,9 +376,9 @@ def reduce_size(image, max_size):
     is_reduced = False
     while os.path.getsize(image) > max_size:
         size = os.path.getsize(image)
-        r = os.system('convert -strip "' + image + '" -quality 90% ' +
-                       'JPEG:"' + image + '"')
-        if r or os.path.getsize(image) == size or os.path.getsize(image) < max_size:
+        img = Image.open(image)
+        img.save(image, 'JPEG', optimize=True)
+        if os.path.getsize(image) == size or os.path.getsize(image) < max_size:
             is_reduced = True
             break
     return is_reduced
