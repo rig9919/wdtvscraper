@@ -135,7 +135,9 @@ def download_poster(self, size, destination, choose):
             poster_url = self.posters[int(choice)-1].geturl(size)
     else:
         poster_url = self.poster.geturl(size)
-    download_file(poster_url, destination)
+    image = download_file(poster_url, destination)
+    if destination == 'temp':
+        return image
     is_reduced = reduce_size(destination, 90)
     if is_reduced:
         notify('warning', 'image quality reduced and useless data removed for '

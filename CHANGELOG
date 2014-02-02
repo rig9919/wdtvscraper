@@ -90,3 +90,4 @@
 1.4.3   switched from install.sh to makefile
 1.4.4   movie posters can be resized if too large
 1.4.5   imagemagick is no longer required to reduce image sizes
+1.4.6   fixed bug bug previewing movie poster, fixed unicode error on xml write
