@@ -17,7 +17,7 @@ from common import notify, get_chosen_match, ask_alternative, uni
 import common
 import build_xml
 
-__version__ = '1.4.6'
+__version__ = '1.4.7'
 
 
 def main():
@@ -32,16 +32,16 @@ def main():
         if not os.path.isfile(args.media_library):
             notify('error', 'media library file does not exist')
             exit()
-        modify_db(args.media_library, args.verbose, None, True)
+        modify_db(args.media_library, args.show, None, True)
 
     # process all the movie paths
     for path in args.movie_paths:
         path = parse_path(path)
         v=process_movies(path, args.thumbnails, args.assume, args.interactive,
-                       args.verbose, args.force_overwrite, args.language,
+                       args.show, args.force_overwrite, args.language,
                        args.country, int(args.max_results), args.choose_image)
         if args.media_library and v:
-            modify_db(args.media_library, args.verbose, v)
+            modify_db(args.media_library, args.show, v)
 
     # process all the tv series paths
     if not args.language in 'en sv no da fi nl de it es fr pl hu el ' \
@@ -50,11 +50,11 @@ def main():
         exit()
     for path in args.tv_paths:
         path = parse_path(path)
-        v=process_tv(path, args.interactive, args.verbose, args.force_overwrite,
+        v=process_tv(path, args.interactive, args.show, args.force_overwrite,
                    args.language, args.choose_image, int(args.max_results),
                    args.dvd_ordering)
         if args.media_library:
-            modify_db(args.media_library, args.verbose, v)
+            modify_db(args.media_library, args.show, v)
 
 def parse_path(path):
     if path == '.' or path == './':
@@ -94,8 +94,9 @@ def init_parser():
                         help='Where LN is a language code from ISO 639-1. '
                              'Common codes include en/de/nl/es/it/fr/pl. '
                              'TVDB languages are more restrictive.')
-    global_opts.add_argument('-v', '--verbose', default=0, action='count',
-                        help='Increase level of information up to 3 levels.')
+    global_opts.add_argument('-s', '--show', default='ok', metavar='SH',
+                             choices=['ok', 'fail', 'all', 'debug'],
+                        help='Show only SH messages.')
     global_opts.add_argument('-f', '--force-overwrite', action='store_true',
                         help='Force overwrite of metadata and poster files.')
     movie_opts = parser.add_argument_group('movie scraping options')
@@ -120,12 +121,12 @@ def init_parser():
     args = parser.parse_args()
     return args
 
-def modify_db(db_file, verbose, videos, repair=False):
+def modify_db(db_file, show, videos, repair=False):
     wdtv_dir = os.path.dirname(os.path.dirname(db_file))
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
     mlib_name = c.execute("SELECT name FROM folder WHERE filepath = './'").fetchone()[0]
-    if verbose >= 3:
+    if show == 'debug':
         notify('modifying media library', mlib_name)
     if not repair:
         broken = [ os.path.split(video) + ('new',) for video in videos ]
@@ -142,10 +143,9 @@ def modify_db(db_file, verbose, videos, repair=False):
         b_basename, b_ext = os.path.splitext(b_filename)
         b_xml = (b_dirname + '/' + b_basename + '.xml')
         if not os.path.isfile(b_xml):
-            if verbose >= 2:
+            if show == 'fail' or show == 'all':
                 notify(os.path.basename(b_fullpath_real) + ' (' + str(b_id) + ')', 
-                   'could not repair record in media library, no matching xml',
-                   sys.stderr)
+                   'could not repair record in media library, no matching xml')
             continue
         # xml will be malformed because wdtv wants it that way
         # now we make it compatible with ElementTree by replacing all the
@@ -212,13 +212,13 @@ def modify_db(db_file, verbose, videos, repair=False):
                            'Season %d' % (int(tree.find('season_number').text)),
                            tree.find('episode_number').text, b[1], b[0]))
         conn.commit()
-        if verbose >= 1:
+        if show == 'ok' or show == 'all':
             notify(b_basename + ' (' + str(b_id) + ')', 
                    'successfully repaired/added record')
         #print tree.find('id').text
     conn.close() 
 
-def process_movies(path, thumbnails, assume, interactive, verbose,
+def process_movies(path, thumbnails, assume, interactive, show,
                    force_overwrite, language, country, max_results,
                    choose_image):
     successful = []
@@ -235,12 +235,12 @@ def process_movies(path, thumbnails, assume, interactive, verbose,
         if country:
             tmdb3.set_locale(country=country, fallthrough=True)
 
-    if verbose >= 3:
+    if show == 'debug':
         notify('processing', path)
         notify('locale', str(tmdb3.get_locale()))
 
     if not os.path.isdir(path):
-        notify('warning', '\'' + path + '\' is not a directory', sys.stderr)
+        notify('warning', '\'' + path + '\' is not a directory')
         return
 
     # process each file in path
@@ -257,17 +257,19 @@ def process_movies(path, thumbnails, assume, interactive, verbose,
             os.path.isfile(path + '/' + videofile.basename + '.xml') and 
             (not force_overwrite)):
             # metathumb and xml already exists for this movie
-            if verbose >= 2:
-                notify(videofile.basename, 'poster and metadata already exist', sys.stderr)
+            if show == 'fail' or show == 'all':
+                notify(videofile.basename, 'poster and metadata already exist')
             continue
 
         # find a matching title from tmdb
         try:
             videofile.get_match(assume)
         except common.NonzeroMatchlistNoMatches as e:
-            print >> sys.stderr, e
+            if show == 'fail' or show == 'all':
+                print e
         except common.ZeroMatchlist as e:
-            print >> sys.stderr, e
+            if show == 'fail' or show == 'all':
+                print e
 
         if not videofile.tmdb_data:
             if not interactive:
@@ -277,10 +279,10 @@ def process_movies(path, thumbnails, assume, interactive, verbose,
                                                         max_results)
 
         if not videofile.tmdb_data:
-            notify(videofile.basename, 'not found', sys.stderr)
+            notify(videofile.basename, 'not found')
             continue
     
-        if verbose >= 1:
+        if show == 'ok' or show == 'all':
             if videofile.matched_method == 'assumed':
                 notify(videofile.basename,
                        'assuming matches ' + videofile.tmdb_data.full_title())
@@ -291,8 +293,8 @@ def process_movies(path, thumbnails, assume, interactive, verbose,
         # deal with poster
         if (os.path.isfile(path + '/' + videofile.basename + '.metathumb')
            and not force_overwrite):
-            if verbose >= 2:
-                notify(videofile.basename, 'poster already exists', sys.stderr)
+            if show == 'fail' or show == 'all':
+                notify(videofile.basename, 'poster already exists')
         else:
         # if there's any posters available, download w185 size
         # preferably. otherwise, get the smallest available.
@@ -307,14 +309,13 @@ def process_movies(path, thumbnails, assume, interactive, verbose,
                              path + '/' + videofile.basename + '.metathumb',
                              choose_image)
             else:
-                notify(videofile.basename,
-                       'no poster available', sys.stderr)
+                notify(videofile.basename, 'no poster available')
     
         # deal with metadata
         if (os.path.isfile(path + '/' + videofile.basename + '.xml')
            and not force_overwrite):
-            if verbose >= 2:
-                notify(videofile.basename, 'metadata already exists', sys.stderr)
+            if show == 'fail' or show == 'all':
+                notify(videofile.basename, 'metadata already exists')
         else:
             videofile.tmdb_data.write_metadata(
                                    path + '/' + videofile.basename + '.xml',
@@ -337,7 +338,7 @@ def manually_search_movie(basename, title, max_results):
     return tmdb_data
 
 
-def process_tv(path, interactive, verbose, force_overwrite, language,
+def process_tv(path, interactive, show, force_overwrite, language,
                choose_image, max_results, dvd_ordering):
     successful = []
     # chop off trailing backslash if found
@@ -347,11 +348,11 @@ def process_tv(path, interactive, verbose, force_overwrite, language,
     series_image = path + '/00aa-series-cover.metathumb'
     if not language:
         language = 'en'
-    if verbose >= 3:
+    if show == 'debug':
         notify('processing', path)
 
     if not os.path.isdir(path):
-        notify('warning', '\'' + path + '\' is not a directory', sys.stderr)
+        notify('warning', '\'' + path + '\' is not a directory')
         return
     dirname = os.path.basename(path)
     basename = dirname
@@ -362,19 +363,21 @@ def process_tv(path, interactive, verbose, force_overwrite, language,
         try:
             series = LocalSeries(basename, language, interactive, max_results)
         except common.NoSeriesException as e:
-            print >> sys.stderr, e
+            if show == 'fail' or show == 'all':
+                print e
             return
         except common.ZeroMatchlist as e:
-            print >> sys.stderr, e
+            if show == 'fail' or show == 'all':
+                print e
             return
 
-        if verbose >= 1:
+        if show == 'debug':
             notify(dirname, 'matches ' + series.series_data.name)
 
         try:
             if os.path.isfile(series_image) and (not force_overwrite):
-                if verbose >= 2:
-                    notify(dirname, 'series poster already exists', sys.stderr)
+                if show == 'fail' or show == 'all':
+                    notify(dirname, 'series poster already exists')
             else:
                 series.save_poster(series_image, choose_image)
         except IOError as e:
@@ -391,7 +394,8 @@ def process_tv(path, interactive, verbose, force_overwrite, language,
             try:
                 episode = LocalEpisode(f, series.series_data, dvd_ordering)
             except common.NoEpisodeException as e:
-                print >> sys.stderr, e
+                if show == 'fail' or show == 'all':
+                    print e
                 continue
 
             # check to see if a poster and metadata file already exist
@@ -399,12 +403,11 @@ def process_tv(path, interactive, verbose, force_overwrite, language,
                 '.metathumb') and
                 os.path.isfile(path + '/' + episode.basename + '.xml') and
                 (not force_overwrite)):
-                if verbose >= 2:
-                    notify(episode.basename, 'screenshot and metadata already exist',
-                           sys.stderr)
+                if show == 'fail' or show == 'all':
+                    notify(episode.basename, 'screenshot and metadata already exist')
                 continue
 
-            if verbose >= 1:
+            if show == 'ok' or show == 'all':
                 if not episode.episode_data:
                     raise common.NoEpisodeException(episode.basename)
                 notify(episode.basename, 'matches ' + episode.episode_data.name)
