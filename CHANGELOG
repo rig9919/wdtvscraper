@@ -92,3 +92,4 @@
 1.4.5   imagemagick is no longer required to reduce image sizes
 1.4.6   fixed bug bug previewing movie poster, fixed unicode error on xml write
 1.4.7   changed how messages are displayed, replaced verbose switch with show
+1.4.8   multiple types of messages can be displayed
