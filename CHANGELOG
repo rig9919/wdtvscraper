@@ -94,3 +94,4 @@
 1.4.7   changed how messages are displayed, replaced verbose switch with show
 1.4.8   multiple types of messages can be displayed
 1.4.8.1 updated example in documentation
+1.4.8.2 fixed typo in example
